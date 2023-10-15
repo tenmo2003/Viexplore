@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, Image } from "react-native";
 
-const Post = ({ id }) => {
+interface Props {
+  id: string;
+}
+
+function Post({ id }) {
   async function fetchData() {
     try {
       const response = await fetch(
@@ -54,6 +58,6 @@ const Post = ({ id }) => {
       ))}
     </View>
   );
-};
+}
 
 export default Post;

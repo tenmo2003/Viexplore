@@ -5,10 +5,10 @@ import * as SecureStore from "expo-secure-store";
 import React, { useEffect, useState } from "react";
 import { Animated, StyleSheet, TouchableOpacity } from "react-native";
 import { CurvedBottomBarExpo } from "react-native-curved-bottom-bar";
-import Loading from "./components/Loading";
-import TokenContext from "./contexts/TokenContext";
-import ForumScreen from "./screens/ForumScreen";
-import MapScreen from "./screens/MapScreen";
+import Loading from "./src/components/Loading";
+import TokenContext from "./src/contexts/TokenContext";
+import ForumScreen from "./src/screens/ForumScreen";
+import MapScreen from "./src/screens/MapScreen";
 import UserTabs from "./tabs/UserTabs";
 
 const _renderIcon = (routeName, selectedTab) => {

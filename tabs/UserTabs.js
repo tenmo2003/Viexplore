@@ -1,9 +1,9 @@
 import { createStackNavigator } from "@react-navigation/stack";
 import React, { useContext } from "react";
 import { View } from "react-native";
-import TokenContext from "../contexts/TokenContext";
-import LoginScreen from "../screens/LoginScreen";
-import UserScreen from "../screens/UserScreen";
+import TokenContext from "../src/contexts/TokenContext";
+import LoginScreen from "../src/screens/LoginScreen";
+import UserScreen from "../src/screens/UserScreen";
 
 const Stack = createStackNavigator();
 
