@@ -1,9 +1,12 @@
 import { AntDesign, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { NavigationContainer } from "@react-navigation/native";
-import React from "react";
+import * as SecureStore from "expo-secure-store";
+import React, { useEffect, useState } from "react";
 import { Animated, StyleSheet, TouchableOpacity } from "react-native";
 import { CurvedBottomBarExpo } from "react-native-curved-bottom-bar";
+import Loading from "./components/Loading";
+import TokenContext from "./contexts/TokenContext";
 import ForumScreen from "./screens/ForumScreen";
 import MapScreen from "./screens/MapScreen";
 import UserTabs from "./tabs/UserTabs";
@@ -38,47 +41,66 @@ const renderTabBar = ({ routeName, selectedTab, navigate }) => {
 };
 
 export default function App() {
+  const [token, setToken] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadToken = async () => {
+      const storedToken = await SecureStore.getItemAsync("token");
+      setToken(storedToken);
+      setLoading(false);
+    };
+
+    loadToken();
+  }, []);
+
+  if (loading) {
+    return <Loading />;
+  }
+
   return (
-    <NavigationContainer>
-      <CurvedBottomBarExpo.Navigator
-        screenOptions={{ headerShown: false }}
-        type="DOWN"
-        height={55}
-        circleWidth={50}
-        bgColor="white"
-        initialRouteName="map"
-        borderTopLeftRight
-        // eslint-disable-next-line no-unused-vars
-        renderCircle={({ selectedTab, navigate }) => (
-          <Animated.View style={styles.btnCircleUp}>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => navigate("map")}
-              map
-            >
-              <Feather name={"map-pin"} color="black" size={25} />
-            </TouchableOpacity>
-          </Animated.View>
-        )}
-        tabBar={renderTabBar}
-      >
-        <CurvedBottomBarExpo.Screen
-          name="forum"
-          position="LEFT"
-          component={() => <ForumScreen />}
-        />
-        <CurvedBottomBarExpo.Screen
-          name="user"
-          component={() => <UserTabs />}
-          position="RIGHT"
-        />
-        <CurvedBottomBarExpo.Screen
-          name="map"
-          component={() => <MapScreen />}
-          position="CIRCLE"
-        />
-      </CurvedBottomBarExpo.Navigator>
-    </NavigationContainer>
+    <TokenContext.Provider value={token}>
+      <NavigationContainer>
+        <CurvedBottomBarExpo.Navigator
+          screenOptions={{ headerShown: false }}
+          type="DOWN"
+          height={55}
+          circleWidth={50}
+          bgColor="white"
+          initialRouteName="map"
+          borderTopLeftRight
+          // eslint-disable-next-line no-unused-vars
+          renderCircle={({ selectedTab, navigate }) => (
+            <Animated.View style={styles.btnCircleUp}>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => navigate("map")}
+                map
+              >
+                <Feather name={"map-pin"} color="black" size={25} />
+              </TouchableOpacity>
+            </Animated.View>
+          )}
+          tabBar={renderTabBar}
+        >
+          <CurvedBottomBarExpo.Screen
+            name="forum"
+            position="LEFT"
+            component={() => <ForumScreen />}
+          />
+          <CurvedBottomBarExpo.Screen
+            name="user"
+            component={() => <UserTabs />}
+            position="RIGHT"
+          />
+          <CurvedBottomBarExpo.Screen
+            name="map"
+            component={() => <MapScreen />}
+            position="CIRCLE"
+          />
+        </CurvedBottomBarExpo.Navigator>
+      </NavigationContainer>
+    </TokenContext.Provider>
   );
 }
 
