@@ -9,7 +9,7 @@ import Loading from "./src/components/Loading";
 import TokenContext from "./src/contexts/TokenContext";
 import ForumScreen from "./src/screens/ForumScreen";
 import MapScreen from "./src/screens/MapScreen";
-import UserTabs from "./tabs/UserTabs";
+import UserTabs from "./src/tabs/UserTabs";
 
 const _renderIcon = (routeName, selectedTab) => {
   switch (routeName) {
