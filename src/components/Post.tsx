@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Image } from "react-native";
+import { View, Text, Image, ScrollView } from "react-native";
 
-interface Props {
-  id: string;
-}
 
-function Post({ id }) {
+function Post({ route, navigation }) {
+  const { id } = route.params;
   async function fetchData() {
     try {
       const response = await fetch(
@@ -39,7 +37,7 @@ function Post({ id }) {
   }, []);
 
   return (
-    <View>
+    <ScrollView showsVerticalScrollIndicator={false}>
       {data.split(/\{image:.*?\}/).map((text, index) => (
         <View key={index}>
           <Text className="mb-3 mt-3">{text.trim()}</Text>
@@ -56,7 +54,7 @@ function Post({ id }) {
           )}
         </View>
       ))}
-    </View>
+    </ScrollView>
   );
 }
 

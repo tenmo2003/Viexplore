@@ -10,14 +10,15 @@ import TokenContext from "./src/contexts/TokenContext";
 import ForumScreen from "./src/screens/ForumScreen";
 import MapScreen from "./src/screens/MapScreen";
 import UserTabs from "./src/tabs/UserTabs";
+import MapTabs from "./src/tabs/MapTabs";
 
 const _renderIcon = (routeName, selectedTab) => {
   switch (routeName) {
-    case "forum":
+    case "ForumTab":
       return (
         <MaterialCommunityIcons name="forum-outline" size={24} color="black" />
       );
-    case "user":
+    case "UserTab":
       return <AntDesign name="user" size={25} color="black" />;
   }
 
@@ -67,14 +68,14 @@ export default function App() {
           height={55}
           circleWidth={50}
           bgColor="white"
-          initialRouteName="map"
+          initialRouteName="MapTab"
           borderTopLeftRight
           // eslint-disable-next-line no-unused-vars
           renderCircle={({ selectedTab, navigate }) => (
             <Animated.View style={styles.btnCircleUp}>
               <TouchableOpacity
                 style={styles.button}
-                onPress={() => navigate("map")}
+                onPress={() => navigate("MapTab")}
                 map
               >
                 <Feather name={"map-pin"} color="black" size={25} />
@@ -84,18 +85,18 @@ export default function App() {
           tabBar={renderTabBar}
         >
           <CurvedBottomBarExpo.Screen
-            name="forum"
+            name="ForumTab"
             position="LEFT"
-            component={() => <ForumScreen />}
+            component={ForumScreen}
           />
           <CurvedBottomBarExpo.Screen
-            name="user"
-            component={() => <UserTabs />}
+            name="UserTab"
+            component={UserTabs}
             position="RIGHT"
           />
           <CurvedBottomBarExpo.Screen
-            name="map"
-            component={() => <MapScreen />}
+            name="MapTab"
+            component={MapTabs}
             position="CIRCLE"
           />
         </CurvedBottomBarExpo.Navigator>
