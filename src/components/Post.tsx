@@ -1,17 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, Image, ScrollView } from "react-native";
-
+import service from "../helper/axiosService";
+import Loading from "./Loading";
 
 function Post({ route, navigation }) {
   const { id } = route.params;
+  const [loading, setLoading] = useState(false);
+
   async function fetchData() {
     try {
-      const response = await fetch(
-        "http://192.168.0.101:8085/api/locations/" + id
+      setLoading(true);
+      service.get(`/locations/${id}`).then(
+        (response) => {
+          const data = response.data;
+          setData(data.results.detailedDescription);
+          extractImageUrls(data.results.detailedDescription);
+          setLoading(false);
+        },
+        () => setLoading(false)
       );
-      const data = await response.json();
-      setData(data.results.detailedDescription);
-      extractImageUrls(data.results.detailedDescription);
     } catch (error) {
       console.error(error);
     }
@@ -35,6 +42,10 @@ function Post({ route, navigation }) {
   useEffect(() => {
     fetchData();
   }, []);
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
