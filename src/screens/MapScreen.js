@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import { Text, TouchableOpacity, View, StyleSheet } from "react-native";
+import { Text, TouchableOpacity, View, StyleSheet, Image } from "react-native";
 import MapView, { Geojson, Marker } from "react-native-maps";
 import { vietnam, mapStyle } from "../helper/vietnam";
 import { initialCamera } from "../helper/camera";
@@ -76,11 +76,11 @@ function MapScreen({ navigation }) {
               longitude: location.longitude,
             }}
             onPress={() => {
-              // setTimeout(() => {
-              //   toggleModal();
-              // }, 200);
+              setTimeout(() => {
+                toggleModal();
+              }, 200);
 
-              navigation.navigate("Post", { id: location.id });
+              // navigation.navigate("Post", { id: location.id });
             }}
           />
         ))}
@@ -108,8 +108,26 @@ function MapScreen({ navigation }) {
         <View style={styles.modalContent}>
           <View style={styles.center}>
             <View style={styles.barIcon} />
-            <Text style={styles.text}>Welcome To My Bottom Sheet</Text>
           </View>
+          <View style={styles.flexView}>
+            <View style={styles.innerBox1}>
+              <Image
+                source={{
+                  uri:
+                    'https://w0.peakpx.com/wallpaper/767/409/HD-wallpaper-ha-long-bay-sea-beautiful-nature-paradise-vietnam-asia-v%E1%BB%8Bnh-h%E1%BA%A1-long-r-summer-travel.jpg',
+                }}
+                style={styles.backgroundImage}
+              />
+            </View>
+            <View style={styles.innerBox2}>
+              <Text style={styles.namepicture}>
+                Vịnh Hạ Long
+              </Text>
+              <Text style={styles.describe}>
+                Vịnh Hạ Long được UNESCO hai lần công nhận là Di sản Thiên nhiên Thế giới vào năm 1994 và năm 2000.
+              </Text>
+            </View>
+            </View>
         </View>
       </Modal>
     </View>
@@ -120,21 +138,23 @@ export default MapScreen;
 
 const styles = StyleSheet.create({
   flexView: {
-    flex: 1,
-    backgroundColor: "white",
+    flex: 1, 
+    flexDirection: 'row', 
   },
   modal: {
     justifyContent: "flex-end",
     margin: 0,
   },
   modalContent: {
-    backgroundColor: "#161616",
-    paddingTop: 12,
+    backgroundColor: "#fefee3",
+    paddingTop: 10,
     paddingHorizontal: 12,
-    borderTopRightRadius: 20,
-    borderTopLeftRadius: 20,
-    minHeight: 400,
+    minHeight: 300,
     paddingBottom: 20,
+    borderTopLeftRadius: 35,
+    borderTopRightRadius: 35,
+    borderWidth: 5,
+    borderColor: "#000",
   },
   center: {
     display: "flex",
@@ -143,19 +163,44 @@ const styles = StyleSheet.create({
   },
   barIcon: {
     width: 60,
-    height: 5,
+    height: 4,
     backgroundColor: "#bbb",
     borderRadius: 3,
   },
-  text: {
-    color: "#bbb",
-    fontSize: 24,
-    marginTop: 100,
-  },
+  
   btnContainer: {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     height: 500,
+  },
+  innerBox1: {
+    flex: 2, 
+  },
+  innerBox2: {
+    flex: 1, 
+  },
+
+  backgroundImage: {
+    top: 20,
+    left: 12,
+    width: 229,
+    height: 220,
+  },
+
+  namepicture: {
+    marginTop: 15,
+    //fontFamily: Poppins,
+    color: 'black',
+    fontSize: 24,
+    lineHeight: 30,
+    letterSpacing: -0.32,
+  },
+
+  describe: {
+    width: 110,
+    marginTop: 15,
+    fontSize: 14,
+    //fontFamily: Poppins,
   },
 });
