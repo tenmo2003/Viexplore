@@ -8,6 +8,7 @@ import service from "../helper/axiosService";
 import Modal from "react-native-modal";
 import locationsJson from "../../assets/tempDb/locations.json";
 import { Feather } from "@expo/vector-icons";
+import { Dimensions } from 'react-native';
 
 function MapScreen({ navigation }) {
   const mapViewRef = useRef(null);
@@ -136,10 +137,10 @@ function MapScreen({ navigation }) {
               <View style={styles.innerBox2}>
                 <Text style={styles.namepicture}>{selectedLocation.name}</Text>
                 <View style={styles.barIcon2}/>
-                <View style={styles.flexView}>
+                <View style={styles.flexView2}>
                   <Feather name="map-pin" size={40} style={styles.icon} />
                   <Text style={styles.describe}>
-                    {selectedLocation.shortDescription}
+                    Hà Nội
                   </Text>
                 </View>
               </View>
@@ -153,8 +154,25 @@ function MapScreen({ navigation }) {
 
 export default MapScreen;
 
+const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
+
+const leftMargin = 15;
+const objectWidth = screenWidth / 2 - leftMargin * 2;
+
+const modalHeight = 260;
+const posiBarIcon2 = modalHeight / 2 - 30;
+const posiName = modalHeight / 4;
+const posiFlexLoca = modalHeight / 2 + 15;
+
 const styles = StyleSheet.create({
   flexView: {
+    flex: 1,
+    flexDirection: "row",
+  },
+  flexView2: {
+    position: 'absolute',
+    top: posiFlexLoca,
     flex: 1,
     flexDirection: "row",
   },
@@ -166,7 +184,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
     paddingTop: 10,
     paddingHorizontal: 12,
-    minHeight: 260,
+    minHeight: modalHeight,
     paddingBottom: 20,
     borderTopLeftRadius: 35,
     borderTopRightRadius: 35,
@@ -186,17 +204,20 @@ const styles = StyleSheet.create({
   },
 
   barIcon2: {
+    position: 'absolute',
     width: 145,
     height: 2,
-    marginTop: 25,
+    top: posiBarIcon2,
     marginLeft: 30,
     backgroundColor: "#000",
     borderRadius: 3,
   },
 
   icon: {
-    marginTop: 20,
-    marginLeft: 30,
+    flex: 1,
+    position: 'relative',
+    bottom: 25,
+    left: 25,
   },
 
   btnContainer: {
@@ -214,15 +235,16 @@ const styles = StyleSheet.create({
 
   backgroundImage: {
     top: 20,
-    left: 12,
-    width: 195,
-    height: 195,
+    left: leftMargin,
+    width: objectWidth,
+    height: objectWidth,
     borderRadius: 15,
   },
 
   namepicture: {
-    marginTop: 55,
-    marginLeft: 35,
+    position: 'absolute',
+    top: posiName,
+    left: 35,
     //fontFamily: Poppins,
     color: "black",
     fontSize: 30,
@@ -233,10 +255,12 @@ const styles = StyleSheet.create({
   },
 
   describe: {
-    width: 110,
-    marginTop: 15,
-    marginLeft: 10,
-    fontSize: 14,
+    flex: 3,
+    position: 'relative',
+    width: 50,
+    bottom: 20,
+    left: 25,
+    fontSize: 25,
     //fontFamily: Poppins,
   },
 });
