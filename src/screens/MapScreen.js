@@ -7,6 +7,7 @@ import Loading from "../components/Loading";
 import service from "../helper/axiosService";
 import Modal from "react-native-modal";
 import locationsJson from "../../assets/tempDb/locations.json";
+import { Feather } from "@expo/vector-icons";
 
 function MapScreen({ navigation }) {
   const mapViewRef = useRef(null);
@@ -134,9 +135,13 @@ function MapScreen({ navigation }) {
               </View>
               <View style={styles.innerBox2}>
                 <Text style={styles.namepicture}>{selectedLocation.name}</Text>
-                <Text style={styles.describe}>
-                  {selectedLocation.shortDescription}
-                </Text>
+                <View style={styles.barIcon2}/>
+                <View style={styles.flexView}>
+                  <Feather name="map-pin" size={40} style={styles.icon} />
+                  <Text style={styles.describe}>
+                    {selectedLocation.shortDescription}
+                  </Text>
+                </View>
               </View>
             </View>
           </View>
@@ -158,10 +163,10 @@ const styles = StyleSheet.create({
     margin: 0,
   },
   modalContent: {
-    backgroundColor: "#fefee3",
+    backgroundColor: "#ffffff",
     paddingTop: 10,
     paddingHorizontal: 12,
-    minHeight: 300,
+    minHeight: 260,
     paddingBottom: 20,
     borderTopLeftRadius: 35,
     borderTopRightRadius: 35,
@@ -180,6 +185,20 @@ const styles = StyleSheet.create({
     borderRadius: 3,
   },
 
+  barIcon2: {
+    width: 145,
+    height: 2,
+    marginTop: 25,
+    marginLeft: 30,
+    backgroundColor: "#000",
+    borderRadius: 3,
+  },
+
+  icon: {
+    marginTop: 20,
+    marginLeft: 30,
+  },
+
   btnContainer: {
     display: "flex",
     alignItems: "center",
@@ -187,7 +206,7 @@ const styles = StyleSheet.create({
     height: 500,
   },
   innerBox1: {
-    flex: 2,
+    flex: 1,
   },
   innerBox2: {
     flex: 1,
@@ -196,22 +215,27 @@ const styles = StyleSheet.create({
   backgroundImage: {
     top: 20,
     left: 12,
-    width: 229,
-    height: 220,
+    width: 195,
+    height: 195,
+    borderRadius: 15,
   },
 
   namepicture: {
-    marginTop: 15,
+    marginTop: 55,
+    marginLeft: 35,
     //fontFamily: Poppins,
     color: "black",
-    fontSize: 24,
+    fontSize: 30,
     lineHeight: 30,
     letterSpacing: -0.32,
+    fontStyle: "normal",
+    
   },
 
   describe: {
     width: 110,
     marginTop: 15,
+    marginLeft: 10,
     fontSize: 14,
     //fontFamily: Poppins,
   },
