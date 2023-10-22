@@ -8,7 +8,7 @@ import service from "../helper/axiosService";
 import Modal from "react-native-modal";
 import locationsJson from "../../assets/tempDb/locations.json";
 import { Feather } from "@expo/vector-icons";
-import { Dimensions } from 'react-native';
+import { Dimensions } from "react-native";
 
 function MapScreen({ navigation }) {
   const mapViewRef = useRef(null);
@@ -135,13 +135,30 @@ function MapScreen({ navigation }) {
                 />
               </View>
               <View style={styles.innerBox2}>
-                <Text style={styles.namepicture}>{selectedLocation.name}</Text>
-                <View style={styles.barIcon2}/>
-                <View style={styles.flexView2}>
-                  <Feather name="map-pin" size={40} style={styles.icon} />
-                  <Text style={styles.describe}>
-                    Hà Nội
-                  </Text>
+                <View style={styles.boxColumn}>
+                  <View style={styles.content1}>
+                    <View style={styles.containerName}>
+                      <Text style={styles.namepicture}>
+                        {selectedLocation.name}
+                      </Text>
+                    </View>
+                  </View>
+                  <View style={styles.content2}>
+                    <View style={styles.barIcon2} />
+                  </View>
+                  <View style={styles.content3}>
+                    <View style={styles.flexView2}>
+                      <Feather name="map-pin" size={40} style={styles.icon} />
+                      <Text style={styles.describe}>Ho Chi Minh City</Text>
+                    </View>
+                  </View>
+                  <View style={styles.content4}>
+                    <View style={styles.containerButton}>
+                      <TouchableOpacity onPress style={styles.button}>
+                        <Text style={styles.buttonText}>Xem</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
                 </View>
               </View>
             </View>
@@ -154,16 +171,13 @@ function MapScreen({ navigation }) {
 
 export default MapScreen;
 
-const screenWidth = Dimensions.get('window').width;
-const screenHeight = Dimensions.get('window').height;
+const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 
 const leftMargin = 15;
 const objectWidth = screenWidth / 2 - leftMargin * 2;
 
 const modalHeight = 260;
-const posiBarIcon2 = modalHeight / 2 - 30;
-const posiName = modalHeight / 4;
-const posiFlexLoca = modalHeight / 2 + 15;
 
 const styles = StyleSheet.create({
   flexView: {
@@ -171,11 +185,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   flexView2: {
-    position: 'absolute',
-    top: posiFlexLoca,
+    position: "relative",
     flex: 1,
     flexDirection: "row",
   },
+  boxColumn: {
+    flex: 1,
+    flexDirection: "column",
+  },
+  content1: { flex: 4 },
+  content2: { flex: 1 },
+  content3: { flex: 2 },
+  content4: { flex: 1 },
   modal: {
     justifyContent: "flex-end",
     margin: 0,
@@ -204,20 +225,12 @@ const styles = StyleSheet.create({
   },
 
   barIcon2: {
-    position: 'absolute',
+    position: "relative",
     width: 145,
     height: 2,
-    top: posiBarIcon2,
     marginLeft: 30,
     backgroundColor: "#000",
     borderRadius: 3,
-  },
-
-  icon: {
-    flex: 1,
-    position: 'relative',
-    bottom: 25,
-    left: 25,
   },
 
   btnContainer: {
@@ -241,26 +254,61 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
 
+  containerName: {
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "flex-end",
+    position: "relative",
+    width: 150,
+    maxHeight: 100,
+    bottom: 0,
+    left: 32,
+  },
+
   namepicture: {
-    position: 'absolute',
-    top: posiName,
-    left: 35,
     //fontFamily: Poppins,
     color: "black",
-    fontSize: 30,
+    fontSize: 28,
     lineHeight: 30,
     letterSpacing: -0.32,
     fontStyle: "normal",
-    
+    fontWeight: "bold",
+  },
+
+  icon: {
+    position: "relative",
+    bottom: 10,
+    left: 25,
   },
 
   describe: {
-    flex: 3,
-    position: 'relative',
-    width: 50,
-    bottom: 20,
-    left: 25,
-    fontSize: 25,
+    position: "relative",
+    bottom: 10,
+    width: 120,
+    left: 30,
+    fontSize: 18,
+    lineHeight: 20,
+    letterSpacing: -0.32,
     //fontFamily: Poppins,
+  },
+
+  containerButton: {
+    flex: 1,
+    bottom: 10,
+    left: 25,
+    width: 150,
+  },
+
+  button: {
+    backgroundColor: "#687DAA",
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 50,
+    padding: 6,
+  },
+
+  buttonText: {
+    color: 'white',
+    fontSize: 12,
   },
 });
