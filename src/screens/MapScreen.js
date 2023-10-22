@@ -11,12 +11,13 @@ import locationsJson from "../../assets/tempDb/locations.json";
 function MapScreen({ navigation }) {
   const mapViewRef = useRef(null);
 
-  const [locations, setLocations] = useState([]);
+  const [camera, setCamera] = useState(initialCamera);
   const [loading, setLoading] = useState(false);
 
+  const [locations, setLocations] = useState([]);
+  const [selectedLocation, setSelectedLocation] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);
 
-  const [camera, setCamera] = useState(initialCamera);
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
@@ -47,7 +48,7 @@ function MapScreen({ navigation }) {
   }
 
   const animateToCamera = (camera) => {
-    mapViewRef.current.animateCamera(camera, 1000);
+    mapViewRef.current.animateCamera(camera, 500);
   };
 
   return (
@@ -61,6 +62,7 @@ function MapScreen({ navigation }) {
         maxZoomLevel={8.5}
         pitchEnabled={false}
         rotateEnabled={false}
+        moveOnMarkerPress={false}
       >
         <Geojson
           geojson={vietnam}
@@ -76,9 +78,19 @@ function MapScreen({ navigation }) {
               longitude: location.longitude,
             }}
             onPress={() => {
+              setSelectedLocation(location);
+
+              animateToCamera({
+                center: {
+                  latitude: location.latitude,
+                  longitude: location.longitude,
+                },
+                zoom: 8,
+              });
+
               setTimeout(() => {
                 toggleModal();
-              }, 200);
+              }, 500);
 
               // navigation.navigate("Post", { id: location.id });
             }}
@@ -91,45 +103,45 @@ function MapScreen({ navigation }) {
       >
         <Text>Reset</Text>
       </TouchableOpacity>
-      <Modal
-        onBackdropPress={() => setModalVisible(false)}
-        onBackButtonPress={() => setModalVisible(false)}
-        isVisible={isModalVisible}
-        swipeDirection="down"
-        onSwipeComplete={toggleModal}
-        animationIn="bounceInUp"
-        animationOut="bounceOutDown"
-        animationInTiming={900}
-        animationOutTiming={500}
-        backdropTransitionInTiming={1000}
-        backdropTransitionOutTiming={500}
-        style={styles.modal}
-      >
-        <View style={styles.modalContent}>
-          <View style={styles.center}>
-            <View style={styles.barIcon} />
+      {selectedLocation && (
+        <Modal
+          onBackdropPress={() => setModalVisible(false)}
+          onBackButtonPress={() => setModalVisible(false)}
+          isVisible={isModalVisible}
+          swipeDirection="down"
+          onSwipeComplete={toggleModal}
+          animationIn="bounceInUp"
+          animationOut="bounceOutDown"
+          animationInTiming={900}
+          animationOutTiming={600}
+          backdropOpacity={0.3}
+          backdropTransitionInTiming={900}
+          backdropTransitionOutTiming={600}
+          style={styles.modal}
+        >
+          <View style={styles.modalContent}>
+            <View style={styles.center}>
+              <View style={styles.barIcon} />
+            </View>
+            <View style={styles.flexView}>
+              <View style={styles.innerBox1}>
+                <Image
+                  source={{
+                    uri: selectedLocation.thumbnail,
+                  }}
+                  style={styles.backgroundImage}
+                />
+              </View>
+              <View style={styles.innerBox2}>
+                <Text style={styles.namepicture}>{selectedLocation.name}</Text>
+                <Text style={styles.describe}>
+                  {selectedLocation.shortDescription}
+                </Text>
+              </View>
+            </View>
           </View>
-          <View style={styles.flexView}>
-            <View style={styles.innerBox1}>
-              <Image
-                source={{
-                  uri:
-                    'https://w0.peakpx.com/wallpaper/767/409/HD-wallpaper-ha-long-bay-sea-beautiful-nature-paradise-vietnam-asia-v%E1%BB%8Bnh-h%E1%BA%A1-long-r-summer-travel.jpg',
-                }}
-                style={styles.backgroundImage}
-              />
-            </View>
-            <View style={styles.innerBox2}>
-              <Text style={styles.namepicture}>
-                Vịnh Hạ Long
-              </Text>
-              <Text style={styles.describe}>
-                Vịnh Hạ Long được UNESCO hai lần công nhận là Di sản Thiên nhiên Thế giới vào năm 1994 và năm 2000.
-              </Text>
-            </View>
-            </View>
-        </View>
-      </Modal>
+        </Modal>
+      )}
     </View>
   );
 }
@@ -138,8 +150,8 @@ export default MapScreen;
 
 const styles = StyleSheet.create({
   flexView: {
-    flex: 1, 
-    flexDirection: 'row', 
+    flex: 1,
+    flexDirection: "row",
   },
   modal: {
     justifyContent: "flex-end",
@@ -167,7 +179,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#bbb",
     borderRadius: 3,
   },
-  
+
   btnContainer: {
     display: "flex",
     alignItems: "center",
@@ -175,10 +187,10 @@ const styles = StyleSheet.create({
     height: 500,
   },
   innerBox1: {
-    flex: 2, 
+    flex: 2,
   },
   innerBox2: {
-    flex: 1, 
+    flex: 1,
   },
 
   backgroundImage: {
@@ -191,7 +203,7 @@ const styles = StyleSheet.create({
   namepicture: {
     marginTop: 15,
     //fontFamily: Poppins,
-    color: 'black',
+    color: "black",
     fontSize: 24,
     lineHeight: 30,
     letterSpacing: -0.32,
