@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, Text, Image, ScrollView } from "react-native";
 import service from "../helper/axiosService";
 import Loading from "./Loading";
+import locationsJson from "../../assets/tempDb/locations.json";
 
 function Post({ route, navigation }) {
   const { id } = route.params;
@@ -10,15 +11,19 @@ function Post({ route, navigation }) {
   async function fetchData() {
     try {
       setLoading(true);
-      service.get(`/locations/${id}`).then(
-        (response) => {
-          const data = response.data;
-          setData(data.results.detailedDescription);
-          extractImageUrls(data.results.detailedDescription);
-          setLoading(false);
-        },
-        () => setLoading(false)
-      );
+      // service.get(`/locations/${id}`).then(
+      //   (response) => {
+      //     const data = response.data;
+      //     setData(data.results.detailedDescription);
+      //     extractImageUrls(data.results.detailedDescription);
+      //     setLoading(false);
+      //   },
+      //   () => setLoading(false)
+      // );
+      const data = locationsJson.filter((item) => item.id === id)[0];
+      setData(data.detailedDescription);
+      extractImageUrls(data.detailedDescription);
+      setLoading(false);
     } catch (error) {
       console.error(error);
     }

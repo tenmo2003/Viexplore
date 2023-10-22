@@ -6,7 +6,8 @@ const service = axios.create({
   baseURL: baseURL,
   headers: {
     "ngrok-skip-browser-warning": "69420",
-  }
+  },
+  timeout: 5000,
 });
 
 export default service;

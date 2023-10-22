@@ -1,10 +1,12 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Text, TouchableOpacity, View, StyleSheet } from "react-native";
 import MapView, { Geojson, Marker } from "react-native-maps";
-import { vietnam, mapStyle, initialCamera } from "../helper/vietnam";
+import { vietnam, mapStyle } from "../helper/vietnam";
+import { initialCamera } from "../helper/camera";
 import Loading from "../components/Loading";
 import service from "../helper/axiosService";
 import Modal from "react-native-modal";
+import locationsJson from "../../assets/tempDb/locations.json";
 
 function MapScreen({ navigation }) {
   const mapViewRef = useRef(null);
@@ -13,6 +15,8 @@ function MapScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
 
   const [isModalVisible, setModalVisible] = useState(false);
+
+  const [camera, setCamera] = useState(initialCamera);
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
@@ -20,13 +24,15 @@ function MapScreen({ navigation }) {
   const fetchData = async () => {
     try {
       setLoading(true);
-      service.get("/locations").then(
-        (response) => {
-          setLocations(response.data.results);
-          setLoading(false);
-        },
-        () => setLoading(false)
-      );
+      // service.get("/locations").then(
+      //   (response) => {
+      //     setLocations(response.data.results);
+      //     setLoading(false);
+      //   },
+      //   () => setLoading(false)
+      // );
+      setLocations(locationsJson);
+      setLoading(false);
     } catch (error) {
       console.error(error);
     }
@@ -40,8 +46,8 @@ function MapScreen({ navigation }) {
     return <Loading />;
   }
 
-  const returnToInitialCamera = () => {
-    mapViewRef.current.animateCamera(initialCamera, 1000);
+  const animateToCamera = (camera) => {
+    mapViewRef.current.animateCamera(camera, 1000);
   };
 
   return (
@@ -50,7 +56,7 @@ function MapScreen({ navigation }) {
         ref={mapViewRef}
         className="w-full h-full"
         customMapStyle={mapStyle}
-        initialCamera={initialCamera}
+        camera={camera}
         minZoomLevel={5.7}
         maxZoomLevel={8.5}
         pitchEnabled={false}
@@ -70,15 +76,18 @@ function MapScreen({ navigation }) {
               longitude: location.longitude,
             }}
             onPress={() => {
-              toggleModal();
-              // navigation.navigate("Post", { id: location.id });
+              // setTimeout(() => {
+              //   toggleModal();
+              // }, 200);
+
+              navigation.navigate("Post", { id: location.id });
             }}
           />
         ))}
       </MapView>
       <TouchableOpacity
         className="absolute bottom-16 right-3 rounded-full bg-white p-3"
-        onPress={returnToInitialCamera}
+        onPress={() => animateToCamera(initialCamera)}
       >
         <Text>Reset</Text>
       </TouchableOpacity>
