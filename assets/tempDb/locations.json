@@ -9,7 +9,8 @@
     "contributor": "admin",
     "_class": "com.example.viexplore.server.data.models.Location",
     "latitude": 21.028,
-    "longitude": 105.851
+    "longitude": 105.851,
+    "thumbnail": "https://1.bp.blogspot.com/-h91audyCWOo/XrPKn_8KAuI/AAAAAAAAkcY/HbJp2-ehp5s2r4ZepKjDbn4ZEqZh0E16QCLcBGAsYHQ/s1600/Hinh-anh-Ho-Guom%2B%25282%2529.jpg"
   },
   {
     "id": "653396b72f89ed0f946a504a",
@@ -21,6 +22,7 @@
     "detailedDescription": "Giới thiệu:Trong gần 400 năm (1558-1945), Huế đã từng là thủ phủ của các chúa Nguyễn ở xứ Đàng Trong (1306). Là kinh đô của triều đại Tây Sơn, rồi đến kinh quốc triều Nguyễn. Cố đô Huế ngày nay vẫn còn lưu giữ trong lòng những di sản văn hoá vật thể và phi vật thể chứa đựng nhiều giá trị biểu trưng cho trí tuệ và tâm hồn của dân tộc Việt Nam. Suốt mấy thế kỷ qua, bao nhiêu tinh hoa của cả nước được chắt lọc hội tụ về đây hun đúc cho một nền văn hoá đậm đà bản sắc để hoàn chỉnh thành một bức tranh thiên nhiên tuyệt vời với sông núi hữu tình thơ mộng. Bởi vậy, nói đến Huế, người ta nghĩ ngay đến những thành quách, cung điện vàng son, những đền đài miếu vũ lộng lẫy, những lăng tẩm uy nghiêm, những danh lam cổ tự trầm tư u tịch, những thắng tích do thiên nhiên khéo tạo.Trên nền tảng vật chất và tinh thần đã được hình thành ở Huế từ đầu thế kỷ XIV, các chúa Nguyễn (thế kỷ XVI-XVIII), triều đại Tây Sơn (cuối thế kỷ XVIII) và các vua Nguyễn (1802-1945) đã tiếp tục phát huy và gây dựng ở vùng Huế một tài sản văn hoá vô giá. Tiêu biểu nhất là Quần thể di tích của Cố đô Huế đã được UNESCO ghi vào danh mục Di sản Văn hoá Thế giới của UNESCO. Ngày nay, Quần thể di tích cố đô Huế đã được Thủ tướng chính phủ Việt Nam đưa vào danh sách xếp hạng 95 di tích quốc gia đặc biệt quan trọng của Việt Nam.{image:https://khamphahue.com.vn/Portals/0/DiSan/DiSanVatThe/QuanTheDiTichCoDo/QuanTheDiTichCoDoHue-1.jpg?ver=2022-10-05-135441-743} Nét đặc trưng:Quần thể kiến trúc Cố đô Huế bao gồm hệ thống các di tích liên quan đến triều Nguyễn, phân bố ở thành phố Huế và các huyện Hương Trà, Hương Thủy, Phú Vang, Phú Lộc, thuộc tỉnh Thừa Thiên Huế. Kiến trúc Huế là sự kết hợp độc đáo giữa những nguyên tắc của kiến trúc truyền thống Việt, tư tưởng triết lý phương Đông, cùng những đặc điểm mang ảnh hưởng của kiến trúc quân sự phương Tây, hài hòa với các yếu tố tự nhiên: núi Ngự Bình, sông Hương, cồn Giã Viên, cồn Bộc Thanh, cồn Hến… Trải qua thời gian và những biến thiên của lịch sử, Huế vẫn bảo tồn được diện mạo của một kinh đô xưa, với hàng trăm công trình nghệ thuật tuyệt mỹ, vừa có giá trị đặc biệt về lịch sử và văn hóa, vừa phong phú, đa dạng, mang đậm bản sắc Huế…",
     "audio": "",
     "contributor": "admin",
-    "_class": "com.example.viexplore.server.data.models.Location"
+    "_class": "com.example.viexplore.server.data.models.Location",
+    "thumbnail": "https://img.nhandan.com.vn/Files/Images/2021/10/27/NgoMon_Hue-1635323560819.jpeg"
   }
 ]
