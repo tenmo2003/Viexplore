@@ -69,7 +69,7 @@ function MapScreen({ navigation }) {
         <Geojson
           geojson={vietnam}
           strokeColor="gray"
-          fillColor="rgba(255, 255, 255, 0.5)"
+          fillColor="rgba(255, 240, 192, 0.5)"
           strokeWidth={1}
         />
         {locations.map((location) => (
