@@ -92,7 +92,7 @@ function MapScreen({ navigation }) {
 
               setTimeout(() => {
                 toggleModal();
-              }, 500);
+              }, 450);
 
               // navigation.navigate("Post", { id: location.id });
             }}
@@ -114,11 +114,11 @@ function MapScreen({ navigation }) {
           onSwipeComplete={toggleModal}
           animationIn="bounceInUp"
           animationOut="bounceOutDown"
-          animationInTiming={900}
-          animationOutTiming={600}
+          animationInTiming={700}
+          animationOutTiming={300}
           backdropOpacity={0.3}
-          backdropTransitionInTiming={900}
-          backdropTransitionOutTiming={600}
+          backdropTransitionInTiming={700}
+          backdropTransitionOutTiming={300}
           style={styles.modal}
         >
           <View style={styles.modalContent}>
@@ -154,7 +154,17 @@ function MapScreen({ navigation }) {
                   </View>
                   <View style={styles.content4}>
                     <View style={styles.containerButton}>
-                      <TouchableOpacity onPress style={styles.button}>
+                      <TouchableOpacity
+                        onPress={() => {
+                          setModalVisible(false);
+                          setTimeout(() => {
+                            navigation.navigate("Post", {
+                              id: selectedLocation.id,
+                            });
+                          }, 0);
+                        }}
+                        style={styles.button}
+                      >
                         <Text style={styles.buttonText}>Xem</Text>
                       </TouchableOpacity>
                     </View>
@@ -301,14 +311,14 @@ const styles = StyleSheet.create({
 
   button: {
     backgroundColor: "#687DAA",
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     borderRadius: 50,
     padding: 6,
   },
 
   buttonText: {
-    color: 'white',
+    color: "white",
     fontSize: 12,
   },
 });
