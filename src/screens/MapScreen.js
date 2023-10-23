@@ -149,7 +149,7 @@ function MapScreen({ navigation }) {
                   <View style={styles.content3}>
                     <View style={styles.flexView2}>
                       <Feather name="map-pin" size={20} style={styles.icon} />
-                      <Text style={styles.describe}>Sai Gon</Text>
+                      <Text style={styles.describe}>{selectedLocation.generalLocation}</Text>
                     </View>
                   </View>
                   <View style={styles.content4}>
@@ -184,17 +184,17 @@ export default MapScreen;
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
-const leftMargin = 15;
-const objectWidth = screenWidth / 2 - leftMargin * 2;
+const leftMargin = screenWidth / 30;
+const objectWidth = screenWidth / 2 - 15;
 
 const modalHeight = 260;
 
 const styles = StyleSheet.create({
   flexView: {
     flex: 1,
-    paddingHorizontal: 10,
-    gap: 20,
+    gap: 25,
     flexDirection: "row",
+    alignItems: "center",
   },
   flexView2: {
     flex: 1,
@@ -259,7 +259,6 @@ const styles = StyleSheet.create({
   },
 
   backgroundImage: {
-    top: 20,
     width: objectWidth,
     height: 170,
     borderRadius: 15,
