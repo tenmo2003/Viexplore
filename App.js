@@ -3,7 +3,12 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { NavigationContainer } from "@react-navigation/native";
 import * as SecureStore from "expo-secure-store";
 import React, { useEffect, useState } from "react";
-import { Animated, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  Animated,
+  StatusBar,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import { CurvedBottomBarExpo } from "react-native-curved-bottom-bar";
 import Loading from "./src/components/Loading";
 import TokenContext from "./src/contexts/TokenContext";
@@ -101,6 +106,7 @@ export default function App() {
           />
         </CurvedBottomBarExpo.Navigator>
       </NavigationContainer>
+      <StatusBar style="auto" />
     </TokenContext.Provider>
   );
 }

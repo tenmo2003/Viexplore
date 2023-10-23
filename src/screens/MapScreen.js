@@ -149,7 +149,9 @@ function MapScreen({ navigation }) {
                   <View style={styles.content3}>
                     <View style={styles.flexView2}>
                       <Feather name="map-pin" size={20} style={styles.icon} />
-                      <Text style={styles.describe}>{selectedLocation.generalLocation}</Text>
+                      <Text style={styles.describe}>
+                        {selectedLocation.generalLocation}
+                      </Text>
                     </View>
                   </View>
                   <View style={styles.content4}>
@@ -158,8 +160,8 @@ function MapScreen({ navigation }) {
                         onPress={() => {
                           setModalVisible(false);
                           setTimeout(() => {
-                            navigation.navigate("Post", {
-                              id: selectedLocation.id,
+                            navigation.navigate("LocationDetail", {
+                              location: selectedLocation,
                             });
                           }, 0);
                         }}

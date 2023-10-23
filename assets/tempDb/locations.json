@@ -10,7 +10,13 @@
     "_class": "com.example.viexplore.server.data.models.Location",
     "latitude": 21.028,
     "longitude": 105.851,
-    "thumbnail": "https://statics.vinpearl.com/ho-hoan-kiem-6_1688884576.jpg"
+    "thumbnail": "https://statics.vinpearl.com/ho-hoan-kiem-6_1688884576.jpg",
+    "images": [
+      "https://static.vinwonders.com/production/ho-hoan-kiem-2.jpg",
+      "https://vcdn1-vnexpress.vnecdn.net/2017/03/31/Hoguom1.jpg?w=680&h=0&q=100&dpr=2&fit=crop&s=dfTSxKIsVc8174AEdz3smg",
+      "https://static.vinwonders.com/production/ho-hoan-kiem-banner.jpg",
+      "https://kiemsat.1cdn.vn/2018/09/06/img_9856.jpg"
+    ]
   },
   {
     "id": "653396b72f89ed0f946a504a",
@@ -23,6 +29,11 @@
     "audio": "",
     "contributor": "admin",
     "_class": "com.example.viexplore.server.data.models.Location",
-    "thumbnail": "https://img.nhandan.com.vn/Files/Images/2021/10/27/NgoMon_Hue-1635323560819.jpeg"
+    "thumbnail": "https://img.nhandan.com.vn/Files/Images/2021/10/27/NgoMon_Hue-1635323560819.jpeg",
+    "images": [
+      "https://datviettour.com.vn/uploads/images/tin-tuc-SEO/mien-trung/hue/noi-dung/co-do-hue.jpg",
+      "https://khamphahue.com.vn/Portals/0/Medias/Nam2022/T10/QuanTheDiTichCoDoHue-NgoMonHue.jpg",
+      "https://cdnmedia.baotintuc.vn/Upload/ggrZaB6nUMyF1EMJeBk2Q/files/2019/11/co-do-hue.jpg"
+    ]
   }
 ]

@@ -5,7 +5,7 @@ import Loading from "./Loading";
 import locationsJson from "../../assets/tempDb/locations.json";
 
 function Post({ route, navigation }) {
-  const { id } = route.params;
+  const { location } = route.params;
   const [loading, setLoading] = useState(false);
 
   async function fetchData() {
@@ -20,9 +20,8 @@ function Post({ route, navigation }) {
       //   },
       //   () => setLoading(false)
       // );
-      const data = locationsJson.filter((item) => item.id === id)[0];
-      setData(data.detailedDescription);
-      extractImageUrls(data.detailedDescription);
+      setData(location.detailedDescription);
+      extractImageUrls(location.detailedDescription);
       setLoading(false);
     } catch (error) {
       console.error(error);

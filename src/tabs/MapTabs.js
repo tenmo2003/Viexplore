@@ -4,6 +4,7 @@ import { View } from "react-native";
 import MapView from "react-native-maps";
 import Post from "../components/Post";
 import MapScreen from "../screens/MapScreen";
+import LocationDetail from "../components/LocationDetail";
 
 const Stack = createStackNavigator();
 
@@ -15,7 +16,7 @@ export default function MapTabs({ navigation }) {
         initialRouteName="Map"
       >
         <Stack.Screen name="Map" component={MapScreen} />
-        <Stack.Screen name="Post" component={Post} />
+        <Stack.Screen name="LocationDetail" component={LocationDetail} />
       </Stack.Navigator>
     </View>
   );
