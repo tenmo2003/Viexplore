@@ -148,8 +148,8 @@ function MapScreen({ navigation }) {
                   </View>
                   <View style={styles.content3}>
                     <View style={styles.flexView2}>
-                      <Feather name="map-pin" size={40} style={styles.icon} />
-                      <Text style={styles.describe}>Ho Chi Minh City</Text>
+                      <Feather name="map-pin" size={20} style={styles.icon} />
+                      <Text style={styles.describe}>Sai Gon</Text>
                     </View>
                   </View>
                   <View style={styles.content4}>
@@ -192,20 +192,22 @@ const modalHeight = 260;
 const styles = StyleSheet.create({
   flexView: {
     flex: 1,
+    paddingHorizontal: 10,
+    gap: 20,
     flexDirection: "row",
   },
   flexView2: {
-    position: "relative",
     flex: 1,
     flexDirection: "row",
+    alignItems: "baseline",
   },
   boxColumn: {
     flex: 1,
     flexDirection: "column",
   },
-  content1: { flex: 4 },
-  content2: { flex: 1 },
-  content3: { flex: 2 },
+  content1: { flex: 3 },
+  content2: {},
+  content3: { flex: 2, marginTop: 10 },
   content4: { flex: 1 },
   modal: {
     justifyContent: "flex-end",
@@ -238,7 +240,6 @@ const styles = StyleSheet.create({
     position: "relative",
     width: 145,
     height: 2,
-    marginLeft: 30,
     backgroundColor: "#000",
     borderRadius: 3,
   },
@@ -254,13 +255,13 @@ const styles = StyleSheet.create({
   },
   innerBox2: {
     flex: 1,
+    marginTop: 10,
   },
 
   backgroundImage: {
     top: 20,
-    left: leftMargin,
     width: objectWidth,
-    height: objectWidth,
+    height: 170,
     borderRadius: 15,
   },
 
@@ -272,7 +273,6 @@ const styles = StyleSheet.create({
     width: 150,
     maxHeight: 100,
     bottom: 0,
-    left: 32,
   },
 
   namepicture: {
@@ -288,15 +288,14 @@ const styles = StyleSheet.create({
   icon: {
     position: "relative",
     bottom: 10,
-    left: 25,
   },
 
   describe: {
     position: "relative",
     bottom: 10,
     width: 120,
-    left: 30,
     fontSize: 18,
+    marginLeft: 5,
     lineHeight: 20,
     letterSpacing: -0.32,
     //fontFamily: Poppins,
@@ -305,11 +304,11 @@ const styles = StyleSheet.create({
   containerButton: {
     flex: 1,
     bottom: 10,
-    left: 25,
     width: 150,
   },
 
   button: {
+    marginTop: -10,
     backgroundColor: "#687DAA",
     justifyContent: "center",
     alignItems: "center",
