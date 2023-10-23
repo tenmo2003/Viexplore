@@ -184,7 +184,7 @@ export default MapScreen;
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
-const leftMargin = 15;
+const leftMargin = screenWidth / 30;
 const objectWidth = screenWidth / 2 - leftMargin * 2;
 
 const modalHeight = 260;
@@ -195,6 +195,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     gap: 20,
     flexDirection: "row",
+  },
+  innerBox1: {
+    flex: 1,
+  },
+  innerBox2: {
+    flex: 1,
+    marginTop: 10,
+    left: 10,
   },
   flexView2: {
     flex: 1,
@@ -236,27 +244,13 @@ const styles = StyleSheet.create({
     borderRadius: 3,
   },
 
-  barIcon2: {
-    position: "relative",
-    width: 145,
-    height: 2,
-    backgroundColor: "#000",
-    borderRadius: 3,
-  },
-
   btnContainer: {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     height: 500,
   },
-  innerBox1: {
-    flex: 1,
-  },
-  innerBox2: {
-    flex: 1,
-    marginTop: 10,
-  },
+
 
   backgroundImage: {
     top: 20,
@@ -270,9 +264,10 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "flex-end",
     position: "relative",
+    left: 5,
     width: 150,
     maxHeight: 100,
-    bottom: 0,
+    bottom: 5,
   },
 
   namepicture: {
@@ -283,6 +278,14 @@ const styles = StyleSheet.create({
     letterSpacing: -0.32,
     fontStyle: "normal",
     fontWeight: "bold",
+  },
+
+  barIcon2: {
+    position: "relative",
+    width: 145,
+    height: 2,
+    backgroundColor: "#000",
+    borderRadius: 3,
   },
 
   icon: {
