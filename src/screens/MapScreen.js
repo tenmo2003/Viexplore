@@ -136,23 +136,23 @@ function MapScreen({ navigation }) {
               </View>
               <View style={styles.innerBox2}>
                 <View style={styles.boxColumn}>
-                  <View style={styles.content1}>
+                  <View style={styles.boxColumn1}>
                     <View style={styles.containerName}>
                       <Text style={styles.namepicture}>
                         {selectedLocation.name}
                       </Text>
                     </View>
                   </View>
-                  <View style={styles.content2}>
+                  <View style={styles.boxColumn2}>
                     <View style={styles.barIcon2} />
                   </View>
-                  <View style={styles.content3}>
-                    <View style={styles.flexView2}>
-                      <Feather name="map-pin" size={20} style={styles.icon} />
-                      <Text style={styles.describe}>Sai Gon</Text>
+                  <View style={styles.boxColumn3}>
+                    <View style={styles.flexViewNameCity}>
+                      <Feather name="map-pin" size={20} style={styles.iconLoca} />
+                      <Text style={styles.nameCity}>Sai Gon</Text>
                     </View>
                   </View>
-                  <View style={styles.content4}>
+                  <View style={styles.boxColumn4}>
                     <View style={styles.containerButton}>
                       <TouchableOpacity
                         onPress={() => {
@@ -204,19 +204,19 @@ const styles = StyleSheet.create({
     marginTop: 10,
     left: 10,
   },
-  flexView2: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "baseline",
-  },
   boxColumn: {
     flex: 1,
     flexDirection: "column",
   },
-  content1: { flex: 3 },
-  content2: {},
-  content3: { flex: 2, marginTop: 10 },
-  content4: { flex: 1 },
+  boxColumn1: { flex: 3 },
+  boxColumn2: {},
+  boxColumn3: { flex: 2, marginTop: 10 },
+  boxColumn4: { flex: 1 },
+  flexViewNameCity: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "baseline",
+  },
   modal: {
     justifyContent: "flex-end",
     margin: 0,
@@ -250,15 +250,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     height: 500,
   },
-
-
   backgroundImage: {
     top: 20,
     width: objectWidth,
     height: 170,
     borderRadius: 15,
   },
-
   containerName: {
     flex: 1,
     flexDirection: "column",
@@ -269,7 +266,6 @@ const styles = StyleSheet.create({
     maxHeight: 100,
     bottom: 5,
   },
-
   namepicture: {
     //fontFamily: Poppins,
     color: "black",
@@ -279,7 +275,6 @@ const styles = StyleSheet.create({
     fontStyle: "normal",
     fontWeight: "bold",
   },
-
   barIcon2: {
     position: "relative",
     width: 145,
@@ -287,13 +282,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#000",
     borderRadius: 3,
   },
-
-  icon: {
+  iconLoca: {
     position: "relative",
     bottom: 10,
   },
-
-  describe: {
+  nameCity: {
     position: "relative",
     bottom: 10,
     width: 120,
