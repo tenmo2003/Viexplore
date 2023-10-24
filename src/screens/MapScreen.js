@@ -19,7 +19,7 @@ import Loading from "../components/Loading";
 import service from "../helper/axiosService";
 import Modal from "react-native-modal";
 import locationsJson from "../../assets/tempDb/locations.json";
-import { Feather } from "@expo/vector-icons";
+import { Feather, MaterialIcons } from "@expo/vector-icons";
 import data from "./data.json";
 
 function MapScreen({ navigation }) {
@@ -38,20 +38,27 @@ function MapScreen({ navigation }) {
   const [haveResults, setHaveResults] = useState(false);
   // const translateY = useRef(new Animated.Value(0)).current;
 
-  const onChange = (value) => {
-    setQuery(value);
-  };
-
-  const onSearch = (searchTerm) => {
-    console.log("", searchTerm);
+  const onSearch = (location) => {
+    setQuery(location.name);
+    setSelectedLocation(location);
+    animateToCamera({
+      center: {
+        latitude: location.latitude,
+        longitude: location.longitude,
+      },
+      zoom: 8,
+    });
+    setTimeout(() => {
+      setModalVisible(true);
+    }, 450);
   };
 
   // const startAnimation = (value) => {
   //   Animated.timing(translateY, {
   //     toValue: value,
-  //     duration: 300, // 
-  //     easing: Easing.linear, 
-  //     useNativeDriver: false, 
+  //     duration: 300, //
+  //     easing: Easing.linear,
+  //     useNativeDriver: false,
   //   }).start();
   // };
 
@@ -82,13 +89,12 @@ function MapScreen({ navigation }) {
 
   useEffect(() => {
     const maximumAmountOfSearchResults = 10;
-    const results = data
-      .filter((item) => {
+    const results = locations
+      .filter((location) => {
         const searchTerm = query.toLowerCase();
-        const tenditich = item.ten_di_tich.toLowerCase();
+        const locationName = location.name.toLowerCase();
 
-        return searchTerm && tenditich.startsWith(searchTerm); // && tenditich !== searchTerm;
-        // điều kiện này là để khi tìm được chính xác tên thì nó sẽ không hiển thị ở
+        return searchTerm && locationName.startsWith(searchTerm);
       })
       .slice(0, maximumAmountOfSearchResults);
     setSearchResults(results);
@@ -228,6 +234,8 @@ function MapScreen({ navigation }) {
           </View>
         </Modal>
       )}
+
+      {/*       SEARCH      */}
       <View
         style={
           haveResults && showResults
@@ -242,29 +250,42 @@ function MapScreen({ navigation }) {
             value={query}
             onChangeText={(value) => {
               setQuery(value);
-            }}
-            onFocus={() => { 
               setShowResults(true);
-              //startAnimation(-500); 
             }}
-            onEndEditing={() => {
+            onFocus={() => {
+              setShowResults(true);
+              //startAnimation(-500);
+            }}
+            onBlur={() => {
               setShowResults(false);
               //startAnimation(0);
             }}
           />
+          {query.length > 0 && (
+            <TouchableOpacity
+              onPress={() => setQuery("")}
+              style={{ position: "absolute", right: 10 }}
+            >
+              <MaterialIcons
+                name="clear"
+                size={20}
+                color="rgba(127, 127, 127, 0.5)"
+              />
+            </TouchableOpacity>
+          )}
         </View>
         {showResults && (
-          <View style={styles.dropDown} >
-            {searchResults.map((item, index) => (
+          <View style={styles.dropDown}>
+            {searchResults.map((location, index) => (
               <TouchableOpacity //Touch? yes //ngon r
                 onPress={() => {
-                  onSearch(item.ten_di_tich);
+                  onSearch(location);
                   setShowResults(false);
                 }}
                 style={styles.dropDownRow}
                 key={index}
               >
-                <Text>{item.ten_di_tich}</Text>
+                <Text>{location.name}</Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -282,7 +303,6 @@ const screenHeight = Dimensions.get("window").height;
 const searchBarPosANDR = screenHeight / 25;
 const searchBarPosIOS = searchBarPosANDR + 20;
 
-
 const leftMargin = screenWidth / 30;
 const objectWidth = screenWidth / 2 - 15;
 
@@ -297,7 +317,7 @@ const styles = StyleSheet.create({
     gap: 25,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   flexView2: {
     flex: 1,
@@ -427,7 +447,7 @@ const styles = StyleSheet.create({
 
   searchContainerEmpty: {
     position: "absolute",
-    top: Platform.OS === 'ios' ? searchBarPosIOS : searchBarPosANDR,
+    top: Platform.OS === "ios" ? searchBarPosIOS : searchBarPosANDR,
     backgroundColor: "white",
     width: searchBarWidth,
     borderRadius: 35,
@@ -437,7 +457,7 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     position: "absolute",
-    top: Platform.OS === 'ios' ? searchBarPosIOS : searchBarPosANDR,
+    top: Platform.OS === "ios" ? searchBarPosIOS : searchBarPosANDR,
     backgroundColor: "white",
     width: searchBarWidth,
     borderTopLeftRadius: 20,
