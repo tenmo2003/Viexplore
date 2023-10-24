@@ -1,5 +1,13 @@
 import React, { useRef, useState, useEffect } from "react";
-import { Text, TouchableOpacity, View, StyleSheet, Image } from "react-native";
+import {
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  StyleSheet,
+  Image,
+  Keyboard
+} from "react-native";
 import MapView, { Geojson, Marker } from "react-native-maps";
 import { vietnam, mapStyle } from "../helper/vietnam";
 import { initialCamera } from "../helper/camera";
@@ -9,6 +17,7 @@ import Modal from "react-native-modal";
 import locationsJson from "../../assets/tempDb/locations.json";
 import { Feather } from "@expo/vector-icons";
 import { Dimensions } from "react-native";
+import data from "./data.json";
 
 function MapScreen({ navigation }) {
   const mapViewRef = useRef(null);
@@ -19,6 +28,18 @@ function MapScreen({ navigation }) {
   const [locations, setLocations] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);
+
+  const [query, setQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [showResults, setShowResults] = useState(false);
+
+  const onChange = (value) => {
+    setQuery(value);
+  };
+
+  const onSearch = (searchTerm) => {
+    console.log("", searchTerm);
+  };
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -45,6 +66,21 @@ function MapScreen({ navigation }) {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const maximumAmountOfSearchResults = 10;
+    const results = data
+      .filter((item) => {
+        const searchTerm = query.toLowerCase();
+        const tenditich = item.ten_di_tich.toLowerCase();
+
+        return searchTerm && tenditich.startsWith(searchTerm); // && tenditich !== searchTerm;
+        // điều kiện này là để khi tìm được chính xác tên thì nó sẽ không hiển thị ở
+      })
+      .slice(0, maximumAmountOfSearchResults);
+    setSearchResults(results);
+    setShowResults(results.length !== 0);
+  }, [query]);
+
   if (loading) {
     return <Loading />;
   }
@@ -65,6 +101,7 @@ function MapScreen({ navigation }) {
         pitchEnabled={false}
         rotateEnabled={false}
         moveOnMarkerPress={false}
+        onPress={Keyboard.dismiss}
       >
         <Geojson
           geojson={vietnam}
@@ -177,6 +214,41 @@ function MapScreen({ navigation }) {
           </View>
         </Modal>
       )}
+      <View
+        style={
+          showResults ? styles.searchContainer : styles.searchContainerEmpty
+        }
+      >
+        <View style={styles.searchInner}>
+          <TextInput
+            placeholder="Tìm kiếm..."
+            style={styles.input}
+            value={query}
+            onChangeText={(value) => {
+              setQuery(value);
+            }}
+            onFocus={() => setShowResults(true)}
+            onEndEditing={() => setShowResults(false)}
+          />
+
+          {showResults && (
+            <View style={styles.dropDown}>
+              {searchResults.map((item, index) => (
+                <TouchableOpacity //Touch? yes //ngon r
+                  onPress={() => {
+                    onSearch(item.ten_di_tich);
+                    setShowResults(false);
+                  }}
+                  style={styles.dropDownRow}
+                  key={index}
+                >
+                  <Text>{item.ten_di_tich}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
+        </View>
+      </View>
     </View>
   );
 }
@@ -188,6 +260,9 @@ const screenHeight = Dimensions.get("window").height;
 
 const leftMargin = screenWidth / 30;
 const objectWidth = screenWidth / 2 - 15;
+
+const searchBarWidth = screenWidth * 0.85;
+const dropDownWidth = searchBarWidth * 0.85;
 
 const modalHeight = 260;
 
@@ -320,5 +395,63 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "white",
     fontSize: 12,
+  },
+
+  // search bar, drop down and fetch data (siêu thiết kế)
+
+  searchContainerEmpty: {
+    position: "absolute",
+    top: 60,
+    backgroundColor: "white",
+    width: searchBarWidth,
+    borderRadius: 35,
+    display: "flex",
+    height: 40,
+    borderColor: "#BABABA",
+  },
+  searchContainer: {
+    position: "absolute",
+    top: 60,
+    backgroundColor: "white",
+    width: searchBarWidth,
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    display: "flex",
+    height: 40,
+    borderBottomWidth: 1,
+    borderColor: "#BABABA",
+  },
+  dropDown: {
+    position: "absolute",
+    top: 40,
+    backgroundColor: "white",
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
+
+    // borderRadius: 15, // xoa cai nay di r set border ben duoi ko la cai nay override
+    width: searchBarWidth,
+    display: "flex",
+    flexDirection: "column",
+  },
+  dropDownempty: {
+    borderWidth: 0,
+  },
+  dropDownRow: {
+    cursor: "pointer",
+    padding: 10,
+    alignItems: "flex-start",
+  },
+  input: {
+    position: "absolute",
+
+    padding: 12,
+    paddingLeft: 15,
+    justifyContent: "center",
+    alignItems: "center",
+    width: searchBarWidth,
+  },
+  searchInner: {
+    display: "flex",
+    alignItems: "center",
   },
 });
