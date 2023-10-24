@@ -6,7 +6,7 @@ import {
   View,
   StyleSheet,
   Image,
-  Keyboard
+  Keyboard,
 } from "react-native";
 import MapView, { Geojson, Marker } from "react-native-maps";
 import { vietnam, mapStyle } from "../helper/vietnam";
@@ -32,6 +32,7 @@ function MapScreen({ navigation }) {
   const [query, setQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
+  const [haveResults, setHaveResults] = useState(false);
 
   const onChange = (value) => {
     setQuery(value);
@@ -78,7 +79,7 @@ function MapScreen({ navigation }) {
       })
       .slice(0, maximumAmountOfSearchResults);
     setSearchResults(results);
-    setShowResults(results.length !== 0);
+    setHaveResults(results.length !== 0);
   }, [query]);
 
   if (loading) {
@@ -216,7 +217,9 @@ function MapScreen({ navigation }) {
       )}
       <View
         style={
-          showResults ? styles.searchContainer : styles.searchContainerEmpty
+          haveResults && showResults
+            ? styles.searchContainer
+            : styles.searchContainerEmpty
         }
       >
         <View style={styles.searchInner}>
@@ -230,24 +233,23 @@ function MapScreen({ navigation }) {
             onFocus={() => setShowResults(true)}
             onEndEditing={() => setShowResults(false)}
           />
-
-          {showResults && (
-            <View style={styles.dropDown}>
-              {searchResults.map((item, index) => (
-                <TouchableOpacity //Touch? yes //ngon r
-                  onPress={() => {
-                    onSearch(item.ten_di_tich);
-                    setShowResults(false);
-                  }}
-                  style={styles.dropDownRow}
-                  key={index}
-                >
-                  <Text>{item.ten_di_tich}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          )}
         </View>
+        {showResults && (
+          <View style={styles.dropDown}>
+            {searchResults.map((item, index) => (
+              <TouchableOpacity //Touch? yes //ngon r
+                onPress={() => {
+                  onSearch(item.ten_di_tich);
+                  setShowResults(false);
+                }}
+                style={styles.dropDownRow}
+                key={index}
+              >
+                <Text>{item.ten_di_tich}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
       </View>
     </View>
   );
@@ -257,6 +259,8 @@ export default MapScreen;
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
+
+const searchBarPos = screenHeight / 25;
 
 const leftMargin = screenWidth / 30;
 const objectWidth = screenWidth / 2 - 15;
@@ -401,7 +405,7 @@ const styles = StyleSheet.create({
 
   searchContainerEmpty: {
     position: "absolute",
-    top: 60,
+    top: searchBarPos,
     backgroundColor: "white",
     width: searchBarWidth,
     borderRadius: 35,
@@ -411,11 +415,11 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     position: "absolute",
-    top: 60,
+    top: searchBarPos,
     backgroundColor: "white",
     width: searchBarWidth,
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
     display: "flex",
     height: 40,
     borderBottomWidth: 1,
@@ -452,6 +456,7 @@ const styles = StyleSheet.create({
   },
   searchInner: {
     display: "flex",
-    alignItems: "center",
+    justifyContent: "center",
+    height: 40,
   },
 });
