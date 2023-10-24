@@ -7,6 +7,10 @@ import {
   StyleSheet,
   Image,
   Keyboard,
+  Dimensions,
+  Platform,
+  Animated,
+  Easing,
 } from "react-native";
 import MapView, { Geojson, Marker } from "react-native-maps";
 import { vietnam, mapStyle } from "../helper/vietnam";
@@ -16,7 +20,6 @@ import service from "../helper/axiosService";
 import Modal from "react-native-modal";
 import locationsJson from "../../assets/tempDb/locations.json";
 import { Feather } from "@expo/vector-icons";
-import { Dimensions } from "react-native";
 import data from "./data.json";
 
 function MapScreen({ navigation }) {
@@ -33,6 +36,7 @@ function MapScreen({ navigation }) {
   const [searchResults, setSearchResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
   const [haveResults, setHaveResults] = useState(false);
+  // const translateY = useRef(new Animated.Value(0)).current;
 
   const onChange = (value) => {
     setQuery(value);
@@ -41,6 +45,15 @@ function MapScreen({ navigation }) {
   const onSearch = (searchTerm) => {
     console.log("", searchTerm);
   };
+
+  // const startAnimation = (value) => {
+  //   Animated.timing(translateY, {
+  //     toValue: value,
+  //     duration: 300, // 
+  //     easing: Easing.linear, 
+  //     useNativeDriver: false, 
+  //   }).start();
+  // };
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -230,12 +243,18 @@ function MapScreen({ navigation }) {
             onChangeText={(value) => {
               setQuery(value);
             }}
-            onFocus={() => setShowResults(true)}
-            onEndEditing={() => setShowResults(false)}
+            onFocus={() => { 
+              setShowResults(true);
+              //startAnimation(-500); 
+            }}
+            onEndEditing={() => {
+              setShowResults(false);
+              //startAnimation(0);
+            }}
           />
         </View>
         {showResults && (
-          <View style={styles.dropDown}>
+          <View style={styles.dropDown} >
             {searchResults.map((item, index) => (
               <TouchableOpacity //Touch? yes //ngon r
                 onPress={() => {
@@ -260,7 +279,9 @@ export default MapScreen;
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
-const searchBarPos = screenHeight / 25;
+const searchBarPosANDR = screenHeight / 25;
+const searchBarPosIOS = searchBarPosANDR + 20;
+
 
 const leftMargin = screenWidth / 30;
 const objectWidth = screenWidth / 2 - 15;
@@ -276,6 +297,7 @@ const styles = StyleSheet.create({
     gap: 25,
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center"
   },
   flexView2: {
     flex: 1,
@@ -405,7 +427,7 @@ const styles = StyleSheet.create({
 
   searchContainerEmpty: {
     position: "absolute",
-    top: searchBarPos,
+    top: Platform.OS === 'ios' ? searchBarPosIOS : searchBarPosANDR,
     backgroundColor: "white",
     width: searchBarWidth,
     borderRadius: 35,
@@ -415,7 +437,7 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     position: "absolute",
-    top: searchBarPos,
+    top: Platform.OS === 'ios' ? searchBarPosIOS : searchBarPosANDR,
     backgroundColor: "white",
     width: searchBarWidth,
     borderTopLeftRadius: 20,
@@ -447,7 +469,6 @@ const styles = StyleSheet.create({
   },
   input: {
     position: "absolute",
-
     padding: 12,
     paddingLeft: 15,
     justifyContent: "center",

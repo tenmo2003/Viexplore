@@ -70,7 +70,7 @@ export default function App() {
         <CurvedBottomBarExpo.Navigator
           screenOptions={{ headerShown: false }}
           type="DOWN"
-          height={55}
+          height={50}
           circleWidth={50}
           bgColor="white"
           initialRouteName="MapTab"
