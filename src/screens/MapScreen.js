@@ -1,5 +1,12 @@
 import React, { useRef, useState, useEffect } from "react";
-import { Text, TouchableOpacity, View, StyleSheet, Image } from "react-native";
+import {
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  StyleSheet,
+  Image,
+} from "react-native";
 import MapView, { Geojson, Marker } from "react-native-maps";
 import { vietnam, mapStyle } from "../helper/vietnam";
 import { initialCamera } from "../helper/camera";
@@ -9,6 +16,7 @@ import Modal from "react-native-modal";
 import locationsJson from "../../assets/tempDb/locations.json";
 import { Feather } from "@expo/vector-icons";
 import { Dimensions } from "react-native";
+import data from "./data.json";
 
 function MapScreen({ navigation }) {
   const mapViewRef = useRef(null);
@@ -19,6 +27,18 @@ function MapScreen({ navigation }) {
   const [locations, setLocations] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);
+
+  const [query, setQuery] = useState("");
+  const [haveResult, setHaveResult] = useState(false);
+
+  const onChange = (value) => {
+    setQuery(value);
+  };
+
+  const onSearch = (searchTerm) => {
+    setQuery(searchTerm)
+    console.log("", searchTerm);
+  };
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -177,6 +197,38 @@ function MapScreen({ navigation }) {
           </View>
         </Modal>
       )}
+      <View style={styles.searchContainerEmpty}>
+        <View style={styles.searchInner}>
+          <TextInput
+            placeholder="Tìm kiếm..."
+            style={styles.input}
+            value={query}
+            onChangeText={(value) => {
+              setQuery(value);
+            }}
+          />
+          
+          <View style={styles.dropDown}>
+            {data
+              .filter((item) => {
+                const searchTerm = query.toLowerCase();
+                const tenditich = item.ten_di_tich.toLowerCase();
+
+                return searchTerm && tenditich.startsWith(searchTerm);// && tenditich !== searchTerm; 
+                // điều kiện này là để khi tìm được chính xác tên thì nó sẽ không hiển thị ở
+              })
+              .map((item, index) => (
+                <View
+                  onPress={() => onSearch(item.ten_di_tich)}
+                  style={styles.dropDownRow}
+                  key={index}
+                >
+                  <Text>{item.ten_di_tich}</Text>
+                </View>
+              ))}
+          </View>
+        </View>
+      </View>
     </View>
   );
 }
@@ -188,6 +240,9 @@ const screenHeight = Dimensions.get("window").height;
 
 const leftMargin = screenWidth / 30;
 const objectWidth = screenWidth / 2 - 15;
+
+const searchBarWidth = screenWidth * 0.85;
+const dropDownWidth = searchBarWidth * 0.85;
 
 const modalHeight = 260;
 
@@ -321,4 +376,56 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 12,
   },
+
+  // search bar, drop down and fetch data (siêu thiết kế)
+
+  searchContainerEmpty: {
+    position: "absolute",
+    top: 60,
+    backgroundColor: "white",
+    width: searchBarWidth,
+    borderRadius: 35,
+    display: "flex",
+    height: 40,
+  },
+  searchContainer: {
+    position: "absolute",
+    top: 60,
+    backgroundColor: "white",
+    width: searchBarWidth,
+    borderTopLeftRadius: 35,
+    borderTopRightRadius: 35,
+    display: "flex",
+    height: 40,
+  },
+  dropDown: {
+    position: "absolute",
+    top: 50,
+    backgroundColor: "white",
+    borderRadius: 15,
+    width: dropDownWidth,
+    display: "flex",
+    flexDirection: "column",
+  },
+  dropDownempty: {
+    borderWidth: 0,
+  },
+  dropDownRow: {
+    cursor: "pointer",
+    padding: 10,
+    alignItems: "flex-start",
+  },
+  input: {
+    position: "absolute",
+    padding: 12,
+    justifyContent: "center",
+    alignItems: "center",
+    width: searchBarWidth,
+  },
+  searchInner: {
+    display: "flex",
+    alignItems: "center",
+  },
 });
+
+
