@@ -7,7 +7,7 @@ export default function ResetpassScreen({ navigation }) {
     <KeyboardAvoidingView behavior="height" style={styles.keyboardAvoidingContainer}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
-            <Image source={require("../../assets/signup.png")} style={styles.img} />
+            <Image source={require("../../assets/reset_password.png")} style={styles.img} />
 
             <Text style={{ fontWeight: "bold", fontSize: 30, marginBottom: 20 }}>
                 Reset Password
