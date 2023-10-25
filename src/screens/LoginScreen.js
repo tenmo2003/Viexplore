@@ -1,51 +1,65 @@
 import React from "react";
-import { View, Image, TextInput, TouchableOpacity, Dimensions } from "react-native";
+import { View, Image, TextInput, TouchableOpacity, Dimensions, ScrollView, KeyboardAvoidingView } from "react-native";
 import { Input, Button, Text } from "react-native-elements";
 
-export default function LoginScreen() {
+export default function LoginScreen({ navigation }) {
   return (
-    <View style={styles.container}>
-      <Image source={require("../../assets/login.png")} style={styles.img} />
-      <View style={styles.inputContainer}>
-        <Input
-          placeholder="Username"
-          leftIcon={{ type: "font-awesome", name: "user",  color: "#BABABA" }}
-          inputContainerStyle={styles.inputContainerStyle}
-          inputStyle={styles.inputStyle}
-          leftIconContainerStyle={styles.leftIconStyle}
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <Input
-          placeholder="Password"
-          leftIcon={{ type: "font-awesome", name: "lock" , color: "#BABABA" }}
-          secureTextEntry={true}
-          inputContainerStyle={styles.inputContainerStyle}
-          inputStyle={styles.inputStyle}
-          leftIconContainerStyle={styles.leftIconStyle}
-        />
-      </View>
-      <TouchableOpacity style={ styles.btn }>
-        <Button
-          title="Login"
-          titleStyle={{ color: "white", fontSize: 30 }}
-          buttonStyle={ styles.loginButton }
-        />
-      </TouchableOpacity>
+    <KeyboardAvoidingView behavior="height" style={styles.keyboardAvoidingContainer}>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={styles.container}>
+          <Image source={require("../../assets/login.png")} style={styles.img} />
+          <View style={styles.inputContainer}>
+            <Input
+              placeholder="Username"
+              leftIcon={{ type: "font-awesome", name: "user",  color: "#BABABA" }}
+              inputContainerStyle={styles.inputContainerStyle}
+              inputStyle={styles.inputStyle}
+              leftIconContainerStyle={styles.leftIconStyle}
+            />
+          </View>
+          <View style={styles.inputContainer}>
+            <Input
+              placeholder="Password"
+              leftIcon={{ type: "font-awesome", name: "lock" , color: "#BABABA" }}
+              secureTextEntry={true}
+              inputContainerStyle={styles.inputContainerStyle}
+              inputStyle={styles.inputStyle}
+              leftIconContainerStyle={styles.leftIconStyle}
+            />
+          </View>
+          <TouchableOpacity style={ styles.btn }>
+            <Button
+              title="Login"
+              titleStyle={{ color: "white", fontSize: 30 }}
+              buttonStyle={ styles.loginButton }
+              onPress={() => navigation.navigate("User")}
+            />
+          </TouchableOpacity>
 
-      <Text style={{ marginBottom: 15 , marginTop: 20 , textDecorationLine: "underline" }}>Forgot password?</Text>
-      <Text style={{ marginBottom: 25 , fontWeight: "bold" , fontSize: 14 }}> ______________________  OR  ______________________ </Text>
+          <Text 
+            style={{ marginBottom: 15 , marginTop: 20 , textDecorationLine: "underline" }}
+            onPress={() => navigation.navigate("MailResetPass")}>Forgot password?</Text>
+            
+          <Text style={{ marginBottom: 25 , fontWeight: "bold" , fontSize: 14 }}> ______________________  OR  ______________________ </Text>
 
-      <TouchableOpacity style={ styles.btn }>
-        <Button
-          title="Signup"
-          titleStyle={{ color: "white", fontSize: 30 }}
-          buttonStyle={ styles.signupButton }
-        />
-      </TouchableOpacity>
-    </View>
+          <TouchableOpacity style={ styles.btn }>
+            <Button
+              title="Signup"
+              titleStyle={{ color: "white", fontSize: 30 }}
+              buttonStyle={ styles.signupButton }
+              onPress={() => navigation.navigate("Signup")}
+            />
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
+
+const {height, width} = Dimensions.get('window');
+const standarWidth = 360;
+const standardHeight = 800;
+const imgWidth = 500/standarWidth * width;
 
 const styles = {
   container: {
@@ -55,9 +69,10 @@ const styles = {
   },
 
   img: {
-    width:Dimensions.get("window").width, 
-    height: 300,
-    marginTop: 20,
+    width: imgWidth, 
+    height: "35%",
+    aspectRatio: 2.5/2,
+    marginTop: Dimensions.get("window").width < 768 ? 20 : 60,
   },
 
   inputContainer: {
@@ -73,7 +88,7 @@ const styles = {
     height: 50,
     elevation: 5,
     shadowColor: "black",
-    
+
   },
 
   inputStyle: {
@@ -104,7 +119,5 @@ const styles = {
     borderWidth: 2,
     padding: 0,
   },
-
-
-  
+ 
 }
