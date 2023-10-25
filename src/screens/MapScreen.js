@@ -314,7 +314,7 @@ const modalHeight = 260;
 const styles = StyleSheet.create({
   flexView: {
     flex: 1,
-    gap: 25,
+    gap: 40,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -375,6 +375,9 @@ const styles = StyleSheet.create({
   },
   innerBox1: {
     flex: 1,
+    flexDirection: "row",
+    justifyContent: "flex-start",
+
   },
   innerBox2: {
     flex: 1,
