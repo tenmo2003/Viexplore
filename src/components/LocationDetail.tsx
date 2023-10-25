@@ -27,11 +27,15 @@ export default function LocationDetail({ route, navigation }) {
 
   if (Platform.OS === "ios") {
     const enableAudio = async () => {
+      await Audio.requestPermissionsAsync();
       await Audio.setAudioModeAsync({
-        playsInSilentModeIOS: true,
-        staysActiveInBackground: false,
+        staysActiveInBackground: true,
         interruptionModeAndroid: InterruptionModeAndroid.DoNotMix,
         shouldDuckAndroid: false,
+        playThroughEarpieceAndroid: false,
+        allowsRecordingIOS: false,
+        interruptionModeIOS: InterruptionModeIOS.DoNotMix,
+        playsInSilentModeIOS: true,
       });
     };
     enableAudio();
@@ -185,8 +189,10 @@ export default function LocationDetail({ route, navigation }) {
                 <Text style={styles.headerReport}>ND BÁO CÁO</Text>
                 <View style={styles.reportContent}>
                   <TextInput
+                    multiline={true}
+                    maxLength={250}
                     style={styles.textReport}
-                    placeholder="Viết báo cáo ở đây..."
+                    placeholder="Viết báo cáo ở đây...(tối đa 250 chữ)"
                   ></TextInput>
                 </View>
                 <View style={styles.containerButton}>
@@ -294,16 +300,16 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     height: reportHeight * 0.65,
     alignItems: "center",
-    paddingVertical: reportHeight / 14,
     width: reportWidth * 0.82,
     borderColor: "#000",
     borderRadius: 20,
   },
   textReport: {
+    padding: 20,
     borderColor: "#000",
-    borderRadius: 20,
-    height: reportHeight * 0.5,
-    width: reportWidth * 0.65,
+    maxHeight: reportHeight * 0.6,
+    width: reportWidth * 0.82,
+    lineHeight: -0.5,
     fontSize: 18,
   },
   containerButton: {
