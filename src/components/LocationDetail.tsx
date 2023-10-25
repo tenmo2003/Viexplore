@@ -1,20 +1,19 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  Image,
-  TouchableOpacity,
-  TextInput,
-  Platform,
-} from "react-native";
-import React, { useState, useEffect } from "react";
-import { ImageSlider } from "react-native-image-slider-banner";
-import { StatusBar } from "expo-status-bar";
 import { Octicons } from "@expo/vector-icons";
 import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from "expo-av";
-import Loading from "./Loading";
+import React, { useEffect, useState } from "react";
+import {
+  Dimensions,
+  Image,
+  Platform,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { ImageSlider } from "react-native-image-slider-banner";
 import Modal from "react-native-modal";
+import Loading from "./Loading";
 
 export default function LocationDetail({ route, navigation }) {
   const { location } = route.params;
