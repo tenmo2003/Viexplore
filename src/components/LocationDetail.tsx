@@ -6,12 +6,13 @@ import {
   Image,
   TouchableOpacity,
   TextInput,
+  Platform,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { ImageSlider } from "react-native-image-slider-banner";
 import { StatusBar } from "expo-status-bar";
 import { Octicons } from "@expo/vector-icons";
-import { Audio } from "expo-av";
+import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from "expo-av";
 import Loading from "./Loading";
 import Modal from "react-native-modal";
 
@@ -24,9 +25,21 @@ export default function LocationDetail({ route, navigation }) {
     });
   }
 
-  Audio.setAudioModeAsync({
-    playsInSilentModeIOS: true,
-  });
+  if (Platform.OS === "ios") {
+    const enableAudio = async () => {
+      await Audio.setAudioModeAsync({
+        playsInSilentModeIOS: true,
+        staysActiveInBackground: false,
+        interruptionModeAndroid: InterruptionModeAndroid.DoNotMix,
+        shouldDuckAndroid: false,
+      });
+    };
+    enableAudio();
+  } else {
+    Audio.setAudioModeAsync({
+      playsInSilentModeIOS: true,
+    });
+  }
   const [playbackObject, setPlaybackObject] = useState(new Audio.Sound());
 
   const [loading, setLoading] = useState(false);
@@ -77,6 +90,14 @@ export default function LocationDetail({ route, navigation }) {
     loadAudio(location.audio);
   }, []);
 
+  useEffect(() => {
+    async function unload() {
+      await playbackObject.unloadAsync();
+    }
+
+    return playbackObject ? () => unload() : undefined;
+  }, [playbackObject]);
+
   const [paused, setPaused] = useState(true);
 
   const handlePause = () => {
@@ -85,12 +106,10 @@ export default function LocationDetail({ route, navigation }) {
       pauseAudio().catch((error) => {
         console.error("Error pausing audio:", error);
       });
-      console.log("paused");
     } else {
       resumeAudio().catch((error) => {
         console.error("Error resuming audio:", error);
       });
-      console.log("resumed");
     }
   };
 
@@ -117,6 +136,7 @@ export default function LocationDetail({ route, navigation }) {
               : require("../../assets/speaking.gif")
           }
           style={styles.chibi}
+          fadeDuration={1}
         />
       </View>
       <View style={styles.container}>
@@ -164,9 +184,10 @@ export default function LocationDetail({ route, navigation }) {
                 </View>
                 <Text style={styles.headerReport}>ND BÁO CÁO</Text>
                 <View style={styles.reportContent}>
-                  <TextInput style={styles.textReport} placeholder="Viết báo cáo ở đây...">
-                    
-                  </TextInput>
+                  <TextInput
+                    style={styles.textReport}
+                    placeholder="Viết báo cáo ở đây..."
+                  ></TextInput>
                 </View>
                 <View style={styles.containerButton}>
                   <TouchableOpacity style={styles.button}>
