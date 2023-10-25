@@ -24,6 +24,12 @@ function ReportScreen() {
     // .. to deal with handleSave case
   };
 
+  const [isBookmarked, setBookmarked] = useState(false);
+
+  const handleBookmarkPress = () => {
+    setBookmarked(!isBookmarked);
+  };
+
   return (
     <View style={styles.layoutReport}>
       <StatusBar />
@@ -32,16 +38,18 @@ function ReportScreen() {
       </View>
       <TouchableOpacity
         style={{
-          position: "absolute",
-          top: 45,
-          right: 25,
-          backgroundColor: "transparent",
+          position: 'absolute',
+          top: 50, 
+          right: 50, 
+          backgroundColor: 'transparent',
           padding: 10,
+          borderRadius: 20, 
         }}
-        onPress={handleSavePress}
+        onPress={handleBookmarkPress}
       >
-        <Icon name="save" size={30} color="blue" />
+        <Icon name={isBookmarked ? "bookmark" : "bookmark-o"} size={40} color={isBookmarked ? '#FFF500' : 'black'} />
       </TouchableOpacity>
+
     </View>
   );
 }
