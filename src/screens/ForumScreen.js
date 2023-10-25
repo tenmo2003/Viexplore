@@ -11,7 +11,7 @@ import {
   Image,
 } from "react-native";
 import Modal from "react-native-modal";
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from "react-native-vector-icons/FontAwesome";
 
 function ReportScreen() {
   const [isModalVisible, setModalVisible] = useState(false);
@@ -32,57 +32,16 @@ function ReportScreen() {
       </View>
       <TouchableOpacity
         style={{
-          position: 'absolute',
-          top: 45, 
-          right: 25, 
-          backgroundColor: 'transparent',
+          position: "absolute",
+          top: 45,
+          right: 25,
+          backgroundColor: "transparent",
           padding: 10,
         }}
         onPress={handleSavePress}
       >
         <Icon name="save" size={30} color="blue" />
       </TouchableOpacity>
-
-      <Modal
-        onBackdropPress={() => setModalVisible(false)}
-        onBackButtonPress={() => setModalVisible(false)}
-        isVisible={isModalVisible}
-        swipeDirection="down"
-        onSwipeComplete={toggleModal}
-        animationIn="bounceInUp"
-        animationOut="bounceOutDown"
-        animationInTiming={900}
-        animationOutTiming={500}
-        backdropTransitionInTiming={1000}
-        backdropTransitionOutTiming={500}
-        style={styles.popupPosi}
-      >
-        <View style={styles.bottomSheetScreen}>
-          <View style={styles.center}>
-            <View style={styles.flexColumn}>
-              <View style={styles.center}>
-                <View style={styles.iconReport}>
-                  <Image
-                    source={require("../../assets/iconReport.png")}
-                    style={styles.img}
-                  />
-                </View>
-                <Text style={styles.headerReport}>ND BÁO CÁO</Text>
-                <View style={styles.reportContent}>
-                  <TextInput style={styles.textReport}>
-                    <Text>Viết báo cáo ở đây...</Text>
-                  </TextInput>
-                </View>
-                <View style={styles.containerButton}>
-                  <TouchableOpacity style={styles.button}>
-                    <Text style={styles.buttonText}>Send</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </View>
-          </View>
-        </View>
-      </Modal>
     </View>
   );
 }

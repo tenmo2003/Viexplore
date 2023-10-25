@@ -20,7 +20,6 @@ import service from "../helper/axiosService";
 import Modal from "react-native-modal";
 import locationsJson from "../../assets/tempDb/locations.json";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
-import data from "./data.json";
 
 function MapScreen({ navigation }) {
   const mapViewRef = useRef(null);
