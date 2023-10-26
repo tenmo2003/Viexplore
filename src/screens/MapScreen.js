@@ -18,7 +18,6 @@ import { initialCamera } from "../helper/camera";
 import Loading from "../components/Loading";
 import service from "../helper/axiosService";
 import Modal from "react-native-modal";
-import locationsJson from "../../assets/tempDb/locations.json";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
 
 function MapScreen({ navigation }) {
@@ -68,14 +67,14 @@ function MapScreen({ navigation }) {
   const fetchData = async () => {
     try {
       setLoading(true);
-      // service.get("/locations").then(
-      //   (response) => {
-      //     setLocations(response.data.results);
-      //     setLoading(false);
-      //   },
-      //   () => setLoading(false)
-      // );
-      setLocations(locationsJson);
+      service.get("/locations").then(
+        (response) => {
+          setLocations(response.data.results);
+          setLoading(false);
+        },
+        () => setLoading(false)
+      );
+      // setLocations(locationsJson);
       setLoading(false);
     } catch (error) {
       console.error(error);

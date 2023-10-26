@@ -1,14 +1,14 @@
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 
-const baseURL = "http://192.168.0.116:8080/api/";
-
-const getToken = async() => {
+const getToken = async () => {
   const token = await SecureStore.getItemAsync("token");
   updateHeaderConfig("Authorization", token);
-}
+};
 
 getToken();
+
+const baseURL = "https://viexplore.onrender.com/api/";
 
 const service = axios.create({
   baseURL: baseURL,
