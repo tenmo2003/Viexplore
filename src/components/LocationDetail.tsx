@@ -208,12 +208,13 @@ export default function LocationDetail({ route, navigation }) {
         backdropTransitionInTiming={1000}
         backdropTransitionOutTiming={500}
         style={styles.popupPosi}
+        avoidKeyboard={true}
       >
-        <KeyboardAvoidingView
+        {/* <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : null}
           style={styles.containerView}
         >
-          <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <ScrollView contentContainerStyle={styles.scrollContainer}> */}
             <View style={styles.bottomSheetScreen}>
               <View style={styles.center}>
                 <DismissKeyboard>
@@ -244,8 +245,8 @@ export default function LocationDetail({ route, navigation }) {
                 </DismissKeyboard>
               </View>
             </View>
-          </ScrollView>
-        </KeyboardAvoidingView>
+          {/* </ScrollView>
+        </KeyboardAvoidingView> */}
       </Modal>
     </View>
   );
@@ -357,8 +358,8 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   textReport: {
-    marginVertical: 10,
-    padding: 20,
+    marginVertical: Platform.OS === "ios" ? 10 : -5,
+    padding: 15,
     borderColor: "#000",
     maxHeight: reportHeight * 0.6,
     width: reportWidth * 0.82,
