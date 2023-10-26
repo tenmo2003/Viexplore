@@ -65,7 +65,7 @@ export default function App() {
   }
 
   return (
-    <TokenContext.Provider value={token}>
+    <TokenContext.Provider value={{ token, setToken }}>
       <NavigationContainer>
         <CurvedBottomBarExpo.Navigator
           screenOptions={{ headerShown: false }}
