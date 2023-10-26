@@ -120,7 +120,7 @@ function MapScreen({ navigation }) {
         pitchEnabled={false}
         rotateEnabled={false}
         moveOnMarkerPress={false}
-        onPress={Keyboard.dismiss}
+        onPress={() => Keyboard.dismiss()}
       >
         <Geojson
           geojson={vietnam}
@@ -280,6 +280,7 @@ function MapScreen({ navigation }) {
                 onPress={() => {
                   onSearch(location);
                   setShowResults(false);
+                  Keyboard.dismiss();
                 }}
                 style={styles.dropDownRow}
                 key={index}
