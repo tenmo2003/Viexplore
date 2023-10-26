@@ -18,22 +18,20 @@ export default function SignupScreen({ navigation }) {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const showAlert = (message) =>
+  const showAlert = (message, proceed) =>
     Alert.alert(
       "Alert",
       message,
       [
         {
           text: "OK",
+          onPress: () => proceed && navigation.navigate("Login"),
           style: "cancel",
         },
       ],
       {
         cancelable: true,
-        onDismiss: () =>
-          Alert.alert(
-            "This alert was dismissed by tapping outside of the alert dialog."
-          ),
+        onDismiss: () => proceed && navigation.navigate("Login"),
       }
     );
 
@@ -43,7 +41,7 @@ export default function SignupScreen({ navigation }) {
     console.log("confirmpass: ", confirmPassword);
 
     if (password !== confirmPassword) {
-      showAlert("Passwords don't match");
+      showAlert("Passwords don't match", false);
       return;
     }
 
@@ -56,11 +54,15 @@ export default function SignupScreen({ navigation }) {
       })
       .then(
         (res) => {
-          console.log(res.data);
-          showAlert("Signed up successfully");
+          console.log(res.data.message);
+          if (res.data.message === "User already exists") {
+            showAlert(res.data.message, false);
+          } else {
+            showAlert("Signed up successfully", true);
+          }
         },
         () => {
-          console.log("failed");
+          console.log("Network failed");
         }
       );
   };

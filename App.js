@@ -53,6 +53,9 @@ export default function App() {
   useEffect(() => {
     const loadToken = async () => {
       const storedToken = await SecureStore.getItemAsync("token");
+      if (storedToken) {
+        //TODO: CHECK IF TOKEN IS STILL VALID
+      }
       setToken(storedToken);
       setLoading(false);
     };

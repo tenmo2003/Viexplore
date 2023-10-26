@@ -32,7 +32,7 @@ export default function LoginScreen({ navigation }) {
           async function saveToken(value) {
             await SecureStore.setItemAsync("token", value);
           }
-          console.log(res.data);
+          console.log(res.data.message);
           const token = res.data.results;
           saveToken(token);
           setToken(token);
@@ -55,7 +55,7 @@ export default function LoginScreen({ navigation }) {
       behavior="height"
       style={styles.keyboardAvoidingContainer}
     >
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView showsVerticalScrollIndicator={false} overScrollMode="never">
         <View style={styles.container}>
           <Image
             source={require("../../assets/login.png")}

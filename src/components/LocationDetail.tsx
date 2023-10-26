@@ -10,6 +10,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  KeyboardAvoidingView
 } from "react-native";
 import { ImageSlider } from "react-native-image-slider-banner";
 import Modal from "react-native-modal";
@@ -325,6 +326,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   textReport: {
+    marginVertical: 10,
     padding: 20,
     borderColor: "#000",
     maxHeight: reportHeight * 0.6,
