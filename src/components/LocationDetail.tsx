@@ -14,6 +14,7 @@ import {
 import { ImageSlider } from "react-native-image-slider-banner";
 import Modal from "react-native-modal";
 import Loading from "./Loading";
+import Icon from "react-native-vector-icons/Ionicons";
 
 export default function LocationDetail({ route, navigation }) {
   const { location } = route.params;
@@ -48,6 +49,12 @@ export default function LocationDetail({ route, navigation }) {
   const [loading, setLoading] = useState(false);
   const [autoPlayCarousel, setAutoPlayCarousel] = useState(true);
   const [isModalVisible, setModalVisible] = useState(false);
+
+  const [isBookmarked, setBookmarked] = useState(false);
+
+  const handleBookmarkPress = () => {
+    setBookmarked(!isBookmarked);
+  };
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -123,6 +130,7 @@ export default function LocationDetail({ route, navigation }) {
   return (
     <View>
       <View>
+      
         <ImageSlider
           data={images}
           autoPlay={autoPlayCarousel}
@@ -132,6 +140,19 @@ export default function LocationDetail({ route, navigation }) {
           indicatorContainerStyle={styles.indicatorContainerStyle}
           preview={false}
         />
+        <TouchableOpacity
+        style={{
+          position: 'absolute',
+          top: 40, 
+          right: 25, 
+          backgroundColor: 'transparent',
+          padding: 10,
+          borderRadius: 20, 
+        }}
+        onPress={handleBookmarkPress}
+      >
+        <Icon name={isBookmarked ? "bookmark" : "bookmark-outline"} size={35} color={isBookmarked ? '#FFF500' : 'white'} />
+      </TouchableOpacity>
         <Image
           source={
             paused
