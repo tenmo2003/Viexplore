@@ -1,52 +1,125 @@
-import React from "react";
-import { View, Image, TextInput, TouchableOpacity, Dimensions, ScrollView, KeyboardAvoidingView } from "react-native";
+import React, { useContext, useState } from "react";
+import {
+  View,
+  Image,
+  TextInput,
+  TouchableOpacity,
+  Dimensions,
+  ScrollView,
+  KeyboardAvoidingView,
+} from "react-native";
 import { Input, Button, Text } from "react-native-elements";
+import TokenContext from "../contexts/TokenContext";
+import service, { updateHeaderConfig } from "../helper/axiosService";
+import * as SecureStore from "expo-secure-store";
 
 export default function LoginScreen({ navigation }) {
+  const { token, setToken } = useContext(TokenContext);
+
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const onSubmit = () => {
+    console.log("username: ", username);
+    console.log("password: ", password);
+    service
+      .post("/authenticate", {
+        username: username,
+        password: password,
+      })
+      .then(
+        (res) => {
+          async function saveToken(value) {
+            await SecureStore.setItemAsync("token", value);
+          }
+          console.log(res.data);
+          const token = res.data.results;
+          saveToken(token);
+          setToken(token);
+          updateHeaderConfig("Authorization", token);
+        },
+        () => console.log("failed")
+      );
+  };
+
+  const onChangeUsername = (input) => {
+    setUsername(input);
+  };
+
+  const onChangePassword = (input) => {
+    setPassword(input);
+  };
+
   return (
-    <KeyboardAvoidingView behavior="height" style={styles.keyboardAvoidingContainer}>
+    <KeyboardAvoidingView
+      behavior="height"
+      style={styles.keyboardAvoidingContainer}
+    >
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
-          <Image source={require("../../assets/login.png")} style={styles.img} />
+          <Image
+            source={require("../../assets/login.png")}
+            style={styles.img}
+          />
           <View style={styles.inputContainer}>
             <Input
               placeholder="Username"
-              leftIcon={{ type: "font-awesome", name: "user",  color: "#BABABA" }}
+              leftIcon={{
+                type: "font-awesome",
+                name: "user",
+                color: "#BABABA",
+              }}
               inputContainerStyle={styles.inputContainerStyle}
               inputStyle={styles.inputStyle}
               leftIconContainerStyle={styles.leftIconStyle}
+              onChangeText={(value) => onChangeUsername(value)}
             />
           </View>
           <View style={styles.inputContainer}>
             <Input
               placeholder="Password"
-              leftIcon={{ type: "font-awesome", name: "lock" , color: "#BABABA" }}
+              leftIcon={{
+                type: "font-awesome",
+                name: "lock",
+                color: "#BABABA",
+              }}
               secureTextEntry={true}
               inputContainerStyle={styles.inputContainerStyle}
               inputStyle={styles.inputStyle}
               leftIconContainerStyle={styles.leftIconStyle}
+              onChangeText={(value) => onChangePassword(value)}
             />
           </View>
-          <TouchableOpacity style={ styles.btn }>
+          <TouchableOpacity style={styles.btn}>
             <Button
               title="Login"
               titleStyle={{ color: "white", fontSize: 30 }}
-              buttonStyle={ styles.loginButton }
-              onPress={() => navigation.navigate("User")}
+              buttonStyle={styles.loginButton}
+              onPress={() => onSubmit()}
             />
           </TouchableOpacity>
 
-          <Text 
-            style={{ marginBottom: 15 , marginTop: 20 , textDecorationLine: "underline" }}
-            onPress={() => navigation.navigate("MailResetPass")}>Forgot password?</Text>
-            
-          <Text style={{ marginBottom: 25 , fontWeight: "bold" , fontSize: 14 }}> ______________________  OR  ______________________ </Text>
+          <Text
+            style={{
+              marginBottom: 15,
+              marginTop: 20,
+              textDecorationLine: "underline",
+            }}
+            onPress={() => navigation.navigate("MailResetPass")}
+          >
+            Forgot password?
+          </Text>
 
-          <TouchableOpacity style={ styles.btn }>
+          <Text style={{ marginBottom: 25, fontWeight: "bold", fontSize: 14 }}>
+            {" "}
+            ______________________ OR ______________________{" "}
+          </Text>
+
+          <TouchableOpacity style={styles.btn}>
             <Button
               title="Signup"
               titleStyle={{ color: "white", fontSize: 30 }}
-              buttonStyle={ styles.signupButton }
+              buttonStyle={styles.signupButton}
               onPress={() => navigation.navigate("Signup")}
             />
           </TouchableOpacity>
@@ -56,12 +129,15 @@ export default function LoginScreen({ navigation }) {
   );
 }
 
-const {height, width} = Dimensions.get('window');
+const { height, width } = Dimensions.get("window");
 const standarWidth = 360;
 const standardHeight = 800;
-const imgWidth = 500/standarWidth * width;
+const imgWidth = (500 / standarWidth) * width;
 
 const styles = {
+  keyboardAvoidingContainer: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     alignItems: "center",
@@ -69,9 +145,9 @@ const styles = {
   },
 
   img: {
-    width: imgWidth, 
+    width: imgWidth,
     height: "35%",
-    aspectRatio: 2.5/2,
+    aspectRatio: 2.5 / 2,
     marginTop: Dimensions.get("window").width < 768 ? 20 : 60,
   },
 
@@ -80,15 +156,14 @@ const styles = {
   },
 
   inputContainerStyle: {
-    borderRadius: 50, 
-    borderColor: "black", 
+    borderRadius: 50,
+    borderColor: "black",
     borderWidth: 2,
     borderBottomWidth: 2,
     backgroundColor: "white",
     height: 50,
     elevation: 5,
     shadowColor: "black",
-
   },
 
   inputStyle: {
@@ -107,7 +182,7 @@ const styles = {
   loginButton: {
     backgroundColor: "#687DAA",
     borderRadius: 50,
-    borderColor: "black", 
+    borderColor: "black",
     borderWidth: 2,
     padding: 0,
   },
@@ -115,9 +190,8 @@ const styles = {
   signupButton: {
     backgroundColor: "#FF6B06",
     borderRadius: 50,
-    borderColor: "black", 
+    borderColor: "black",
     borderWidth: 2,
     padding: 0,
   },
- 
-}
+};
