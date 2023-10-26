@@ -10,7 +10,10 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Keyboard,
+  ScrollView,
 } from "react-native";
 import { ImageSlider } from "react-native-image-slider-banner";
 import Modal from "react-native-modal";
@@ -124,6 +127,12 @@ export default function LocationDetail({ route, navigation }) {
     }
   };
 
+  const DismissKeyboard = ({ children }) => (
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      {children}
+    </TouchableWithoutFeedback>
+  );
+
   if (loading) {
     return <Loading />;
   }
@@ -131,7 +140,6 @@ export default function LocationDetail({ route, navigation }) {
   return (
     <View>
       <View>
-      
         <ImageSlider
           data={images}
           autoPlay={autoPlayCarousel}
@@ -142,18 +150,22 @@ export default function LocationDetail({ route, navigation }) {
           preview={false}
         />
         <TouchableOpacity
-        style={{
-          position: 'absolute',
-          top: 40, 
-          right: 25, 
-          backgroundColor: 'transparent',
-          padding: 10,
-          borderRadius: 20, 
-        }}
-        onPress={handleBookmarkPress}
-      >
-        <Icon name={isBookmarked ? "bookmark" : "bookmark-outline"} size={35} color={isBookmarked ? '#FFF500' : 'white'} />
-      </TouchableOpacity>
+          style={{
+            position: "absolute",
+            top: 40,
+            right: 25,
+            backgroundColor: "transparent",
+            padding: 10,
+            borderRadius: 20,
+          }}
+          onPress={handleBookmarkPress}
+        >
+          <Icon
+            name={isBookmarked ? "bookmark" : "bookmark-outline"}
+            size={35}
+            color={isBookmarked ? "#FFF500" : "white"}
+          />
+        </TouchableOpacity>
         <Image
           source={
             paused
@@ -197,34 +209,43 @@ export default function LocationDetail({ route, navigation }) {
         backdropTransitionOutTiming={500}
         style={styles.popupPosi}
       >
-        <View style={styles.bottomSheetScreen}>
-          <View style={styles.center}>
-            <View style={styles.flexColumn}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : null}
+          style={styles.containerView}
+        >
+          <ScrollView contentContainerStyle={styles.scrollContainer}>
+            <View style={styles.bottomSheetScreen}>
               <View style={styles.center}>
-                <View style={styles.iconReport}>
-                  <Image
-                    source={require("../../assets/iconReport.png")}
-                    style={styles.img}
-                  />
-                </View>
-                <Text style={styles.headerReport}>ND BÁO CÁO</Text>
-                <View style={styles.reportContent}>
-                  <TextInput
-                    multiline={true}
-                    maxLength={250}
-                    style={styles.textReport}
-                    placeholder="Viết báo cáo ở đây...(tối đa 250 chữ)"
-                  ></TextInput>
-                </View>
-                <View style={styles.containerButton}>
-                  <TouchableOpacity style={styles.button}>
-                    <Text style={styles.buttonText}>Send</Text>
-                  </TouchableOpacity>
-                </View>
+                <DismissKeyboard>
+                  <View style={styles.flexColumn}>
+                    <View style={styles.center}>
+                      <View style={styles.iconReport}>
+                        <Image
+                          source={require("../../assets/iconReport.png")}
+                          style={styles.img}
+                        />
+                      </View>
+                      <Text style={styles.headerReport}>ND BÁO CÁO</Text>
+                      <View style={styles.reportContent}>
+                        <TextInput
+                          multiline={true}
+                          maxLength={400}
+                          style={styles.textReport}
+                          placeholder="Viết báo cáo ở đây...(tối đa 400 chữ)"
+                        ></TextInput>
+                      </View>
+                      <View style={styles.containerButton}>
+                        <TouchableOpacity style={styles.button}>
+                          <Text style={styles.buttonText}>Send</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  </View>
+                </DismissKeyboard>
               </View>
             </View>
-          </View>
-        </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
       </Modal>
     </View>
   );
@@ -324,6 +345,16 @@ const styles = StyleSheet.create({
     width: reportWidth * 0.82,
     borderColor: "#000",
     borderRadius: 20,
+  },
+  flexStyle: {
+    flex: 1,
+  },
+  containerView: {
+    flex: 1,
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: "flex-end",
   },
   textReport: {
     marginVertical: 10,
