@@ -210,25 +210,33 @@ export default function LocationDetail({ route, navigation }) {
         style={styles.popupPosi}
         avoidKeyboard={true}
       >
-        <View style={styles.bottomSheetScreen}>
-          <View style={styles.center}>
-            <DismissKeyboard>
-              <View style={styles.flexColumn}>
-                <View style={styles.center}>
-                  <View style={styles.iconReport}>
-                    <Image
-                      source={require("../../assets/iconReport.png")}
-                      style={styles.img}
-                    />
-                  </View>
-                  <Text style={styles.headerReport}>ND BÁO CÁO</Text>
-                  <View style={styles.reportContent}>
-                    <TextInput
-                      multiline={true}
-                      maxLength={400}
-                      style={styles.textReport}
-                      placeholder="Viết báo cáo ở đây...(tối đa 400 chữ)"
-                    ></TextInput>
+            <View style={styles.bottomSheetScreen}>
+              <View style={styles.center}>
+                <DismissKeyboard>
+                  <View style={styles.flexColumn}>
+                    <View style={styles.center}>
+                      <View style={styles.iconReport}>
+                        <Image
+                          source={require("../../assets/iconReport.png")}
+                          style={styles.img}
+                        />
+                      </View>
+                      <Text style={styles.headerReport}>ND BÁO CÁO</Text>
+                      <View style={styles.reportContent}>
+                        <TextInput
+                          multiline={true}
+                          maxLength={400}
+                          style={styles.textReport}
+                          placeholder="Viết báo cáo ở đây...(tối đa 400 chữ)"
+                        ></TextInput>
+                      </View>
+                      <View style={styles.containerButton}>
+                        <TouchableOpacity style={styles.button}>
+                          <Text style={styles.buttonText}>Send</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+
                   </View>
                   <View style={styles.containerButton}>
                     <TouchableOpacity style={styles.button}>
@@ -237,9 +245,13 @@ export default function LocationDetail({ route, navigation }) {
                   </View>
                 </View>
               </View>
+
+            </View>
+
             </DismissKeyboard>
           </View>
         </View>
+
       </Modal>
     </View>
   );
@@ -351,8 +363,8 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   textReport: {
-    marginVertical: 10,
-    padding: 20,
+    marginVertical: Platform.OS === "ios" ? 10 : -5,
+    padding: 15,
     borderColor: "#000",
     maxHeight: reportHeight * 0.6,
     width: reportWidth * 0.82,
