@@ -127,7 +127,7 @@ function MapScreen({ navigation }) {
           fillColor="rgba(255, 240, 192, 0.5)"
           strokeWidth={1}
         />
-        {locations.map((location) => (
+        {locations && locations.map((location) => (
           <Marker
             key={location.id}
             coordinate={{

@@ -208,44 +208,38 @@ export default function LocationDetail({ route, navigation }) {
         backdropTransitionInTiming={1000}
         backdropTransitionOutTiming={500}
         style={styles.popupPosi}
+        avoidKeyboard={true}
       >
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : null}
-          style={styles.containerView}
-        >
-          <ScrollView contentContainerStyle={styles.scrollContainer}>
-            <View style={styles.bottomSheetScreen}>
-              <View style={styles.center}>
-                <DismissKeyboard>
-                  <View style={styles.flexColumn}>
-                    <View style={styles.center}>
-                      <View style={styles.iconReport}>
-                        <Image
-                          source={require("../../assets/iconReport.png")}
-                          style={styles.img}
-                        />
-                      </View>
-                      <Text style={styles.headerReport}>ND BÁO CÁO</Text>
-                      <View style={styles.reportContent}>
-                        <TextInput
-                          multiline={true}
-                          maxLength={400}
-                          style={styles.textReport}
-                          placeholder="Viết báo cáo ở đây...(tối đa 400 chữ)"
-                        ></TextInput>
-                      </View>
-                      <View style={styles.containerButton}>
-                        <TouchableOpacity style={styles.button}>
-                          <Text style={styles.buttonText}>Send</Text>
-                        </TouchableOpacity>
-                      </View>
-                    </View>
+        <View style={styles.bottomSheetScreen}>
+          <View style={styles.center}>
+            <DismissKeyboard>
+              <View style={styles.flexColumn}>
+                <View style={styles.center}>
+                  <View style={styles.iconReport}>
+                    <Image
+                      source={require("../../assets/iconReport.png")}
+                      style={styles.img}
+                    />
                   </View>
-                </DismissKeyboard>
+                  <Text style={styles.headerReport}>ND BÁO CÁO</Text>
+                  <View style={styles.reportContent}>
+                    <TextInput
+                      multiline={true}
+                      maxLength={400}
+                      style={styles.textReport}
+                      placeholder="Viết báo cáo ở đây...(tối đa 400 chữ)"
+                    ></TextInput>
+                  </View>
+                  <View style={styles.containerButton}>
+                    <TouchableOpacity style={styles.button}>
+                      <Text style={styles.buttonText}>Send</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
               </View>
-            </View>
-          </ScrollView>
-        </KeyboardAvoidingView>
+            </DismissKeyboard>
+          </View>
+        </View>
       </Modal>
     </View>
   );
