@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { Input, Button, Text } from "react-native-elements";
 import service from "../helper/axiosService";
+import { showAlert } from "../helper/CustomAlert";
 
 export default function SignupScreen({ navigation }) {
   const [email, setEmail] = useState("");
@@ -18,22 +19,7 @@ export default function SignupScreen({ navigation }) {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const showAlert = (message, proceed) =>
-    Alert.alert(
-      "Alert",
-      message,
-      [
-        {
-          text: "OK",
-          onPress: () => proceed && navigation.navigate("Login"),
-          style: "cancel",
-        },
-      ],
-      {
-        cancelable: true,
-        onDismiss: () => proceed && navigation.navigate("Login"),
-      }
-    );
+  
 
   const onSubmit = () => {
     console.log("username: ", username);
@@ -41,7 +27,7 @@ export default function SignupScreen({ navigation }) {
     console.log("confirmpass: ", confirmPassword);
 
     if (password !== confirmPassword) {
-      showAlert("Passwords don't match", false);
+      showAlert("Passwords don't match", false, "Login");
       return;
     }
 
@@ -56,9 +42,9 @@ export default function SignupScreen({ navigation }) {
         (res) => {
           console.log(res.data.message);
           if (res.data.message === "User already exists") {
-            showAlert(res.data.message, false);
+            showAlert(res.data.message, false, "Login");
           } else {
-            showAlert("Signed up successfully", true);
+            showAlert("Signed up successfully", true, "Login");
           }
         },
         () => {

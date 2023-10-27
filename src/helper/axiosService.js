@@ -10,8 +10,8 @@ const getToken = async () => {
 
 getToken();
 
-const baseURL = "http://192.168.0.101:8080/api/";
-// const baseURL = "https://viexplore.onrender.com/api/";
+// const baseURL = "http://192.168.0.101:8080/api/";
+const baseURL = "https://viexplore.onrender.com/api/";
 
 const service = axios.create({
   baseURL: baseURL,
@@ -29,5 +29,9 @@ function removeHeaderConfig(key) {
   delete service.defaults.headers.common[key];
 }
 
+function getAllHeaderConfig() {
+  return service.defaults.headers.common;
+}
+
 export default service;
-export { updateHeaderConfig, removeHeaderConfig };
+export { updateHeaderConfig, removeHeaderConfig, getAllHeaderConfig };
