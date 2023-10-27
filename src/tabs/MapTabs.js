@@ -4,7 +4,7 @@ import { View } from "react-native";
 import MapView from "react-native-maps";
 import Post from "../components/Post";
 import MapScreen from "../screens/MapScreen";
-import LocationDetail from "../components/LocationDetail";
+import LocationDetail from "../screens/LocationDetailScreen";
 
 const Stack = createStackNavigator();
 

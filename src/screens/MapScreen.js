@@ -113,8 +113,7 @@ function MapScreen({ navigation }) {
         className="w-full h-full"
         customMapStyle={mapStyle}
         camera={camera}
-        minZoomLevel={5.7}
-        maxZoomLevel={8.5}
+        minZoomLevel={5.5}
         pitchEnabled={false}
         rotateEnabled={false}
         moveOnMarkerPress={false}
@@ -126,32 +125,37 @@ function MapScreen({ navigation }) {
           fillColor="rgba(255, 240, 192, 0.5)"
           strokeWidth={1}
         />
-        {locations && locations.map((location) => (
-          <Marker
-            key={location.id}
-            coordinate={{
-              latitude: location.latitude,
-              longitude: location.longitude,
-            }}
-            onPress={() => {
-              setSelectedLocation(location);
+        {locations &&
+          locations.map((location) => (
+            <Marker
+              key={location.id}
+              coordinate={{
+                latitude: location.latitude,
+                longitude: location.longitude,
+              }}
+              description={location.name}
+              onPress={() => {
+                setSelectedLocation(location);
+                async function animate() {
+                  const curCam = await mapViewRef.current.getCamera();
+                  animateToCamera({
+                    center: {
+                      latitude: location.latitude,
+                      longitude: location.longitude,
+                    },
+                    zoom: curCam.zoom > 11 ? curCam.zoom : 11,
+                  });
+                }
+                animate();
 
-              animateToCamera({
-                center: {
-                  latitude: location.latitude,
-                  longitude: location.longitude,
-                },
-                zoom: 8,
-              });
+                setTimeout(() => {
+                  toggleModal();
+                }, 450);
 
-              setTimeout(() => {
-                toggleModal();
-              }, 450);
-
-              // navigation.navigate("Post", { id: location.id });
-            }}
-          />
-        ))}
+                // navigation.navigate("Post", { id: location.id });
+              }}
+            />
+          ))}
       </MapView>
       <TouchableOpacity
         className="absolute bottom-16 right-3 rounded-full bg-white p-3"
@@ -375,7 +379,6 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     justifyContent: "flex-start",
-
   },
   innerBox2: {
     flex: 1,

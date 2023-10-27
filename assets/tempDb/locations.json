@@ -1,6 +1,5 @@
 [
   {
-    "id": "652a5a1aeb823057cb71ef76",
     "name": "Hồ Gươm",
     "generalLocation": "Hà Nội",
     "shortDescription": "Hồ Gươm là một hồ nổi tiếng ở Hà Nội, Việt Nam.",
@@ -19,7 +18,6 @@
     ]
   },
   {
-    "id": "653396b72f89ed0f946a504a",
     "name": "Quần thể di tích Cố đô Huế",
     "generalLocation": "Huế",
     "latitude": 16.470278,
@@ -37,7 +35,6 @@
     ]
   },
   {
-    "id": "6542bca5eef45c2f1c30d862",
     "name": "Hang Pác Bó",
     "generalLocation": "Cao Bằng",
     "latitude": 22.911058,
@@ -56,7 +53,6 @@
     ]
   },
   {
-    "id": "6542bca5eef45c2f1c30d861",
     "name": "An toàn khu Định Hóa",
     "generalLocation": "Bình Thuận",
     "latitude": 11.178659,
@@ -74,7 +70,6 @@
     ]
   },
   {
-    "id": "6542bca5eef45c2f1c30d860",
     "name": "Chiến Khu Tân Trào",
     "generalLocation": "Tuyên Quang",
     "latitude": 21.601761,
@@ -92,7 +87,6 @@
     ]
   },
   {
-    "id": "6542bca5eef45c2f1c30d859",
     "name": "Yên Thế",
     "generalLocation": "Bắc Giang",
     "latitude": 21.240294,
@@ -110,7 +104,6 @@
     ]
   },
   {
-    "id": "6542bca5eef45c2f1c30d858",
     "name": "Điện Biên Phủ",
     "generalLocation": "Điện Biên",
     "latitude": 21.395694,
@@ -129,7 +122,6 @@
     ]
   },
   {
-    "id": "6542bca5eef45c2f1c30d857",
     "name": "Đền Hùng",
     "generalLocation": "Phú Thọ",
     "latitude": 21.256622,
@@ -149,7 +141,6 @@
     ]
   },
   {
-    "id": "6542bca5eef45c2f1c30d856",
     "name": "Côn Sơn",
     "generalLocation": "Hải Dương",
     "latitude": 20.925481,
@@ -168,7 +159,6 @@
     ]
   },
   {
-    "id": "6542bca5eef45c2f1c30d837",
     "name": "Vịnh Hạ Long",
     "generalLocation": "Quảng Ninh",
     "latitude": 20.951665,
@@ -186,7 +176,6 @@
       "https://t4.ftcdn.net/jpg/02/71/35/77/360_F_271357771_omlUZGSn9bNfvuMKibacRMzDz3Lm6j3l.jpg"    ]
   },
   {
-    "id": "6542bca5eef45c2f1c30d855",
     "name": "Cố đô Hoa Lư",
     "generalLocation": "Ninh Bình",
     "latitude": 20.251841,
@@ -204,7 +193,6 @@
       "https://vcdn-vnexpress.vnecdn.net/2017/06/27/Ninh-Binh-2-2507-1498554715.jpg"    ]
   },
   {
-    "id": "6542bca5eef45c2f1c30d854",
     "name": "Tràng An - Tam Cốc",
     "generalLocation": "Ninh Bình",
     "latitude": 20.253215,
@@ -224,7 +212,6 @@
     ]
   },
   {
-    "id": "6542bca5eef45c2f1c30d853",
     "name": "Thành nhà Hồ",
     "generalLocation": "Thanh Hóa",
     "latitude": 19.782590,
@@ -242,7 +229,6 @@
     ]
   },
   {
-    "id": "6542bca5eef45c2f1c30d852",
     "name": "Kim Liên",
     "generalLocation": "Nghệ An",
     "latitude": 19.275516,
@@ -260,7 +246,6 @@
     ]
   },
   {
-    "id": "6542bca5eef45c2f1c30d851",
     "name": "Phong Nha - Kẻ Bàng",
     "generalLocation": "Quảng Bình",
     "latitude": 17.590316,
@@ -280,7 +265,6 @@
     ]
   },
   {
-    "id": "6542bca5eef45c2f1c30d850",
     "name": "Hội An",
     "generalLocation": "Quảng Nam",
     "latitude": 15.880058,
@@ -300,7 +284,6 @@
     ]
   },
   {
-    "id": "6542bca5eef45c2f1c30d844",
     "name": "Thánh địa Mỹ Sơn",
     "generalLocation": "Quảng Nam",
     "latitude": 15.796421,
@@ -318,7 +301,6 @@
       "https://danviet.mediacdn.vn/upload/1-2016/images/2016-03-21/1458551180-nui-chua-my-son-4.jpg"    ]
   },
   {
-    "id": "6542bca5eef45c2f1c30d849",
     "name": "Văn phòng Tổng cục Tình báo miền Nam",
     "generalLocation": "TP.HCM",
     "latitude": 10.780063,
@@ -338,7 +320,6 @@
     ]
   },
   {
-    "id": "6542bca5eef45c2f1c30d847",
     "name": "Dinh Độc Lập",
     "generalLocation": "TP.HCM",
     "latitude": 10.777665,
@@ -358,7 +339,6 @@
     ]
   },
   {
-    "id": "6542bca5eef45c2f1c30d847",
     "name": "Khu lưu niệm Tôn Đức Thắng",
     "generalLocation": "TP.HCM",
     "latitude": 10.777215,
@@ -376,7 +356,6 @@
     ]
   },
   {
-    "id": "6542bca5eef45c2f1c30d848",
     "name": "Nhà tù Côn Đảo",
     "generalLocation": "Côn Đảo, Bà Rịa - Vũng Tàu",
     "latitude": 8.696058,
@@ -396,7 +375,6 @@
     ]
   },
   {
-    "id": "6546a3c1b1ed6f21b5a7c832",
     "name": "Thành Cổ Loa",
     "generalLocation": "Hà Nội",
     "latitude": 21.110106,
@@ -415,7 +393,6 @@
     ]
   },
   {
-    "id": "6546a3c1b1ed6f21b5a7c833",
     "name": "Đền Đồng Nhân",
     "generalLocation": "Hà Nội",
     "latitude": 21.101754,
@@ -433,7 +410,6 @@
     ]
   },
   {
-    "id": "6546a3c1b1ed6f21b5a7c834",
     "name": "Văn Miếu Quốc Tử Giám",
     "generalLocation": "Hà Nội",
     "latitude": 21.029676,
@@ -453,7 +429,6 @@
     ]
   },
   {
-    "id": "6546a3c1b1ed6f21b5a7c835",
     "name": "Thiền Viện Trúc Lâm Yên Tử",
     "generalLocation": "Quảng Ninh",
     "latitude": 21.063620,
@@ -472,7 +447,6 @@
     ]
   },
   {
-    "id": "6546a3c1b1ed6f21b5a7c836",
     "name": "Đền Trần",
     "generalLocation": "Nam Định",
     "latitude": 20.393524,
@@ -491,7 +465,6 @@
     ]
   },
   {
-    "id": "6546a3c1b1ed6f21b5a7c838",
     "name": "Chùa Phổ Minh",
     "generalLocation": "Tây Ninh",
     "latitude": 11.305174,
@@ -510,7 +483,6 @@
     ]
   },
   {
-    "id": "6546a3c1b1ed6f21b5a7c839",
     "name": "Đền Phủ Đổng",
     "generalLocation": "Bắc Giang",
     "latitude": 21.356225,
@@ -530,7 +502,6 @@
     ]
   },
   {
-    "id": "6546a3c1b1ed6f21b5a7c840",
     "name": "Lăng Chủ tịch Hồ Chí Minh",
     "generalLocation": "Hà Nội",
     "latitude": 21.036666,
@@ -548,7 +519,6 @@
       "https://www.vamvo.com/desktopmodules/multimediagallerypro/ThumbnailImage.aspx?FileName=C%3A%5Cinetpub%5Cvhosts%5Cvamvo.com%5Chttpdocs%5CPortals%5C0%5Chinha%5Cvietnam%5Cha-noi%5Cha-noi-lang-bac-01.jpg&portalID=0&mid=1024&width=500"
     ]
   },{
-    "id": "6546a3c1b1ed6f21b5a7c841",
     "name": "Chùa Thầy",
     "generalLocation": "Hà Nội",
     "latitude": 21.070351,

@@ -17,7 +17,7 @@ import {
 } from "react-native";
 import { ImageSlider } from "react-native-image-slider-banner";
 import Modal from "react-native-modal";
-import Loading from "./Loading";
+import Loading from "../components/Loading";
 import Icon from "react-native-vector-icons/Ionicons";
 
 export default function LocationDetail({ route, navigation }) {
@@ -152,17 +152,16 @@ export default function LocationDetail({ route, navigation }) {
         <TouchableOpacity
           style={{
             position: "absolute",
-            top: 40,
-            right: 25,
+            top: Platform.OS === "ios" ? ((screenHeight / 20)) : (screenHeight / 30) - 10,
+            right: (screenWidth / 20) - 10,
             backgroundColor: "transparent",
             padding: 10,
-            borderRadius: 20,
           }}
           onPress={handleBookmarkPress}
         >
           <Icon
             name={isBookmarked ? "bookmark" : "bookmark-outline"}
-            size={35}
+            size={30}
             color={isBookmarked ? "#FFF500" : "white"}
           />
         </TouchableOpacity>
@@ -357,7 +356,7 @@ const styles = StyleSheet.create({
     maxHeight: reportHeight * 0.6,
     width: reportWidth * 0.82,
     lineHeight: -0.5,
-    fontSize: (screenWidth / 25),
+    fontSize: screenWidth / 25,
   },
   containerButton: {
     width: reportHeight * 0.7,

@@ -5,5 +5,5 @@ export const initialCamera = {
   },
   pitch: 0,
   heading: 0,
-  zoom: 5.9,
+  zoom: 5.7,
 };
