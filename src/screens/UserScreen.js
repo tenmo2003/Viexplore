@@ -62,7 +62,7 @@ const UserScreen = ({route, navigation}) => {
           <TouchableOpacity
             onPress={() => navigation.navigate("Login")}
           >
-            <Ionicons name="settings-outline" size={23} color="#52575D" style={{ marginTop: 20, left: 350 }}></Ionicons>
+            <Ionicons name="settings-outline" size={23} color="#52575D" style={{ marginTop: 20, right:10,position:"absolute" }}></Ionicons>
           </TouchableOpacity>
         
         </View>

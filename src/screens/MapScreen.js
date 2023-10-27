@@ -1,5 +1,17 @@
 import React, { useRef, useState, useEffect } from "react";
-import { Text, TouchableOpacity, View, StyleSheet, Image } from "react-native";
+import {
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  StyleSheet,
+  Image,
+  Keyboard,
+  Dimensions,
+  Platform,
+  Animated,
+  Easing,
+} from "react-native";
 import MapView, { Geojson, Marker } from "react-native-maps";
 import { vietnam, mapStyle } from "../helper/vietnam";
 import { initialCamera } from "../helper/camera";
@@ -7,8 +19,7 @@ import Loading from "../components/Loading";
 import service from "../helper/axiosService";
 import Modal from "react-native-modal";
 import locationsJson from "../../assets/tempDb/locations.json";
-import { Feather } from "@expo/vector-icons";
-import { Dimensions } from "react-native";
+import { Feather, MaterialIcons } from "@expo/vector-icons";
 
 function MapScreen({ navigation }) {
   const mapViewRef = useRef(null);
@@ -19,6 +30,36 @@ function MapScreen({ navigation }) {
   const [locations, setLocations] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);
+
+  const [query, setQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [showResults, setShowResults] = useState(false);
+  const [haveResults, setHaveResults] = useState(false);
+  // const translateY = useRef(new Animated.Value(0)).current;
+
+  const onSearch = (location) => {
+    setQuery(location.name);
+    setSelectedLocation(location);
+    animateToCamera({
+      center: {
+        latitude: location.latitude,
+        longitude: location.longitude,
+      },
+      zoom: 8,
+    });
+    setTimeout(() => {
+      setModalVisible(true);
+    }, 450);
+  };
+
+  // const startAnimation = (value) => {
+  //   Animated.timing(translateY, {
+  //     toValue: value,
+  //     duration: 300, //
+  //     easing: Easing.linear,
+  //     useNativeDriver: false,
+  //   }).start();
+  // };
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -45,6 +86,20 @@ function MapScreen({ navigation }) {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const maximumAmountOfSearchResults = 10;
+    const results = locations
+      .filter((location) => {
+        const searchTerm = query.toLowerCase();
+        const locationName = location.name.toLowerCase();
+
+        return searchTerm && locationName.startsWith(searchTerm);
+      })
+      .slice(0, maximumAmountOfSearchResults);
+    setSearchResults(results);
+    setHaveResults(results.length !== 0);
+  }, [query]);
+
   if (loading) {
     return <Loading />;
   }
@@ -65,6 +120,7 @@ function MapScreen({ navigation }) {
         pitchEnabled={false}
         rotateEnabled={false}
         moveOnMarkerPress={false}
+        onPress={Keyboard.dismiss}
       >
         <Geojson
           geojson={vietnam}
@@ -177,6 +233,63 @@ function MapScreen({ navigation }) {
           </View>
         </Modal>
       )}
+
+      {/*       SEARCH      */}
+      <View
+        style={
+          haveResults && showResults
+            ? styles.searchContainer
+            : styles.searchContainerEmpty
+        }
+      >
+        <View style={styles.searchInner}>
+          <TextInput
+            placeholder="Tìm kiếm..."
+            style={styles.input}
+            value={query}
+            onChangeText={(value) => {
+              setQuery(value);
+              setShowResults(true);
+            }}
+            onFocus={() => {
+              setShowResults(true);
+              //startAnimation(-500);
+            }}
+            onBlur={() => {
+              setShowResults(false);
+              //startAnimation(0);
+            }}
+          />
+          {query.length > 0 && (
+            <TouchableOpacity
+              onPress={() => setQuery("")}
+              style={{ position: "absolute", right: 10 }}
+            >
+              <MaterialIcons
+                name="clear"
+                size={20}
+                color="rgba(127, 127, 127, 0.5)"
+              />
+            </TouchableOpacity>
+          )}
+        </View>
+        {showResults && (
+          <View style={styles.dropDown}>
+            {searchResults.map((location, index) => (
+              <TouchableOpacity //Touch? yes //ngon r
+                onPress={() => {
+                  onSearch(location);
+                  setShowResults(false);
+                }}
+                style={styles.dropDownRow}
+                key={index}
+              >
+                <Text>{location.name}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
+      </View>
     </View>
   );
 }
@@ -186,17 +299,24 @@ export default MapScreen;
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
+const searchBarPosANDR = screenHeight / 25;
+const searchBarPosIOS = searchBarPosANDR + 20;
+
 const leftMargin = screenWidth / 30;
 const objectWidth = screenWidth / 2 - 15;
+
+const searchBarWidth = screenWidth * 0.85;
+const dropDownWidth = searchBarWidth * 0.85;
 
 const modalHeight = 260;
 
 const styles = StyleSheet.create({
   flexView: {
     flex: 1,
-    gap: 25,
+    gap: 40,
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
   },
   flexView2: {
     flex: 1,
@@ -254,6 +374,9 @@ const styles = StyleSheet.create({
   },
   innerBox1: {
     flex: 1,
+    flexDirection: "row",
+    justifyContent: "flex-start",
+
   },
   innerBox2: {
     flex: 1,
@@ -320,5 +443,63 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "white",
     fontSize: 12,
+  },
+
+  // search bar, drop down and fetch data (siêu thiết kế)
+
+  searchContainerEmpty: {
+    position: "absolute",
+    top: Platform.OS === "ios" ? searchBarPosIOS : searchBarPosANDR,
+    backgroundColor: "white",
+    width: searchBarWidth,
+    borderRadius: 35,
+    display: "flex",
+    height: 40,
+    borderColor: "#BABABA",
+  },
+  searchContainer: {
+    position: "absolute",
+    top: Platform.OS === "ios" ? searchBarPosIOS : searchBarPosANDR,
+    backgroundColor: "white",
+    width: searchBarWidth,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    display: "flex",
+    height: 40,
+    borderBottomWidth: 1,
+    borderColor: "#BABABA",
+  },
+  dropDown: {
+    position: "absolute",
+    top: 40,
+    backgroundColor: "white",
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
+
+    // borderRadius: 15, // xoa cai nay di r set border ben duoi ko la cai nay override
+    width: searchBarWidth,
+    display: "flex",
+    flexDirection: "column",
+  },
+  dropDownempty: {
+    borderWidth: 0,
+  },
+  dropDownRow: {
+    cursor: "pointer",
+    padding: 10,
+    alignItems: "flex-start",
+  },
+  input: {
+    position: "absolute",
+    padding: 12,
+    paddingLeft: 15,
+    justifyContent: "center",
+    alignItems: "center",
+    width: searchBarWidth,
+  },
+  searchInner: {
+    display: "flex",
+    justifyContent: "center",
+    height: 40,
   },
 });
