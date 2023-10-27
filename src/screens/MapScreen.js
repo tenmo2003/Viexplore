@@ -18,7 +18,6 @@ import { initialCamera } from "../helper/camera";
 import Loading from "../components/Loading";
 import service from "../helper/axiosService";
 import Modal from "react-native-modal";
-import locationsJson from "../../assets/tempDb/locations.json";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
 
 function MapScreen({ navigation }) {
@@ -68,14 +67,14 @@ function MapScreen({ navigation }) {
   const fetchData = async () => {
     try {
       setLoading(true);
-      // service.get("/locations").then(
-      //   (response) => {
-      //     setLocations(response.data.results);
-      //     setLoading(false);
-      //   },
-      //   () => setLoading(false)
-      // );
-      setLocations(locationsJson);
+      service.get("/locations").then(
+        (response) => {
+          setLocations(response.data.results);
+          setLoading(false);
+        },
+        () => setLoading(false)
+      );
+      // setLocations(locationsJson);
       setLoading(false);
     } catch (error) {
       console.error(error);
@@ -120,7 +119,7 @@ function MapScreen({ navigation }) {
         pitchEnabled={false}
         rotateEnabled={false}
         moveOnMarkerPress={false}
-        onPress={Keyboard.dismiss}
+        onPress={() => Keyboard.dismiss()}
       >
         <Geojson
           geojson={vietnam}
@@ -128,7 +127,7 @@ function MapScreen({ navigation }) {
           fillColor="rgba(255, 240, 192, 0.5)"
           strokeWidth={1}
         />
-        {locations.map((location) => (
+        {locations && locations.map((location) => (
           <Marker
             key={location.id}
             coordinate={{
@@ -280,6 +279,7 @@ function MapScreen({ navigation }) {
                 onPress={() => {
                   onSearch(location);
                   setShowResults(false);
+                  Keyboard.dismiss();
                 }}
                 style={styles.dropDownRow}
                 key={index}

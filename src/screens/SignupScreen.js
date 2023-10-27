@@ -1,44 +1,69 @@
-import React, { useContext, useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Image,
   TextInput,
   TouchableOpacity,
   Dimensions,
-  ScrollView,
   KeyboardAvoidingView,
+  ScrollView,
+  Alert,
 } from "react-native";
 import { Input, Button, Text } from "react-native-elements";
-import TokenContext from "../contexts/TokenContext";
-import service, { updateHeaderConfig } from "../helper/axiosService";
-import * as SecureStore from "expo-secure-store";
+import service from "../helper/axiosService";
 
-export default function LoginScreen({ navigation }) {
-  const { token, setToken } = useContext(TokenContext);
-
+export default function SignupScreen({ navigation }) {
+  const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const showAlert = (message, proceed) =>
+    Alert.alert(
+      "Alert",
+      message,
+      [
+        {
+          text: "OK",
+          onPress: () => proceed && navigation.navigate("Login"),
+          style: "cancel",
+        },
+      ],
+      {
+        cancelable: true,
+        onDismiss: () => proceed && navigation.navigate("Login"),
+      }
+    );
 
   const onSubmit = () => {
     console.log("username: ", username);
     console.log("password: ", password);
+    console.log("confirmpass: ", confirmPassword);
+
+    if (password !== confirmPassword) {
+      showAlert("Passwords don't match", false);
+      return;
+    }
+
     service
-      .post("/authenticate", {
+      .post("/signup", {
         username: username,
         password: password,
+        email: email,
+        role: "ROLE_USER",
       })
       .then(
         (res) => {
-          async function saveToken(value) {
-            await SecureStore.setItemAsync("token", value);
-          }
           console.log(res.data.message);
-          const token = res.data.results;
-          saveToken(token);
-          setToken(token);
-          updateHeaderConfig("Authorization", token);
+          if (res.data.message === "User already exists") {
+            showAlert(res.data.message, false);
+          } else {
+            showAlert("Signed up successfully", true);
+          }
         },
-        () => console.log("failed")
+        () => {
+          console.log("Network failed");
+        }
       );
   };
 
@@ -50,17 +75,43 @@ export default function LoginScreen({ navigation }) {
     setPassword(input);
   };
 
+  const onChangeConfirmPassword = (input) => {
+    setConfirmPassword(input);
+  };
+
+  const onChangeEmail = (input) => {
+    setEmail(input);
+  };
+
   return (
     <KeyboardAvoidingView
       behavior="height"
       style={styles.keyboardAvoidingContainer}
     >
-      <ScrollView showsVerticalScrollIndicator={false} overScrollMode="never">
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContainer}
+      >
         <View style={styles.container}>
           <Image
-            source={require("../../assets/login.png")}
+            source={require("../../assets/signup.png")}
             style={styles.img}
           />
+          <View style={styles.inputContainer}>
+            <Input
+              placeholder="Email"
+              leftIcon={{
+                type: "font-awesome",
+                name: "envelope",
+                color: "#BABABA",
+                size: 20,
+              }}
+              inputContainerStyle={styles.inputContainerStyle}
+              inputStyle={styles.inputStyle}
+              leftIconContainerStyle={styles.leftIconStyle}
+              onChangeText={(value) => onChangeEmail(value)}
+            />
+          </View>
           <View style={styles.inputContainer}>
             <Input
               placeholder="Username"
@@ -90,39 +141,39 @@ export default function LoginScreen({ navigation }) {
               onChangeText={(value) => onChangePassword(value)}
             />
           </View>
-          <TouchableOpacity style={styles.btn}>
-            <Button
-              title="Login"
-              titleStyle={{ color: "white", fontSize: 30 }}
-              buttonStyle={styles.loginButton}
-              onPress={() => onSubmit()}
+          <View style={styles.inputContainer}>
+            <Input
+              placeholder="Confirm password"
+              leftIcon={{
+                type: "font-awesome",
+                name: "lock",
+                color: "#BABABA",
+              }}
+              secureTextEntry={true}
+              inputContainerStyle={styles.inputContainerStyle}
+              inputStyle={styles.inputStyle}
+              leftIconContainerStyle={styles.leftIconStyle}
+              onChangeText={(value) => onChangeConfirmPassword(value)}
             />
-          </TouchableOpacity>
-
-          <Text
-            style={{
-              marginBottom: 15,
-              marginTop: 20,
-              textDecorationLine: "underline",
-            }}
-            onPress={() => navigation.navigate("MailResetPass")}
-          >
-            Forgot password?
-          </Text>
-
-          <Text style={{ marginBottom: 25, fontWeight: "bold", fontSize: 14 }}>
-            {" "}
-            ______________________ OR ______________________{" "}
-          </Text>
-
+          </View>
           <TouchableOpacity style={styles.btn}>
             <Button
               title="Signup"
               titleStyle={{ color: "white", fontSize: 30 }}
               buttonStyle={styles.signupButton}
-              onPress={() => navigation.navigate("Signup")}
+              onPress={() => onSubmit()}
             />
           </TouchableOpacity>
+
+          <Text style={{ fontWeight: "bold", fontSize: 18, marginTop: 10 }}>
+            Already have an account?{" "}
+            <Text
+              onPress={() => navigation.navigate("Login")}
+              style={{ textDecorationLine: "underline" }}
+            >
+              Login
+            </Text>
+          </Text>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -135,9 +186,6 @@ const standardHeight = 800;
 const imgWidth = (500 / standarWidth) * width;
 
 const styles = {
-  keyboardAvoidingContainer: {
-    flex: 1,
-  },
   container: {
     flex: 1,
     alignItems: "center",
@@ -179,16 +227,8 @@ const styles = {
     height: 50,
   },
 
-  loginButton: {
-    backgroundColor: "#687DAA",
-    borderRadius: 50,
-    borderColor: "black",
-    borderWidth: 2,
-    padding: 0,
-  },
-
   signupButton: {
-    backgroundColor: "#FF6B06",
+    backgroundColor: "#687DAA",
     borderRadius: 50,
     borderColor: "black",
     borderWidth: 2,
