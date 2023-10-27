@@ -16,6 +16,7 @@ import ForumScreen from "./src/screens/ForumScreen";
 import MapScreen from "./src/screens/MapScreen";
 import UserTabs from "./src/tabs/UserTabs";
 import MapTabs from "./src/tabs/MapTabs";
+import service, { removeHeaderConfig } from "./src/helper/axiosService";
 
 const _renderIcon = (routeName, selectedTab) => {
   switch (routeName) {
@@ -55,8 +56,24 @@ export default function App() {
       const storedToken = await SecureStore.getItemAsync("token");
       if (storedToken) {
         //TODO: CHECK IF TOKEN IS STILL VALID
+        service.get("/check-token").then(
+          (res) => {
+            async function removeToken() {
+              await SecureStore.deleteItemAsync("token");
+            }
+            if (res.data.message === "Success") {
+              setToken(storedToken);
+            } else {
+              console.log("token expired")
+              removeToken();
+              removeHeaderConfig("Authorization");
+            }
+          },
+          () => {
+            console.log("Failed");
+          }
+        );
       }
-      setToken(storedToken);
       setLoading(false);
     };
 

@@ -210,11 +210,6 @@ export default function LocationDetail({ route, navigation }) {
         style={styles.popupPosi}
         avoidKeyboard={true}
       >
-        {/* <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : null}
-          style={styles.containerView}
-        >
-          <ScrollView contentContainerStyle={styles.scrollContainer}> */}
             <View style={styles.bottomSheetScreen}>
               <View style={styles.center}>
                 <DismissKeyboard>
@@ -241,12 +236,22 @@ export default function LocationDetail({ route, navigation }) {
                         </TouchableOpacity>
                       </View>
                     </View>
+
                   </View>
-                </DismissKeyboard>
+                  <View style={styles.containerButton}>
+                    <TouchableOpacity style={styles.button}>
+                      <Text style={styles.buttonText}>Send</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
               </View>
+
             </View>
-          {/* </ScrollView>
-        </KeyboardAvoidingView> */}
+
+            </DismissKeyboard>
+          </View>
+        </View>
+
       </Modal>
     </View>
   );

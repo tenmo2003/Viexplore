@@ -11,7 +11,7 @@ import ResetpassScreen from "../screens/ResetpassScreen";
 const Stack = createStackNavigator();
 
 export default function UserTabs({ navigation }) {
-  const token = useContext(TokenContext);
+  const { token, setToken } = useContext(TokenContext);
 
   return (
     <View className="flex-1">
