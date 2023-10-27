@@ -210,33 +210,25 @@ export default function LocationDetail({ route, navigation }) {
         style={styles.popupPosi}
         avoidKeyboard={true}
       >
-            <View style={styles.bottomSheetScreen}>
-              <View style={styles.center}>
-                <DismissKeyboard>
-                  <View style={styles.flexColumn}>
-                    <View style={styles.center}>
-                      <View style={styles.iconReport}>
-                        <Image
-                          source={require("../../assets/iconReport.png")}
-                          style={styles.img}
-                        />
-                      </View>
-                      <Text style={styles.headerReport}>ND BÁO CÁO</Text>
-                      <View style={styles.reportContent}>
-                        <TextInput
-                          multiline={true}
-                          maxLength={400}
-                          style={styles.textReport}
-                          placeholder="Viết báo cáo ở đây...(tối đa 400 chữ)"
-                        ></TextInput>
-                      </View>
-                      <View style={styles.containerButton}>
-                        <TouchableOpacity style={styles.button}>
-                          <Text style={styles.buttonText}>Send</Text>
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-
+        <View style={styles.bottomSheetScreen}>
+          <View style={styles.center}>
+            <DismissKeyboard>
+              <View style={styles.flexColumn}>
+                <View style={styles.center}>
+                  <View style={styles.iconReport}>
+                    <Image
+                      source={require("../../assets/iconReport.png")}
+                      style={styles.img}
+                    />
+                  </View>
+                  <Text style={styles.headerReport}>ND BÁO CÁO</Text>
+                  <View style={styles.reportContent}>
+                    <TextInput
+                      multiline={true}
+                      maxLength={400}
+                      style={styles.textReport}
+                      placeholder="Viết báo cáo ở đây...(tối đa 400 chữ)"
+                    ></TextInput>
                   </View>
                   <View style={styles.containerButton}>
                     <TouchableOpacity style={styles.button}>
@@ -245,13 +237,9 @@ export default function LocationDetail({ route, navigation }) {
                   </View>
                 </View>
               </View>
-
-            </View>
-
             </DismissKeyboard>
           </View>
         </View>
-
       </Modal>
     </View>
   );
@@ -369,7 +357,7 @@ const styles = StyleSheet.create({
     maxHeight: reportHeight * 0.6,
     width: reportWidth * 0.82,
     lineHeight: -0.5,
-    fontSize: 18,
+    fontSize: (screenWidth / 25),
   },
   containerButton: {
     width: reportHeight * 0.7,

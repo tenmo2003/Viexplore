@@ -10,8 +10,9 @@ import {
 } from "react-native";
 import { Input, Button, Text } from "react-native-elements";
 import TokenContext from "../contexts/TokenContext";
-import service, { updateHeaderConfig } from "../helper/axiosService";
+import service, { getAllHeaderConfig, updateHeaderConfig } from "../helper/axiosService";
 import * as SecureStore from "expo-secure-store";
+import { showAlert } from "../helper/CustomAlert";
 
 export default function LoginScreen({ navigation }) {
   const { token, setToken } = useContext(TokenContext);
@@ -33,10 +34,15 @@ export default function LoginScreen({ navigation }) {
             await SecureStore.setItemAsync("token", value);
           }
           console.log(res.data.message);
-          const token = res.data.results;
-          saveToken(token);
-          setToken(token);
-          updateHeaderConfig("Authorization", token);
+          if (res.data.message === "Success") {
+            const token = res.data.results;
+            saveToken(token);
+            setToken(token);
+            updateHeaderConfig("Authorization", token);
+            navigation.navigate("User");
+          } else {
+            showAlert(res.data.message, false, "User");
+          }
         },
         () => console.log("failed")
       );

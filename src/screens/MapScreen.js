@@ -16,7 +16,7 @@ import MapView, { Geojson, Marker } from "react-native-maps";
 import { vietnam, mapStyle } from "../helper/vietnam";
 import { initialCamera } from "../helper/camera";
 import Loading from "../components/Loading";
-import service from "../helper/axiosService";
+import service, { getAllHeaderConfig } from "../helper/axiosService";
 import Modal from "react-native-modal";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
 
@@ -75,7 +75,6 @@ function MapScreen({ navigation }) {
         () => setLoading(false)
       );
       // setLocations(locationsJson);
-      setLoading(false);
     } catch (error) {
       console.error(error);
     }
