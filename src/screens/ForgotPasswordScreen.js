@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Image, TextInput, TouchableOpacity, Dimensions, ScrollView, KeyboardAvoidingView } from "react-native";
 import { Input, Button, Text } from "react-native-elements";
+import { ScreenHeight } from "react-native-elements/dist/helpers";
 
 export default function ForgotPasswordScreen({ navigation }) {
   return (
@@ -48,25 +49,26 @@ export default function ForgotPasswordScreen({ navigation }) {
   );
 }
 
-const {height, width} = Dimensions.get('window');
+const { height, width } = Dimensions.get("window");
 const standarWidth = 360;
 const standardHeight = 800;
-const imgWidth = 500/standarWidth * width;
+const imgWidth = (500 / standarWidth) * width;
+const imgHeight = (550 / standardHeight) * width;
 
 const styles = {
   container: {
     flex: 1,
     alignItems: "center",
     backgroundColor: "#AACCFF", // Mã màu nền
+    height: Dimensions.get("window").height - ScreenHeight*0.09,
   },
 
   img: {
-    width: imgWidth, 
-    height: "35%",
-    aspectRatio: 2.5/2,
+    width: imgWidth,
+    height: imgHeight,
+    aspectRatio: 2.9 / 2,
     marginTop: Dimensions.get("window").width < 768 ? 20 : 60,
   },
-
   inputContainer: {
     width: "80%",
   },
