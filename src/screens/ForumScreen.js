@@ -90,6 +90,8 @@ function ForumScreen() {
         </View>
       </View>
       <View style={styles.Rectangle} />
+
+      
     </ScrollView>
   );
 }
