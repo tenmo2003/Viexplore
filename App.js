@@ -1,28 +1,22 @@
 import { AntDesign, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import { NavigationContainer } from "@react-navigation/native";
 import * as SecureStore from "expo-secure-store";
 import React, { useEffect, useState } from "react";
 import {
-  Animated,
   StatusBar,
-  StyleSheet,
-  TouchableOpacity,
+  StyleSheet
 } from "react-native";
-import { CurvedBottomBarExpo } from "react-native-curved-bottom-bar";
-import Loading from "./src/components/Loading";
-import TokenContext from "./src/contexts/TokenContext";
-import ForumScreen from "./src/screens/ForumScreen";
-import MapScreen from "./src/screens/MapScreen";
-import UserTabs from "./src/tabs/UserTabs";
-import MapTabs from "./src/tabs/MapTabs";
-import service, {
-  getAllHeaderConfig,
-  removeHeaderConfig,
-} from "./src/helper/axiosService";
+import { ScreenHeight } from "react-native-elements/dist/helpers";
 import { PaperProvider } from "react-native-paper";
 import { createMaterialBottomTabNavigator } from "react-native-paper/react-navigation";
-import { ScreenHeight } from "react-native-elements/dist/helpers";
+import Loading from "./src/components/Loading";
+import TokenContext from "./src/contexts/TokenContext";
+import service, {
+  removeHeaderConfig
+} from "./src/helper/axiosService";
+import ForumScreen from "./src/screens/ForumScreen";
+import MapTabs from "./src/tabs/MapTabs";
+import UserTabs from "./src/tabs/UserTabs";
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -33,7 +27,6 @@ export default function App() {
   useEffect(() => {
     const loadToken = async () => {
       const storedToken = await SecureStore.getItemAsync("token");
-      console.log(storedToken);
       if (storedToken) {
         service.get("/check-token").then(
           (res) => {
@@ -60,17 +53,12 @@ export default function App() {
       }
     };
 
-    console.log("checking token");
-
     loadToken();
   }, []);
 
-  if (loading) {
-    return <Loading />;
-  }
-
   return (
     <TokenContext.Provider value={{ token, setToken }}>
+      {loading && <Loading/>}
       <PaperProvider>
         <NavigationContainer>
           <Tab.Navigator
