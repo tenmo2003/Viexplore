@@ -20,35 +20,11 @@ import service, {
   getAllHeaderConfig,
   removeHeaderConfig,
 } from "./src/helper/axiosService";
+import { PaperProvider } from "react-native-paper";
+import { createMaterialBottomTabNavigator } from "react-native-paper/react-navigation";
+import { ScreenHeight } from "react-native-elements/dist/helpers";
 
-const _renderIcon = (routeName, selectedTab) => {
-  switch (routeName) {
-    case "ForumTab":
-      return (
-        <MaterialCommunityIcons name="forum-outline" size={24} color="black" />
-      );
-    case "UserTab":
-      return <AntDesign name="user" size={25} color="black" />;
-  }
-
-  return (
-    <Ionicons
-      name={"close-outline"}
-      size={25}
-      color={routeName === selectedTab ? "black" : "gray"}
-    />
-  );
-};
-const renderTabBar = ({ routeName, selectedTab, navigate }) => {
-  return (
-    <TouchableOpacity
-      onPress={() => navigate(routeName)}
-      style={styles.tabbarItem}
-    >
-      {_renderIcon(routeName, selectedTab)}
-    </TouchableOpacity>
-  );
-};
+const Tab = createMaterialBottomTabNavigator();
 
 export default function App() {
   const [token, setToken] = useState(null);
@@ -66,7 +42,7 @@ export default function App() {
             }
             if (res.data.message === "Success") {
               setToken(storedToken);
-              console.log("Token valid")
+              console.log("Token valid");
             } else {
               console.log("token expired");
               removeToken();
@@ -84,7 +60,7 @@ export default function App() {
       }
     };
 
-    console.log("checking token")
+    console.log("checking token");
 
     loadToken();
   }, []);
@@ -95,46 +71,55 @@ export default function App() {
 
   return (
     <TokenContext.Provider value={{ token, setToken }}>
-      <NavigationContainer>
-        <CurvedBottomBarExpo.Navigator
-          screenOptions={{ headerShown: false }}
-          type="DOWN"
-          height={50}
-          circleWidth={50}
-          bgColor="white"
-          initialRouteName="MapTab"
-          borderTopLeftRight
-          // eslint-disable-next-line no-unused-vars
-          renderCircle={({ selectedTab, navigate }) => (
-            <Animated.View style={styles.btnCircleUp}>
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() => navigate("MapTab")}
-                map
-              >
-                <Feather name={"map-pin"} color="black" size={25} />
-              </TouchableOpacity>
-            </Animated.View>
-          )}
-          tabBar={renderTabBar}
-        >
-          <CurvedBottomBarExpo.Screen
-            name="ForumTab"
-            position="LEFT"
-            component={ForumScreen}
-          />
-          <CurvedBottomBarExpo.Screen
-            name="UserTab"
-            component={UserTabs}
-            position="RIGHT"
-          />
-          <CurvedBottomBarExpo.Screen
-            name="MapTab"
-            component={MapTabs}
-            position="CIRCLE"
-          />
-        </CurvedBottomBarExpo.Navigator>
-      </NavigationContainer>
+      <PaperProvider>
+        <NavigationContainer>
+          <Tab.Navigator
+            initialRouteName="MapTab"
+            screenOptions={{ tabBarShowLabel: false }}
+            // labeled={false}
+            shifting={true}
+            backBehavior="history"
+            barStyle={styles.bottomBar}
+            activeColor="black"
+            inactiveColor="gray"
+          >
+            <Tab.Screen
+              options={{
+                tabBarIcon: ({ color, size }) => (
+                  <MaterialCommunityIcons
+                    name="forum-outline"
+                    size={24}
+                    color={color}
+                  />
+                ),
+                tabBarLabel: "Diễn đàn",
+              }}
+              name="ForumTab"
+              component={ForumScreen}
+            />
+            <Tab.Screen
+              options={{
+                tabBarIcon: ({ color, size }) => (
+                  <Feather name="map-pin" size={24} color={color} />
+                ),
+                tabBarLabel: "Bản đồ",
+              }}
+              name="MapTab"
+              component={MapTabs}
+            />
+            <Tab.Screen
+              options={{
+                tabBarIcon: ({ color, size }) => (
+                  <AntDesign name="user" size={24} color={color} />
+                ),
+                tabBarLabel: "Trang cá nhân",
+              }}
+              name="UserTab"
+              component={UserTabs}
+            />
+          </Tab.Navigator>
+        </NavigationContainer>
+      </PaperProvider>
       <StatusBar style="auto" />
     </TokenContext.Provider>
   );
@@ -145,57 +130,8 @@ export const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
   },
-  shawdow: {
-    shadowColor: "#DDDDDD",
-    shadowOffset: {
-      width: 0,
-      height: 0,
-    },
-    shadowOpacity: 1,
-    shadowRadius: 5,
-  },
-  button: {
-    flex: 1,
-    justifyContent: "center",
-  },
-  bottomBar: {},
-  btnCircleUp: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#E8E8E8",
-    bottom: 30,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 1.41,
-    elevation: 1,
-  },
-  imgCircle: {
-    width: 30,
-    height: 30,
-    tintColor: "gray",
-  },
-  tabbarItem: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  img: {
-    width: 30,
-    height: 30,
-  },
-  screen1: {
-    flex: 1,
-    backgroundColor: "#BFEFFF",
-  },
-  screen2: {
-    flex: 1,
-    backgroundColor: "#FFEBCD",
+  bottomBar: {
+    backgroundColor: "white",
+    height: ScreenHeight * 0.09,
   },
 });

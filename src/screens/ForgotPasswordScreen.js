@@ -2,7 +2,7 @@ import React from "react";
 import { View, Image, TextInput, TouchableOpacity, Dimensions, ScrollView, KeyboardAvoidingView } from "react-native";
 import { Input, Button, Text } from "react-native-elements";
 
-export default function ForgotpassMailScreen({ navigation }) {
+export default function ForgotPasswordScreen({ navigation }) {
   return (
     <KeyboardAvoidingView behavior="height" style={styles.keyboardAvoidingContainer}>
       <ScrollView showsVerticalScrollIndicator={false}>

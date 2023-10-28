@@ -158,7 +158,7 @@ function MapScreen({ navigation }) {
           ))}
       </MapView>
       <TouchableOpacity
-        className="absolute bottom-16 right-3 rounded-full bg-white p-3"
+        className="absolute bottom-3 right-3 rounded-full bg-white p-3"
         onPress={() => animateToCamera(initialCamera)}
       >
         <Text>Reset</Text>
