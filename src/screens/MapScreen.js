@@ -1,24 +1,22 @@
-import React, { useRef, useState, useEffect } from "react";
+import { Feather, MaterialIcons } from "@expo/vector-icons";
+import React, { useEffect, useRef, useState } from "react";
 import {
+  Dimensions,
+  Image,
+  Keyboard,
+  Platform,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  View,
-  StyleSheet,
-  Image,
-  Keyboard,
-  Dimensions,
-  Platform,
-  Animated,
-  Easing,
+  View
 } from "react-native";
 import MapView, { Geojson, Marker } from "react-native-maps";
-import { vietnam, mapStyle } from "../helper/vietnam";
-import { initialCamera } from "../helper/camera";
-import Loading from "../components/Loading";
-import service, { getAllHeaderConfig } from "../helper/axiosService";
 import Modal from "react-native-modal";
-import { Feather, MaterialIcons } from "@expo/vector-icons";
+import Loading from "../components/Loading";
+import service from "../helper/axiosService";
+import { initialCamera } from "../helper/camera";
+import { mapStyle, vietnam } from "../helper/vietnam";
 
 function MapScreen({ navigation }) {
   const mapViewRef = useRef(null);
@@ -98,9 +96,9 @@ function MapScreen({ navigation }) {
     setHaveResults(results.length !== 0);
   }, [query]);
 
-  if (loading) {
-    return <Loading />;
-  }
+  // if (loading) {
+  //   return <Loading />;
+  // }
 
   const animateToCamera = (camera) => {
     mapViewRef.current.animateCamera(camera, 500);
@@ -108,6 +106,7 @@ function MapScreen({ navigation }) {
 
   return (
     <View className="flex-1 items-center justify-end bg-gray-200">
+      {loading && <Loading/>}
       <MapView
         ref={mapViewRef}
         className="w-full h-full"
