@@ -1,4 +1,4 @@
-import { Octicons } from "@expo/vector-icons";
+import { Feather, Octicons } from "@expo/vector-icons";
 import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from "expo-av";
 import React, { useEffect, useState } from "react";
 import {
@@ -19,6 +19,8 @@ import { ImageSlider } from "react-native-image-slider-banner";
 import Modal from "react-native-modal";
 import Loading from "../components/Loading";
 import Icon from "react-native-vector-icons/Ionicons";
+import { useIsFocused } from "@react-navigation/native";
+import { Slider } from "react-native-elements";
 
 export default function LocationDetail({ route, navigation }) {
   const { location } = route.params;
@@ -48,13 +50,31 @@ export default function LocationDetail({ route, navigation }) {
       playsInSilentModeIOS: true,
     });
   }
+
   const [playbackObject, setPlaybackObject] = useState(new Audio.Sound());
+  const [duration, setDuration] = useState(0);
+  const [position, setPosition] = useState(0);
+
+  async function unload() {
+    await playbackObject.unloadAsync();
+  }
 
   const [loading, setLoading] = useState(false);
   const [autoPlayCarousel, setAutoPlayCarousel] = useState(true);
   const [isModalVisible, setModalVisible] = useState(false);
 
   const [isBookmarked, setBookmarked] = useState(false);
+
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    if (!isFocused) {
+      if (!paused) {
+        pauseAudio();
+        setPaused(true);
+      }
+    }
+  }, [isFocused]);
 
   const handleBookmarkPress = () => {
     setBookmarked(!isBookmarked);
@@ -75,6 +95,15 @@ export default function LocationDetail({ route, navigation }) {
           shouldPlay: false,
         }
       );
+      const initStatus = await playbackObject.getStatusAsync();
+      setDuration(initStatus.durationMillis);
+      await playbackObject.setProgressUpdateIntervalAsync(1000);
+      playbackObject.setOnPlaybackStatusUpdate((status) => {
+        if (status.didJustFinish) {
+          setPaused(true);
+        }
+        setPosition(status.positionMillis);
+      });
       setLoading(false);
     } catch (error) {
       // Handle the error
@@ -105,10 +134,6 @@ export default function LocationDetail({ route, navigation }) {
   }, []);
 
   useEffect(() => {
-    async function unload() {
-      await playbackObject.unloadAsync();
-    }
-
     return playbackObject ? () => unload() : undefined;
   }, [playbackObject]);
 
@@ -127,6 +152,16 @@ export default function LocationDetail({ route, navigation }) {
     }
   };
 
+  const handleJumpTo = async (position: number) => {
+    await playbackObject.setPositionAsync(position).catch((error) => {
+      console.error("Error jumping to position:", error);
+    });
+    await resumeAudio().catch((error) => {
+      console.error("Error resuming audio:", error);
+    });
+    setPaused(false);
+  };
+
   const DismissKeyboard = ({ children }) => (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       {children}
@@ -138,7 +173,7 @@ export default function LocationDetail({ route, navigation }) {
   }
 
   return (
-    <View>
+    <View className="flex-1">
       <View>
         <ImageSlider
           data={images}
@@ -152,8 +187,11 @@ export default function LocationDetail({ route, navigation }) {
         <TouchableOpacity
           style={{
             position: "absolute",
-            top: Platform.OS === "ios" ? ((screenHeight / 20)) : (screenHeight / 30) - 10,
-            right: (screenWidth / 20) - 10,
+            top:
+              Platform.OS === "ios"
+                ? screenHeight / 20
+                : screenHeight / 30 - 10,
+            right: screenWidth / 20 - 10,
             backgroundColor: "transparent",
             padding: 10,
           }}
@@ -185,15 +223,39 @@ export default function LocationDetail({ route, navigation }) {
             <Octicons name="report" size={24} color="black" />
           </TouchableOpacity>
         </View>
+        <View style={styles.audioPlayer}>
+          <TouchableOpacity
+            onPress={() => {
+              handlePause();
+            }}
+            style={styles.audioBtn}
+            className="bg-white p-2 rounded-lg"
+          >
+            {paused ? (
+              <Feather name="play" size={24} color="black" />
+            ) : (
+              <Feather name="pause" size={24} color="black" />
+            )}
+          </TouchableOpacity>
+          <View style={styles.audioSlider}>
+            <Slider
+              animateTransitions={true}
+              value={position}
+              minimumValue={0}
+              maximumValue={duration}
+              animationType="spring"
+              thumbStyle={styles.thumbStyle}
+              onSlidingStart={() => {
+                setPaused(true);
+                pauseAudio();
+              }}
+              onSlidingComplete={(position) => {
+                handleJumpTo(position);
+              }}
+            />
+          </View>
+        </View>
       </View>
-      <TouchableOpacity
-        className="bg-blue-500 p-3 rounded-lg"
-        onPress={() => {
-          handlePause();
-        }}
-      >
-        <Text>Play/Pause</Text>
-      </TouchableOpacity>
       <Modal
         onBackdropPress={() => setModalVisible(false)}
         onBackButtonPress={() => setModalVisible(false)}
@@ -254,6 +316,8 @@ const styles = StyleSheet.create({
   container: {
     paddingTop: 15,
     paddingHorizontal: 15,
+    flex: 1,
+    alignItems: "center",
   },
   activeIndicatorStyle: {
     width: 12,
@@ -373,4 +437,21 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
   },
+  audioPlayer: {
+    flexDirection: "row",
+    alignItems: "center",
+    position: "absolute",
+    bottom: 0,
+  },
+  audioBtn: {},
+  audioSlider: {
+    flex: 1,
+    paddingLeft: 10,
+  },
+  thumbStyle: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: "black",
+  }
 });

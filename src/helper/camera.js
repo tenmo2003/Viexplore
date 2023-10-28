@@ -1,6 +1,6 @@
 export const initialCamera = {
   center: {
-    latitude: 15.7,
+    latitude: 17.2,
     longitude: 106,
   },
   pitch: 0,

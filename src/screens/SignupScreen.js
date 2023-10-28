@@ -13,7 +13,7 @@ import { Input, Button, Text } from "react-native-elements";
 import service from "../helper/axiosService";
 import { showAlert } from "../helper/CustomAlert";
 
-export default function SignupScreen({ navigation }) {
+export default function SignUpScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
