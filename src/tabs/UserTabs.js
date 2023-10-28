@@ -4,7 +4,7 @@ import { View } from "react-native";
 import TokenContext from "../contexts/TokenContext";
 import LoginScreen from "../screens/LoginScreen";
 import UserScreen from "../screens/UserScreen";
-import SignUpScreen from "../screens/SignUpScreen";
+import SignUpScreen from "../screens/SignupScreen";
 import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
 import ResetpassScreen from "../screens/ResetpassScreen";
 

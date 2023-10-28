@@ -12,6 +12,7 @@ import {
 import { Input, Button, Text } from "react-native-elements";
 import service from "../helper/axiosService";
 import { showAlert } from "../helper/CustomAlert";
+import { ScreenHeight } from "react-native-elements/dist/helpers";
 
 export default function SignUpScreen({ navigation }) {
   const [email, setEmail] = useState("");
@@ -77,6 +78,7 @@ export default function SignUpScreen({ navigation }) {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContainer}
+        overScrollMode="never"
       >
         <View style={styles.container}>
           <Image
@@ -151,7 +153,7 @@ export default function SignUpScreen({ navigation }) {
             />
           </TouchableOpacity>
 
-          <Text style={{ fontWeight: "bold", fontSize: 18, marginTop: 10 }}>
+          <Text style={{ fontWeight: "bold", fontSize: 18, marginTop: 10, marginBottom: Dimensions.get("window").width < 768 ? 30 : 60, }}>
             Already have an account?{" "}
             <Text
               onPress={() => navigation.navigate("Login")}
@@ -170,18 +172,20 @@ const { height, width } = Dimensions.get("window");
 const standarWidth = 360;
 const standardHeight = 800;
 const imgWidth = (500 / standarWidth) * width;
+const imgHeight = (550 / standardHeight) * width;
 
 const styles = {
   container: {
     flex: 1,
     alignItems: "center",
     backgroundColor: "#AACCFF", // Mã màu nền
+    height: Dimensions.get("window").height - ScreenHeight*0.09,
   },
 
   img: {
     width: imgWidth,
-    height: "35%",
-    aspectRatio: 2.5 / 2,
+    height: imgHeight,
+    aspectRatio: 2.9 / 2,
     marginTop: Dimensions.get("window").width < 768 ? 20 : 60,
   },
 
@@ -219,5 +223,6 @@ const styles = {
     borderColor: "black",
     borderWidth: 2,
     padding: 0,
+    
   },
 };
