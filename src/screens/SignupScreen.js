@@ -1,18 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
-  View,
-  Image,
-  TextInput,
-  TouchableOpacity,
   Dimensions,
+  Image,
   KeyboardAvoidingView,
   ScrollView,
-  Alert,
+  TouchableOpacity,
+  View
 } from "react-native";
-import { Input, Button, Text } from "react-native-elements";
-import service from "../helper/axiosService";
-import { showAlert } from "../helper/CustomAlert";
+import { Button, Input, Text } from "react-native-elements";
 import { ScreenHeight } from "react-native-elements/dist/helpers";
+import { showAlert } from "../helper/CustomAlert";
+import service from "../helper/axiosService";
 
 export default function SignUpScreen({ navigation }) {
   const [email, setEmail] = useState("");

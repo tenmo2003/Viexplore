@@ -24,7 +24,6 @@ import { showAlert } from "../helper/CustomAlert";
 import TokenContext from "../contexts/TokenContext";
 import Loading from "../components/Loading";
 
-
 export default function LocationDetail({ route, navigation }) {
   const { location } = route.params;
   var images = [];
@@ -81,13 +80,8 @@ export default function LocationDetail({ route, navigation }) {
     }
   }, [isFocused]);
 
-
   useEffect(() => {
-    (token) ? setIsLogin(true) : setIsLogin(false);
-    console.log("token: ", token);
-    console.log("name: ", location.name);
-    console.log("isLogin: ", isLogin);
-    
+    token ? setIsLogin(true) : setIsLogin(false);
 
     service.get("/bookmarks", {}).then((res) => {
       for (let i = 0; i < res.data.results.length; i++) {
@@ -99,7 +93,7 @@ export default function LocationDetail({ route, navigation }) {
       () => {
         console.log("Failed to get list of Bookmarked");
       };
-    
+
     // service
     //   .get("/authenticate", {})
     //   .then((res) => {
@@ -117,6 +111,7 @@ export default function LocationDetail({ route, navigation }) {
   const handleBookmarkPress = () => {
     if (isLogin) {
       if (isBookmarked) {
+        setBookmarked(false);
         service
           .delete("/bookmark", {
             data: {
@@ -125,32 +120,25 @@ export default function LocationDetail({ route, navigation }) {
               thumbnail: location.thumbnail,
             },
           })
-          .then((res) => {
-            console.log("Response: ", res.data.message);
-            console.log("id: ", location.id);
-            console.log("name: ", location.name);
-            setBookmarked(false);
-          })
+          .then((res) => {})
           .catch((error) => {
+            setBookmarked(true);
             console.error("Delete Failed:", error);
           });
       } else {
+        setBookmarked(true);
         service
           .post("/bookmark", {
             id: location.id,
             name: location.name,
             thumbnail: location.thumbnail,
           })
-          .then((res) => {
-            console.log("Response: ", res.data.message);
-            console.log("id: ", location.id);
-            console.log("name: ", location.name);
-            setBookmarked(true);
-          })
+          .then((res) => {})
           .catch((error) => {
+            setBookmarked(false);
             console.error("Post Failed:", error);
           });
-      };
+      }
     } else {
       showAlert("Bạn cần đăng nhập để thực hiện chức năng này!");
     }
@@ -238,7 +226,6 @@ export default function LocationDetail({ route, navigation }) {
     setPaused(false);
   };
 
-
   const DismissKeyboard = ({ children }) => (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       {children}
@@ -251,7 +238,7 @@ export default function LocationDetail({ route, navigation }) {
 
   return (
     <View className="flex-1">
-      {loading && <Loading/>}
+      {loading && <Loading full={true} />}
       <View>
         <ImageSlider
           data={images}

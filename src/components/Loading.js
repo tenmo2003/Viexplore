@@ -1,9 +1,9 @@
 import { View, ActivityIndicator, StyleSheet } from "react-native";
 import React from "react";
 
-export default function Loading() {
+export default function Loading({ full=false }) {
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {backgroundColor: full ? "rgba(226, 232, 240, 1)" : "rgba(226, 232, 240, 0.5)"}]}>
       <ActivityIndicator size="large" color="blue" />
     </View>
   );
@@ -11,7 +11,6 @@ export default function Loading() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "rgba(226, 232, 240, 0.5)",
     zIndex: 1000,
     position: "absolute",
     top: 0,

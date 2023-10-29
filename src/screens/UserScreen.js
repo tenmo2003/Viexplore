@@ -1,108 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { TouchableOpacity } from "react-native";
 import { Ionicons } from "react-native-vector-icons";
 
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import {
+  Dimensions,
+  Image,
+  ScrollView,
+  StyleSheet,
   Text,
   View,
-  StyleSheet,
-  SafeAreaView,
-  ScrollView,
-  Image,
-  Dimensions,
 } from "react-native";
-import {
-  BottomTabBarHeightCallbackContext,
-  BottomTabBarHeightContext,
-} from "@react-navigation/bottom-tabs";
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import service from "../helper/axiosService";
-
-
-const UserScreen = ({ route, navigation }) => {
-  const [fullname, setFullName] = useState("");
-  const [username, setUsername] = useState("");
-
-  const onSubmit = () => {
-    service.get("users/me", {}).then(
-      (res) => {
-        const userData = res.data.results;
-        console.log(userData.fullName);
-        console.log(userData.username);
-        setFullName(userData.fullName);
-        setUsername(userData.username);
-      },
-      () => {
-        console.log("failed");
-      }
-    );
-  };
-
-  useEffect(() => {
-    onSubmit();
-  }, []);
-
-  return (
-    <View style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={true}>
-        <View>
-          <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-            <Ionicons
-              name="settings-outline"
-              size={23}
-              color="#52575D"
-              style={{ marginTop: 20, right: 10, position: "absolute" }}
-            ></Ionicons>
-          </TouchableOpacity>
-        </View>
-
-        <View style={{ alignSelf: "center" }}>
-          <View style={styles.profileImage}>
-            <Image
-              source={require("./../../assets/cho.jpg")}
-              style={styles.image}
-              resizeMode="center"
-            ></Image>
-          </View>
-          <View style={styles.add}>
-            <Ionicons
-              name="ios-add"
-              size={23}
-              color="#DFD8C8"
-              style={{ marginTop: -2, marginLeft: -1 }}
-            ></Ionicons>
-          </View>
-        </View>
-        <View style={styles.info}>
-          <Text
-            style={[
-              styles.text,
-              { fontWeight: "200", fontSize: 20, fontWeight: "bold" },
-            ]}
-            onPress={onSubmit}
-          >
-            {fullname}
-          </Text>
-          <Text
-            style={[
-              styles.text,
-              {
-                color: "#AEB5BC",
-                fontSize: 14,
-                fontStyle: "italic",
-                marginBottom: 5,
-              },
-            ]}
-            onPress={onSubmit}
-          >
-            {username}
-          </Text>
-        </View>
-      </ScrollView>
-      <BottomTab />
-    </View>
-  );
-};
+import Loading from "../components/Loading";
 
 const BottomTab = () => {
   const Tab = createMaterialTopTabNavigator();
@@ -111,7 +21,7 @@ const BottomTab = () => {
       <View style={{ flex: 1, backgroundColor: "#0000" }}>
         <View style={{ flex: 1 }}>
           <ScrollView style={{ flex: 1 }}>
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+            <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
               <View style={styles.content}>
                 <Image
                   source={require("./../../assets/ho.jpg")}
@@ -119,7 +29,15 @@ const BottomTab = () => {
                   resizeMode="center"
                 ></Image>
                 <View style={styles.name}>
-                  <Text style = {{fontSize:16,flexWrap:'wrap',textAlign:'center'}}>Hồ Gươm</Text>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      flexWrap: "wrap",
+                      textAlign: "center",
+                    }}
+                  >
+                    Hồ Gươm
+                  </Text>
                 </View>
               </View>
             </View>
@@ -134,33 +52,8 @@ const BottomTab = () => {
       <View style={{ flex: 1, backgroundColor: "#000" }}>
         <View style={{ flex: 1 }}>
           <ScrollView style={{ flex: 1 }}>
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+            <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
               <Text style={styles.img}>2</Text>
-              <Text style={styles.img}>2</Text>
-              <Text style={styles.img}>2</Text>
-              <Text style={styles.img}>2</Text>
-              <Text style={styles.img}>2</Text>
-              <Text style={styles.img}>2</Text>
-              <Text style={styles.img}>2</Text>
-              <Text style={styles.img}>2</Text>
-              <Text style={styles.img}>2</Text>
-              <Text style={styles.img}>2</Text>
-              <Text style={styles.img}>2</Text>
-              <Text style={styles.img}>2</Text>
-            </View>
-          </ScrollView>
-        </View>
-      </View>
-    )
-  }
-  const Save = () => {
-    return (
-      <View style={{ flex: 1, backgroundColor: "#000" }}>
-        <View style={{ flex: 1 }}>
-          <ScrollView style={{ flex: 1 }}>
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-
-
               <Text style={styles.img}>2</Text>
               <Text style={styles.img}>2</Text>
               <Text style={styles.img}>2</Text>
@@ -178,8 +71,29 @@ const BottomTab = () => {
       </View>
     );
   };
-
-
+  const Save = () => {
+    return (
+      <View style={{ flex: 1, backgroundColor: "#000" }}>
+        <View style={{ flex: 1 }}>
+          <ScrollView style={{ flex: 1 }}>
+            <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+              <Text style={styles.img}>2</Text>
+              <Text style={styles.img}>2</Text>
+              <Text style={styles.img}>2</Text>
+              <Text style={styles.img}>2</Text>
+              <Text style={styles.img}>2</Text>
+              <Text style={styles.img}>2</Text>
+              <Text style={styles.img}>2</Text>
+              <Text style={styles.img}>2</Text>
+              <Text style={styles.img}>2</Text>
+              <Text style={styles.img}>2</Text>
+              <Text style={styles.img}>2</Text>
+            </View>
+          </ScrollView>
+        </View>
+      </View>
+    );
+  };
 
   return (
     <Tab.Navigator
@@ -210,117 +124,146 @@ const BottomTab = () => {
       <Tab.Screen name="Save" component={Forums}></Tab.Screen>
       <Tab.Screen name="Forums" component={Forums}></Tab.Screen>
     </Tab.Navigator>
-  )
-}
-
+  );
+};
 
 const UserScreen = ({ route, navigation }) => {
+  const [fullname, setFullName] = useState("");
+  const [username, setUsername] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setLoading(true);
+    service.get("users/me", {}).then(
+      (res) => {
+        const userData = res.data.results;
+        setFullName(userData.fullName);
+        setUsername(userData.username);
+        setLoading(false);
+      },
+      () => {
+        console.log("failed");
+      }
+    );
+  }, []);
+
   return (
     <View style={styles.container}>
+      {loading && <Loading full={true} />}
       <ScrollView showsVerticalScrollIndicator={true}>
         <View>
-
-          <TouchableOpacity
-            onPress={() => navigation.navigate("Login")}
-          >
-            <Ionicons name="settings-outline" size={23} color="#52575D" style={{ marginTop: 20, right: 10, position: "absolute" }}></Ionicons>
+          <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+            <Ionicons
+              name="settings-outline"
+              size={23}
+              color="#52575D"
+              style={{ marginTop: 20, right: 10, position: "absolute" }}
+            ></Ionicons>
           </TouchableOpacity>
-
         </View>
 
         <View style={{ alignSelf: "center" }}>
           <View style={styles.profileImage}>
-            <Image source={require('./../../assets/cho.jpg')} style={styles.image} resizeMode="center"></Image>
+            <Image
+              source={require("./../../assets/cho.jpg")}
+              style={styles.image}
+              resizeMode="center"
+            ></Image>
           </View>
         </View>
         <View style={styles.info}>
-          <Text style={[styles.text, { fontWeight: "200", fontSize: 20, fontWeight: 'bold' }]}>MingMing</Text>
-          <Text style={[styles.text, { color: "#AEB5BC", fontSize: 14, fontStyle: 'italic', marginBottom: 5 }]}>Đ thích code</Text>
+          <Text style={[styles.text, { fontSize: 20, fontWeight: "bold" }]}>
+            {fullname}
+          </Text>
+          <Text
+            style={[
+              styles.text,
+              {
+                color: "#AEB5BC",
+                fontSize: 14,
+                fontStyle: "italic",
+                marginBottom: 5,
+              },
+            ]}
+          >
+            {username}
+          </Text>
         </View>
       </ScrollView>
       <BottomTab />
     </View>
-
-
   );
 };
 
-const styles = StyleSheet.create(
-  {
-    container: {
-      flex: 1,
-      backgroundColor: "#ffff",
-    },
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#ffff",
+  },
 
-    text: {
-      // fontFamily: 'Cochin',
-      color: "#52575D",
-      top: 5
-    },
-    image: {
-      flex: 1,
-      width: undefined,
-      height: undefined,
-      borderRadius: 100
-    },
-    titleBar: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      marginHorizontal: 16
-    },
-    profileImage: {
-      marginTop: 50,
-      width: 100,
-      height: 100,
-      overflow: "hidden",
-
-    },
-    info: {
-      position: "relative",
-      alignSelf: "center",
-      alignItems: "center",
-    },
-    content: {
-      flexDirection: 'column',
-      flexWrap: 'wrap',
-      margin: 5,
-      borderRadius: 12,
-      justifyContent: 'center',
-      alignSelf: 'center',
-      alignItems: 'center',
-
-    },
-    img: {
-      width: Dimensions.get("window").width / 3 - 13,
-      height: Dimensions.get("window").height / 6 - 2,
-      backgroundColor: "#0000",
-      borderTopRightRadius: 10,
-      borderTopLeftRadius: 10,
-      justifyContent: 'center',
-      alignSelf: 'center',
-      alignItems: 'center',
-      marginTop: 2,
-      borderColor: 'black',
-      borderWidth: 1
-
-    },
-    name: {
-      width: Dimensions.get("window").width / 3 - 13,
-      backgroundColor: "#ffff",
-      marginTop: -4,
-      alignSelf: 'center',
-      alignItems: 'center',
-      borderBottomRightRadius: 10,
-      borderBottomLeftRadius: 10,
-      borderColor: 'black',
-      borderWidth: 1,
-      flexWrap:'wrap',
-      flexDirection: 'row',
-      flex:0.3,
-      justifyContent: 'center',
-    }
-
+  text: {
+    // fontFamily: 'Cochin',
+    color: "#52575D",
+    top: 5,
+  },
+  image: {
+    flex: 1,
+    width: undefined,
+    height: undefined,
+    borderRadius: 100,
+  },
+  titleBar: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginHorizontal: 16,
+  },
+  profileImage: {
+    marginTop: 50,
+    width: 100,
+    height: 100,
+    overflow: "hidden",
+  },
+  info: {
+    position: "relative",
+    alignSelf: "center",
+    alignItems: "center",
+  },
+  content: {
+    flexDirection: "column",
+    flexWrap: "wrap",
+    margin: 5,
+    borderRadius: 12,
+    justifyContent: "center",
+    alignSelf: "center",
+    alignItems: "center",
+  },
+  img: {
+    width: Dimensions.get("window").width / 3 - 13,
+    height: Dimensions.get("window").height / 6 - 2,
+    backgroundColor: "#0000",
+    borderTopRightRadius: 10,
+    borderTopLeftRadius: 10,
+    justifyContent: "center",
+    alignSelf: "center",
+    alignItems: "center",
+    marginTop: 2,
+    borderColor: "black",
+    borderWidth: 1,
+  },
+  name: {
+    width: Dimensions.get("window").width / 3 - 13,
+    backgroundColor: "#ffff",
+    marginTop: -4,
+    alignSelf: "center",
+    alignItems: "center",
+    borderBottomRightRadius: 10,
+    borderBottomLeftRadius: 10,
+    borderColor: "black",
+    borderWidth: 1,
+    flexWrap: "wrap",
+    flexDirection: "row",
+    flex: 0.3,
+    justifyContent: "center",
   },
   profileImage: {
     marginTop: 50,
