@@ -1,10 +1,108 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { TouchableOpacity } from "react-native";
 import { Ionicons } from "react-native-vector-icons";
-import { Text, View, StyleSheet, SafeAreaView, ScrollView, Image, Dimensions } from "react-native";
-import { BottomTabBarHeightCallbackContext, BottomTabBarHeightContext } from "@react-navigation/bottom-tabs";
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
+import {
+  Text,
+  View,
+  StyleSheet,
+  SafeAreaView,
+  ScrollView,
+  Image,
+  Dimensions,
+} from "react-native";
+import {
+  BottomTabBarHeightCallbackContext,
+  BottomTabBarHeightContext,
+} from "@react-navigation/bottom-tabs";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import service from "../helper/axiosService";
+
+
+const UserScreen = ({ route, navigation }) => {
+  const [fullname, setFullName] = useState("");
+  const [username, setUsername] = useState("");
+
+  const onSubmit = () => {
+    service.get("users/me", {}).then(
+      (res) => {
+        const userData = res.data.results;
+        console.log(userData.fullName);
+        console.log(userData.username);
+        setFullName(userData.fullName);
+        setUsername(userData.username);
+      },
+      () => {
+        console.log("failed");
+      }
+    );
+  };
+
+  useEffect(() => {
+    onSubmit();
+  }, []);
+
+  return (
+    <View style={styles.container}>
+      <ScrollView showsVerticalScrollIndicator={true}>
+        <View>
+          <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+            <Ionicons
+              name="settings-outline"
+              size={23}
+              color="#52575D"
+              style={{ marginTop: 20, right: 10, position: "absolute" }}
+            ></Ionicons>
+          </TouchableOpacity>
+        </View>
+
+        <View style={{ alignSelf: "center" }}>
+          <View style={styles.profileImage}>
+            <Image
+              source={require("./../../assets/cho.jpg")}
+              style={styles.image}
+              resizeMode="center"
+            ></Image>
+          </View>
+          <View style={styles.add}>
+            <Ionicons
+              name="ios-add"
+              size={23}
+              color="#DFD8C8"
+              style={{ marginTop: -2, marginLeft: -1 }}
+            ></Ionicons>
+          </View>
+        </View>
+        <View style={styles.info}>
+          <Text
+            style={[
+              styles.text,
+              { fontWeight: "200", fontSize: 20, fontWeight: "bold" },
+            ]}
+            onPress={onSubmit}
+          >
+            {fullname}
+          </Text>
+          <Text
+            style={[
+              styles.text,
+              {
+                color: "#AEB5BC",
+                fontSize: 14,
+                fontStyle: "italic",
+                marginBottom: 5,
+              },
+            ]}
+            onPress={onSubmit}
+          >
+            {username}
+          </Text>
+        </View>
+      </ScrollView>
+      <BottomTab />
+    </View>
+  );
+};
 
 const BottomTab = () => {
   const Tab = createMaterialTopTabNavigator();
@@ -24,13 +122,13 @@ const BottomTab = () => {
                   <Text style = {{fontSize:16,flexWrap:'wrap',textAlign:'center'}}>Hồ Gươm</Text>
                 </View>
               </View>
-
             </View>
           </ScrollView>
         </View>
       </View>
-    )
-  }
+    );
+  };
+
   const Forums = () => {
     return (
       <View style={{ flex: 1, backgroundColor: "#000" }}>
@@ -78,15 +176,19 @@ const BottomTab = () => {
           </ScrollView>
         </View>
       </View>
-    )
-  }
+    );
+  };
+
+
+
   return (
-    <Tab.Navigator style={{ marginTop: -450 }}
+    <Tab.Navigator
+      style={{ marginTop: -450 }}
       screenOptions={({ route }) => ({
         tabBarShowLabel: false,
         tabBarIndicatorStyle: {
-          backgroundColor: 'black',
-          height: 1.5
+          backgroundColor: "black",
+          height: 1.5,
         },
         tabBarIcon: ({ focused, color }) => {
           let iconName;
@@ -101,8 +203,9 @@ const BottomTab = () => {
             color = focused ? "#52575D" : "#AEB5BC";
           }
           return <Ionicons name={iconName} color={color} size={23} />;
-        }
-      })}>
+        },
+      })}
+    >
       <Tab.Screen name="Post" component={Post}></Tab.Screen>
       <Tab.Screen name="Save" component={Forums}></Tab.Screen>
       <Tab.Screen name="Forums" component={Forums}></Tab.Screen>
@@ -217,7 +320,29 @@ const styles = StyleSheet.create(
       justifyContent: 'center',
     }
 
-
-  }
-)
+    marginHorizontal: 16,
+  },
+  profileImage: {
+    marginTop: 50,
+    width: 100,
+    height: 100,
+    overflow: "hidden",
+  },
+  add: {
+    backgroundColor: "#41444B",
+    position: "absolute",
+    left: 70,
+    top: 130,
+    width: 20,
+    height: 20,
+    borderRadius: 30,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  info: {
+    position: "relative",
+    alignSelf: "center",
+    alignItems: "center",
+  },
+});
 export default UserScreen;
