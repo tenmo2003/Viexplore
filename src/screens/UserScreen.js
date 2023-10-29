@@ -1,7 +1,7 @@
 import React from "react";
 import { TouchableOpacity } from "react-native";
 import { Ionicons } from "react-native-vector-icons";
-import { Text, View, StyleSheet, SafeAreaView, ScrollView, Image } from "react-native";
+import { Text, View, StyleSheet, SafeAreaView, ScrollView, Image, Dimensions } from "react-native";
 import { BottomTabBarHeightCallbackContext, BottomTabBarHeightContext } from "@react-navigation/bottom-tabs";
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
@@ -10,19 +10,73 @@ const BottomTab = () => {
   const Tab = createMaterialTopTabNavigator();
   const Post = () => {
     return (
-      <View >
-        <Text>
-          Post
-        </Text>
+      <View style={{ flex: 1, backgroundColor: "#0000" }}>
+        <View style={{ flex: 1 }}>
+          <ScrollView style={{ flex: 1 }}>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+              <View style={styles.content}>
+                <Image
+                  source={require("./../../assets/ho.jpg")}
+                  style={styles.img}
+                  resizeMode="center"
+                ></Image>
+                <View style={styles.name}>
+                  <Text style = {{fontSize:16,flexWrap:'wrap',textAlign:'center'}}>Hồ Gươm</Text>
+                </View>
+              </View>
+
+            </View>
+          </ScrollView>
+        </View>
       </View>
     )
   }
   const Forums = () => {
     return (
-      <View>
-        <Text>
-          Forums
-        </Text>
+      <View style={{ flex: 1, backgroundColor: "#000" }}>
+        <View style={{ flex: 1 }}>
+          <ScrollView style={{ flex: 1 }}>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+              <Text style={styles.img}>2</Text>
+              <Text style={styles.img}>2</Text>
+              <Text style={styles.img}>2</Text>
+              <Text style={styles.img}>2</Text>
+              <Text style={styles.img}>2</Text>
+              <Text style={styles.img}>2</Text>
+              <Text style={styles.img}>2</Text>
+              <Text style={styles.img}>2</Text>
+              <Text style={styles.img}>2</Text>
+              <Text style={styles.img}>2</Text>
+              <Text style={styles.img}>2</Text>
+              <Text style={styles.img}>2</Text>
+            </View>
+          </ScrollView>
+        </View>
+      </View>
+    )
+  }
+  const Save = () => {
+    return (
+      <View style={{ flex: 1, backgroundColor: "#000" }}>
+        <View style={{ flex: 1 }}>
+          <ScrollView style={{ flex: 1 }}>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+
+
+              <Text style={styles.img}>2</Text>
+              <Text style={styles.img}>2</Text>
+              <Text style={styles.img}>2</Text>
+              <Text style={styles.img}>2</Text>
+              <Text style={styles.img}>2</Text>
+              <Text style={styles.img}>2</Text>
+              <Text style={styles.img}>2</Text>
+              <Text style={styles.img}>2</Text>
+              <Text style={styles.img}>2</Text>
+              <Text style={styles.img}>2</Text>
+              <Text style={styles.img}>2</Text>
+            </View>
+          </ScrollView>
+        </View>
       </View>
     )
   }
@@ -42,37 +96,38 @@ const BottomTab = () => {
           } else if (route.name === "Save") {
             iconName = focused ? "heart" : "heart";
             color = focused ? "#52575D" : "#AEB5BC";
+          } else {
+            iconName = focused ? "heart" : "heart";
+            color = focused ? "#52575D" : "#AEB5BC";
           }
           return <Ionicons name={iconName} color={color} size={23} />;
         }
       })}>
       <Tab.Screen name="Post" component={Post}></Tab.Screen>
       <Tab.Screen name="Save" component={Forums}></Tab.Screen>
+      <Tab.Screen name="Forums" component={Forums}></Tab.Screen>
     </Tab.Navigator>
   )
 }
 
 
-const UserScreen = ({route, navigation}) => {
+const UserScreen = ({ route, navigation }) => {
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={true}>
         <View>
-        
+
           <TouchableOpacity
             onPress={() => navigation.navigate("Login")}
           >
-            <Ionicons name="settings-outline" size={23} color="#52575D" style={{ marginTop: 20, right:10,position:"absolute" }}></Ionicons>
+            <Ionicons name="settings-outline" size={23} color="#52575D" style={{ marginTop: 20, right: 10, position: "absolute" }}></Ionicons>
           </TouchableOpacity>
-        
+
         </View>
-        
+
         <View style={{ alignSelf: "center" }}>
           <View style={styles.profileImage}>
             <Image source={require('./../../assets/cho.jpg')} style={styles.image} resizeMode="center"></Image>
-          </View>
-          <View style={styles.add}>
-            <Ionicons name="ios-add" size={23} color="#DFD8C8" style={{ marginTop: -2, marginLeft: -1 }}></Ionicons>
           </View>
         </View>
         <View style={styles.info}>
@@ -108,7 +163,6 @@ const styles = StyleSheet.create(
     titleBar: {
       flexDirection: "row",
       justifyContent: "space-between",
-
       marginHorizontal: 16
     },
     profileImage: {
@@ -118,22 +172,51 @@ const styles = StyleSheet.create(
       overflow: "hidden",
 
     },
-    add: {
-      backgroundColor: "#41444B",
-      position: "absolute",
-      left: 70,
-      top: 130,
-      width: 20,
-      height: 20,
-      borderRadius: 30,
-      alignItems: "center",
-      justifyContent: "center"
-    },
     info: {
       position: "relative",
       alignSelf: "center",
       alignItems: "center",
     },
+    content: {
+      flexDirection: 'column',
+      flexWrap: 'wrap',
+      margin: 5,
+      borderRadius: 12,
+      justifyContent: 'center',
+      alignSelf: 'center',
+      alignItems: 'center',
+
+    },
+    img: {
+      width: Dimensions.get("window").width / 3 - 13,
+      height: Dimensions.get("window").height / 6 - 2,
+      backgroundColor: "#0000",
+      borderTopRightRadius: 10,
+      borderTopLeftRadius: 10,
+      justifyContent: 'center',
+      alignSelf: 'center',
+      alignItems: 'center',
+      marginTop: 2,
+      borderColor: 'black',
+      borderWidth: 1
+
+    },
+    name: {
+      width: Dimensions.get("window").width / 3 - 13,
+      backgroundColor: "#ffff",
+      marginTop: -4,
+      alignSelf: 'center',
+      alignItems: 'center',
+      borderBottomRightRadius: 10,
+      borderBottomLeftRadius: 10,
+      borderColor: 'black',
+      borderWidth: 1,
+      flexWrap:'wrap',
+      flexDirection: 'row',
+      flex:0.3,
+      justifyContent: 'center',
+    }
+
 
   }
 )
