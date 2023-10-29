@@ -16,6 +16,7 @@ import service, {
 } from "../helper/axiosService";
 import * as SecureStore from "expo-secure-store";
 import { showAlert } from "../helper/CustomAlert";
+import { ScreenHeight } from "react-native-elements/dist/helpers";
 
 export default function LoginScreen({ navigation }) {
   const { token, setToken } = useContext(TokenContext);
@@ -75,9 +76,8 @@ export default function LoginScreen({ navigation }) {
   return (
     <KeyboardAvoidingView
       behavior="height"
-      style={styles.keyboardAvoidingContainer}
     >
-      <ScrollView showsVerticalScrollIndicator={false} overScrollMode="never">
+      <ScrollView showsVerticalScrollIndicator={false} overScrollMode="never" >
         <View style={styles.container}>
           <Image
             source={require("../../assets/login.png")}
@@ -155,21 +155,20 @@ const { height, width } = Dimensions.get("window");
 const standarWidth = 360;
 const standardHeight = 800;
 const imgWidth = (500 / standarWidth) * width;
+const imgHeight = (550 / standardHeight) * width;
 
 const styles = {
-  keyboardAvoidingContainer: {
-    flex: 1,
-  },
   container: {
     flex: 1,
     alignItems: "center",
     backgroundColor: "#AACCFF", // Mã màu nền
+    height: Dimensions.get("window").height - ScreenHeight*0.09,
   },
 
   img: {
     width: imgWidth,
-    height: "35%",
-    aspectRatio: 2.5 / 2,
+    height: imgHeight,
+    aspectRatio: 2.9 / 2,
     marginTop: Dimensions.get("window").width < 768 ? 20 : 60,
   },
 
@@ -202,7 +201,7 @@ const styles = {
   },
 
   loginButton: {
-    backgroundColor: "#687DAA",
+    backgroundColor: "#FF6B06",
     borderRadius: 50,
     borderColor: "black",
     borderWidth: 2,
@@ -210,7 +209,7 @@ const styles = {
   },
 
   signupButton: {
-    backgroundColor: "#FF6B06",
+    backgroundColor: "#687DAA",
     borderRadius: 50,
     borderColor: "black",
     borderWidth: 2,

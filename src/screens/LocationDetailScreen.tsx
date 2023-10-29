@@ -1,29 +1,29 @@
 import { Feather, Octicons } from "@expo/vector-icons";
+import { useIsFocused } from "@react-navigation/native";
 import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from "expo-av";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import {
   Dimensions,
   Image,
+  Keyboard,
   Platform,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  View,
-  KeyboardAvoidingView,
   TouchableWithoutFeedback,
-  Keyboard,
-  ScrollView,
+  View,
 } from "react-native";
+import { Slider } from "react-native-elements";
 import { ImageSlider } from "react-native-image-slider-banner";
 import Modal from "react-native-modal";
-import Loading from "../components/Loading";
 import Icon from "react-native-vector-icons/Ionicons";
-import { useIsFocused } from "@react-navigation/native";
-import { Slider } from "react-native-elements";
 import service from "../helper/axiosService";
 import { showAlert } from "../helper/CustomAlert";
 import TokenContext from "../contexts/TokenContext";
+import Loading from "../components/Loading";
+
 
 export default function LocationDetail({ route, navigation }) {
   const { location } = route.params;
@@ -238,18 +238,20 @@ export default function LocationDetail({ route, navigation }) {
     setPaused(false);
   };
 
+
   const DismissKeyboard = ({ children }) => (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       {children}
     </TouchableWithoutFeedback>
   );
 
-  if (loading) {
-    return <Loading />;
-  }
+  // if (loading) {
+  //   return <Loading />;
+  // }
 
   return (
     <View className="flex-1">
+      {loading && <Loading/>}
       <View>
         <ImageSlider
           data={images}
@@ -291,7 +293,7 @@ export default function LocationDetail({ route, navigation }) {
       </View>
       <View style={styles.container}>
         <View style={{ flexDirection: "row" }}>
-          <Text style={styles.title}>{location.name}</Text>
+          <Text className=" text-2xl font-bold">{location.name}</Text>
           <TouchableOpacity
             style={styles.reportButton}
             onPress={() => setModalVisible(true)}
@@ -299,13 +301,20 @@ export default function LocationDetail({ route, navigation }) {
             <Octicons name="report" size={24} color="black" />
           </TouchableOpacity>
         </View>
+        <View className="flex-1 py-2 px-2">
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <View>
+              <Text className="text-center text-xl">{location.script}</Text>
+            </View>
+          </ScrollView>
+        </View>
         <View style={styles.audioPlayer}>
           <TouchableOpacity
             onPress={() => {
               handlePause();
             }}
             style={styles.audioBtn}
-            className="bg-white p-2 rounded-lg"
+            className="p-2 rounded-lg"
           >
             {paused ? (
               <Feather name="play" size={24} color="black" />
@@ -390,7 +399,7 @@ const reportWidth = screenWidth;
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 15,
+    paddingTop: 10,
     paddingHorizontal: 15,
     flex: 1,
     alignItems: "center",
@@ -415,10 +424,6 @@ const styles = StyleSheet.create({
     left: 5,
     width: 100,
     height: 100,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
   },
   reportButton: {
     flex: 1,
@@ -516,8 +521,8 @@ const styles = StyleSheet.create({
   audioPlayer: {
     flexDirection: "row",
     alignItems: "center",
-    position: "absolute",
-    bottom: 0,
+    // position: "absolute",
+    // bottom: 0,
   },
   audioBtn: {},
   audioSlider: {
