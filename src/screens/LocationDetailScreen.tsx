@@ -1,6 +1,6 @@
 import { Feather, Octicons } from "@expo/vector-icons";
 import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from "expo-av";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Dimensions,
   Image,
@@ -21,6 +21,9 @@ import Loading from "../components/Loading";
 import Icon from "react-native-vector-icons/Ionicons";
 import { useIsFocused } from "@react-navigation/native";
 import { Slider } from "react-native-elements";
+import service from "../helper/axiosService";
+import { showAlert } from "../helper/CustomAlert";
+import TokenContext from "../contexts/TokenContext";
 
 export default function LocationDetail({ route, navigation }) {
   const { location } = route.params;
@@ -64,6 +67,8 @@ export default function LocationDetail({ route, navigation }) {
   const [isModalVisible, setModalVisible] = useState(false);
 
   const [isBookmarked, setBookmarked] = useState(false);
+  const { token } = useContext(TokenContext);
+  const [isLogin, setIsLogin] = useState(false);
 
   const isFocused = useIsFocused();
 
@@ -76,8 +81,79 @@ export default function LocationDetail({ route, navigation }) {
     }
   }, [isFocused]);
 
+
+  useEffect(() => {
+    (token) ? setIsLogin(true) : setIsLogin(false);
+    console.log("token: ", token);
+    console.log("name: ", location.name);
+    console.log("isLogin: ", isLogin);
+    
+
+    service.get("/bookmarks", {}).then((res) => {
+      for (let i = 0; i < res.data.results.length; i++) {
+        if (res.data.results[i].id === location.id) {
+          setBookmarked(!isBookmarked);
+        }
+      }
+    }),
+      () => {
+        console.log("Failed to get list of Bookmarked");
+      };
+    
+    // service
+    //   .get("/authenticate", {})
+    //   .then((res) => {
+    //     if (res.data.status === 200) {
+    //       setIsLogin(true);
+    //     } else {
+    //       setIsLogin(false);
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     console.error("Failed to authenticate:", error);
+    //   });
+  }, [location.id, token, isLogin]);
+
   const handleBookmarkPress = () => {
-    setBookmarked(!isBookmarked);
+    if (isLogin) {
+      if (isBookmarked) {
+        service
+          .delete("/bookmark", {
+            data: {
+              id: location.id,
+              name: location.name,
+              thumbnail: location.thumbnail,
+            },
+          })
+          .then((res) => {
+            console.log("Response: ", res.data.message);
+            console.log("id: ", location.id);
+            console.log("name: ", location.name);
+            setBookmarked(false);
+          })
+          .catch((error) => {
+            console.error("Delete Failed:", error);
+          });
+      } else {
+        service
+          .post("/bookmark", {
+            id: location.id,
+            name: location.name,
+            thumbnail: location.thumbnail,
+          })
+          .then((res) => {
+            console.log("Response: ", res.data.message);
+            console.log("id: ", location.id);
+            console.log("name: ", location.name);
+            setBookmarked(true);
+          })
+          .catch((error) => {
+            console.error("Post Failed:", error);
+          });
+      };
+    } else {
+      showAlert("Bạn cần đăng nhập để thực hiện chức năng này!");
+    }
   };
 
   const toggleModal = () => {
@@ -453,5 +529,5 @@ const styles = StyleSheet.create({
     height: 20,
     borderRadius: 10,
     backgroundColor: "black",
-  }
+  },
 });

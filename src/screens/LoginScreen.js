@@ -10,7 +10,10 @@ import {
 } from "react-native";
 import { Input, Button, Text } from "react-native-elements";
 import TokenContext from "../contexts/TokenContext";
-import service, { getAllHeaderConfig, updateHeaderConfig } from "../helper/axiosService";
+import service, {
+  getAllHeaderConfig,
+  updateHeaderConfig,
+} from "../helper/axiosService";
 import * as SecureStore from "expo-secure-store";
 import { showAlert } from "../helper/CustomAlert";
 
@@ -39,7 +42,20 @@ export default function LoginScreen({ navigation }) {
             saveToken(token);
             setToken(token);
             updateHeaderConfig("Authorization", token);
-            navigation.navigate("User");
+            // navigation.navigate("User");
+            service.get("/users/me", {}).then((res) => {
+              if (res.data.status === 200) {
+                if (res.data.results.fullName === null) {
+                  navigation.navigate(
+                    "SetFullName",
+                    { username: username },
+                    { password: password }
+                  );
+                } else {
+                  navigation.navigate("User");
+                }
+              }
+            });
           } else {
             showAlert(res.data.message, false, "User");
           }
