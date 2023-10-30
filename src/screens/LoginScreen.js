@@ -17,16 +17,19 @@ import service, {
 import * as SecureStore from "expo-secure-store";
 import { showAlert } from "../helper/CustomAlert";
 import { ScreenHeight } from "react-native-elements/dist/helpers";
+import Loading from "../components/Loading";
 
 export default function LoginScreen({ navigation }) {
   const { token, setToken } = useContext(TokenContext);
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const onSubmit = () => {
     console.log("username: ", username);
     console.log("password: ", password);
+    setLoading(true);
     service
       .post("/authenticate", {
         username: username,
@@ -60,8 +63,12 @@ export default function LoginScreen({ navigation }) {
           } else {
             showAlert(res.data.message, false, "User");
           }
+          setLoading(false);
         },
-        () => console.log("failed")
+        () => {
+          console.log("failed");
+          setLoading(false);
+        }
       );
   };
 
@@ -74,10 +81,9 @@ export default function LoginScreen({ navigation }) {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior="height"
-    >
-      <ScrollView showsVerticalScrollIndicator={false} overScrollMode="never" >
+    <KeyboardAvoidingView behavior="height">
+      {loading && <Loading />}
+      <ScrollView showsVerticalScrollIndicator={false} overScrollMode="never">
         <View style={styles.container}>
           <Image
             source={require("../../assets/login.png")}
@@ -162,7 +168,7 @@ const styles = {
     flex: 1,
     alignItems: "center",
     backgroundColor: "#AACCFF", // Mã màu nền
-    height: Dimensions.get("window").height - ScreenHeight*0.09,
+    height: Dimensions.get("window").height - ScreenHeight * 0.09,
   },
 
   img: {

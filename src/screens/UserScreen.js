@@ -12,7 +12,7 @@ import {
   TextInput,
   View,
 } from "react-native";
-import service from "../helper/axiosService";
+import service, { removeHeaderConfig } from "../helper/axiosService";
 import Loading from "../components/Loading";
 import Modal from "react-native-modal";
 import * as SecureStore from "expo-secure-store";
@@ -134,6 +134,7 @@ const BottomTab = () => {
 const UserScreen = ({ route, navigation }) => {
   const [fullname, setFullName] = useState("");
   const [username, setUsername] = useState("");
+  const [avatar, setAvatar] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const [isModalVisible, setModalVisible] = useState(false);
@@ -149,6 +150,7 @@ const UserScreen = ({ route, navigation }) => {
         const userData = res.data.results;
         setFullName(userData.fullName);
         setUsername(userData.username);
+        setAvatar(userData.avatar);
         setLoading(false);
       },
       () => {
@@ -160,18 +162,18 @@ const UserScreen = ({ route, navigation }) => {
   const { token, setToken } = useContext(TokenContext);
 
   const logOutHandler = () => {
-    const loadToken = async () => {
+    const removeToken = async () => {
       await SecureStore.deleteItemAsync("token");
       setToken(null);
+      removeHeaderConfig("Authorization");
       navigation.navigate("Login");
-      console.log("remove token");
     };
-    loadToken();
+    removeToken();
   };
 
   return (
     <View style={styles.container}>
-      {loading && <Loading full={true} />}
+      {loading && <Loading full={false} />}
       <ScrollView showsVerticalScrollIndicator={true}>
         <View>
           <TouchableOpacity onPress={toggleModal}>
@@ -195,7 +197,7 @@ const UserScreen = ({ route, navigation }) => {
         <View style={{ alignSelf: "center" }}>
           <View style={styles.profileImage}>
             <Image
-              source={require("./../../assets/cho.jpg")}
+              source={avatar ? { uri: avatar } : require("./../../assets/cho.jpg")}
               style={styles.image}
               resizeMode="center"
             ></Image>

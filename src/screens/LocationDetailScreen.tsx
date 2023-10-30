@@ -27,7 +27,7 @@ import Loading from "../components/Loading";
 export default function LocationDetail({ route, navigation }) {
   const { location } = route.params;
   var images = [];
-  for (let i = 0; i < location.images.length; i++) {
+  for (let i = 0; i < location?.images?.length; i++) {
     images.push({
       img: location.images[i],
     });
@@ -83,16 +83,20 @@ export default function LocationDetail({ route, navigation }) {
   useEffect(() => {
     token ? setIsLogin(true) : setIsLogin(false);
 
-    service.get("/bookmarks", {}).then((res) => {
-      for (let i = 0; i < res.data.results.length; i++) {
-        if (res.data.results[i].id === location.id) {
-          setBookmarked(!isBookmarked);
+    if (token) {
+      service.get("/bookmarks", {}).then(
+        (res) => {
+          for (let i = 0; i < res.data.results.length; i++) {
+            if (res.data.results[i].id === location.id) {
+              setBookmarked(!isBookmarked);
+            }
+          }
+        },
+        () => {
+          console.log("Failed to get list of Bookmarked");
         }
-      }
-    }),
-      () => {
-        console.log("Failed to get list of Bookmarked");
-      };
+      );
+    }
 
     // service
     //   .get("/authenticate", {})
@@ -106,7 +110,7 @@ export default function LocationDetail({ route, navigation }) {
     //   .catch((error) => {
     //     console.error("Failed to authenticate:", error);
     //   });
-  }, [location.id, token, isLogin]);
+  }, [location, token]);
 
   const handleBookmarkPress = () => {
     if (isLogin) {
@@ -295,38 +299,40 @@ export default function LocationDetail({ route, navigation }) {
             </View>
           </ScrollView>
         </View>
-        <View style={styles.audioPlayer}>
-          <TouchableOpacity
-            onPress={() => {
-              handlePause();
-            }}
-            style={styles.audioBtn}
-            className="p-2 rounded-lg"
-          >
-            {paused ? (
-              <Feather name="play" size={24} color="black" />
-            ) : (
-              <Feather name="pause" size={24} color="black" />
-            )}
-          </TouchableOpacity>
-          <View style={styles.audioSlider}>
-            <Slider
-              animateTransitions={true}
-              value={position}
-              minimumValue={0}
-              maximumValue={duration}
-              animationType="spring"
-              thumbStyle={styles.thumbStyle}
-              onSlidingStart={() => {
-                setPaused(true);
-                pauseAudio();
+        {duration > 0 && (
+          <View style={styles.audioPlayer}>
+            <TouchableOpacity
+              onPress={() => {
+                handlePause();
               }}
-              onSlidingComplete={(position) => {
-                handleJumpTo(position);
-              }}
-            />
+              style={styles.audioBtn}
+              className="p-2 rounded-lg"
+            >
+              <Feather
+                name={paused ? "play" : "pause"}
+                size={24}
+                color="black"
+              />
+            </TouchableOpacity>
+            <View style={styles.audioSlider}>
+              <Slider
+                animateTransitions={true}
+                value={position}
+                minimumValue={0}
+                maximumValue={duration}
+                animationType="spring"
+                thumbStyle={styles.thumbStyle}
+                onSlidingStart={() => {
+                  setPaused(true);
+                  pauseAudio();
+                }}
+                onSlidingComplete={(position) => {
+                  handleJumpTo(position);
+                }}
+              />
+            </View>
           </View>
-        </View>
+        )}
       </View>
       <Modal
         onBackdropPress={() => setModalVisible(false)}

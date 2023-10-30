@@ -32,6 +32,7 @@ export default function App() {
           (res) => {
             async function removeToken() {
               await SecureStore.deleteItemAsync("token");
+              removeHeaderConfig("Authorization");
             }
             if (res.data.message === "Success") {
               setToken(storedToken);
@@ -39,7 +40,6 @@ export default function App() {
             } else {
               console.log("token expired");
               removeToken();
-              removeHeaderConfig("Authorization");
             }
             setLoading(false);
           },
