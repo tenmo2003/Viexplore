@@ -11,12 +11,14 @@ import { Button, Input, Text } from "react-native-elements";
 import { ScreenHeight } from "react-native-elements/dist/helpers";
 import { showAlert } from "../helper/CustomAlert";
 import service from "../helper/axiosService";
+import Loading from "../components/Loading";
 
 export default function SignUpScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   
 
@@ -30,6 +32,7 @@ export default function SignUpScreen({ navigation }) {
       return;
     }
 
+    setLoading(true);
     service
       .post("/signup", {
         username: username,
@@ -45,9 +48,11 @@ export default function SignUpScreen({ navigation }) {
           } else {
             showAlert("Signed up successfully", true, "Login");
           }
+          setLoading(false);
         },
         () => {
           console.log("Network failed");
+          setLoading(false);
         }
       );
   };
@@ -73,6 +78,7 @@ export default function SignUpScreen({ navigation }) {
       behavior="height"
       style={styles.keyboardAvoidingContainer}
     >
+      {loading && <Loading />}
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContainer}

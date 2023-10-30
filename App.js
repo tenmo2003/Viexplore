@@ -30,17 +30,6 @@ export default function App() {
       if (storedToken) {
         service.get("/check-token").then(
           (res) => {
-            async function removeToken() {
-              await SecureStore.deleteItemAsync("token");
-              removeHeaderConfig("Authorization");
-            }
-            if (res.data.message === "Success") {
-              setToken(storedToken);
-              console.log("Token valid");
-            } else {
-              console.log("token expired");
-              removeToken();
-            }
             setLoading(false);
           },
           (reject) => {

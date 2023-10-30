@@ -1,5 +1,6 @@
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
+import { showAlert } from "./CustomAlert";
 
 const getToken = async () => {
   const token = await SecureStore.getItemAsync("token");
@@ -20,6 +21,24 @@ const service = axios.create({
   },
   timeout: 20000,
 });
+
+async function removeToken() {
+  await SecureStore.deleteItemAsync("token");
+  removeHeaderConfig("Authorization");
+}
+
+service.interceptors.response.use(
+  (response) => {
+    if (response.data.code === 401) {
+      removeToken();
+      showAlert("Phiên đăng nhập đã hết hạn");
+    }
+    return response;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 function updateHeaderConfig(key, value) {
   service.defaults.headers.common[key] = value;
