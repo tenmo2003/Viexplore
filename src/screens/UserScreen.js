@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { TouchableOpacity } from "react-native";
 import { Ionicons } from "react-native-vector-icons";
-
+import { Feather, Octicons } from "react-native-vector-icons";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import {
   Dimensions,
@@ -9,10 +9,14 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from "react-native";
 import service from "../helper/axiosService";
 import Loading from "../components/Loading";
+import Modal from "react-native-modal";
+import * as SecureStore from "expo-secure-store";
+import TokenContext from "../contexts/TokenContext";
 
 const BottomTab = () => {
   const Tab = createMaterialTopTabNavigator();
@@ -132,6 +136,12 @@ const UserScreen = ({ route, navigation }) => {
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const [isModalVisible, setModalVisible] = useState(false);
+
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
+
   useEffect(() => {
     setLoading(true);
     service.get("users/me", {}).then(
@@ -147,18 +157,38 @@ const UserScreen = ({ route, navigation }) => {
     );
   }, []);
 
+  const { token, setToken } = useContext(TokenContext);
+
+  const logOutHandler = () => {
+    const loadToken = async () => {
+      await SecureStore.deleteItemAsync("token");
+      setToken(null);
+      navigation.navigate("Login");
+      console.log("remove token");
+    };
+    loadToken();
+  };
+
   return (
     <View style={styles.container}>
       {loading && <Loading full={true} />}
       <ScrollView showsVerticalScrollIndicator={true}>
         <View>
-          <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-            <Ionicons
-              name="settings-outline"
-              size={23}
-              color="#52575D"
-              style={{ marginTop: 20, right: 10, position: "absolute" }}
-            ></Ionicons>
+          <TouchableOpacity onPress={toggleModal}>
+            <Octicons
+              name="three-bars"
+              size={24}
+              style={{
+                position: "absolute",
+                top:
+                  Platform.OS === "ios"
+                    ? screenHeight / 20
+                    : screenHeight / 30 - 10,
+                right: screenWidth / 20 - 10,
+                backgroundColor: "transparent",
+                padding: 10,
+              }}
+            />
           </TouchableOpacity>
         </View>
 
@@ -189,11 +219,69 @@ const UserScreen = ({ route, navigation }) => {
             {username}
           </Text>
         </View>
+        <Modal
+          onBackdropPress={() => setModalVisible(false)}
+          onBackButtonPress={() => setModalVisible(false)}
+          isVisible={isModalVisible}
+          swipeDirection="down"
+          onSwipeComplete={toggleModal}
+          animationIn="bounceInUp"
+          animationOut="bounceOutDown"
+          animationInTiming={900}
+          animationOutTiming={500}
+          backdropTransitionInTiming={1000}
+          backdropTransitionOutTiming={500}
+          style={styles.modal}
+        >
+          <View style={styles.modalContent}>
+            <View style={styles.center}>
+              <View style={styles.barIcon} />
+              <View style={styles.flexColumn}>
+                <View style={styles.editProfile}>
+                  <TouchableOpacity style={styles.flexEditProfile}>
+                    <Ionicons name="settings-outline" size={30} />
+                    <Text
+                      style={{
+                        fontSize: 24,
+                        fontWeight: "bold",
+                        paddingHorizontal: 10,
+                      }}
+                    >
+                      Edit profile
+                    </Text>
+                    <Feather
+                      name="chevron-right"
+                      style={{
+                        paddingHorizontal:
+                          Platform.OS === "ios"
+                            ? screenWidth / 3
+                            : screenWidth / 2.8,
+                      }}
+                      size={30}
+                    />
+                  </TouchableOpacity>
+                </View>
+                <TouchableOpacity style={styles.logOut} onPress={logOutHandler}>
+                  <Text style={{ fontSize: 26, fontWeight: "bold" }}>
+                    Đăng xuất
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
       </ScrollView>
       <BottomTab />
     </View>
   );
 };
+
+const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
+
+const settingsHeight = screenHeight / 5;
+const settingsWidth = screenWidth / 12;
+const paddingTopModalContent = 10;
 
 const styles = StyleSheet.create({
   container: {
@@ -285,6 +373,51 @@ const styles = StyleSheet.create({
   info: {
     position: "relative",
     alignSelf: "center",
+    alignItems: "center",
+  },
+  modal: {
+    justifyContent: "flex-end",
+    margin: 0,
+  },
+  modalContent: {
+    backgroundColor: "#fff",
+    paddingTop: paddingTopModalContent,
+    paddingHorizontal: settingsWidth,
+    borderWidth: 5,
+    borderColor: "#000",
+    borderTopRightRadius: 35,
+    borderTopLeftRadius: 35,
+    minHeight: settingsHeight,
+    paddingBottom: 20,
+  },
+  center: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  barIcon: {
+    width: 60,
+    height: 5,
+    backgroundColor: "#bbb",
+    borderRadius: 3,
+  },
+  flexColumn: {
+    display: "flex",
+    flexDirection: "column",
+    width: "100%",
+    height: settingsHeight - paddingTopModalContent * 2,
+  },
+  flexEditProfile: {
+    display: "flex",
+    flexDirection: "row",
+  },
+  editProfile: {
+    top: 20,
+    width: "auto",
+    height: "auto",
+  },
+  logOut: {
+    top: settingsHeight - 80,
     alignItems: "center",
   },
 });
