@@ -1,6 +1,6 @@
 import { Alert } from "react-native";
 
-const showAlert = (message, proceed, screen) => {
+const showAlert = (message, proceed, screen, navigation) => {
   Alert.alert(
     "Alert",
     message,

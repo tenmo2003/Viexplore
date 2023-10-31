@@ -2,9 +2,12 @@ import React, { useState } from "react";
 import { View, Text, TextInput, Button } from "react-native";
 import service, { getAllHeaderConfig, updateHeaderConfig } from "../helper/axiosService";
 import { showAlert } from "../helper/CustomAlert";
+import Loading from "../components/Loading";
 
 export default function SetFullNameScreen({ route, navigation }) {
   const [fullname, setFullName] = useState("");
+
+  const [loading, setLoading] = useState(false);
 
   const { username } = route.params;
 
@@ -14,34 +17,28 @@ export default function SetFullNameScreen({ route, navigation }) {
   };
 
   const onSubmit = () => {
-    console.log("fullName: ", fullname);
-    console.log("username: ", username);
+    setLoading(true);
 
     service
-      .post("/user", {
-        fullName: fullname,
+      .put("/user", {
         username: username,
+        fullName: fullname,
       })
       .then(
         (res) => {
-          showAlert("Create full name successfully", false, "SetFullName");
-          console.log("OK", fullname);
-          service
-          .get("/users/me", {})
-          .then((res) => {
-            if (res.data.status === 200) {
-              navigation.navigate("User");
-            }
-          });
+            navigation.navigate("User");
+            setLoading(false);
         },
         () => {
           console.log("Network failed");
+          setLoading(false);
         }
       );
   };
 
   return (
     <View>
+      {loading && <Loading/>}
       <Text style={{ marginVertical: 50, textAlign: "center", fontSize: 30 }}>
         SetFullNameScreen
       </Text>

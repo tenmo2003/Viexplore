@@ -139,6 +139,7 @@ const BottomTab = ({ bookmarks }) => {
 const UserScreen = ({ route, navigation }) => {
   const [fullname, setFullName] = useState("");
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [avatar, setAvatar] = useState(null);
   const [bookmarkList, setBookmarkList] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -150,13 +151,16 @@ const UserScreen = ({ route, navigation }) => {
   };
 
   const loadBookmarkList = () => {
+    setLoading(true);
     service.get("/bookmarks", {}).then(
       (res) => {
         const bookmarks = res.data.results;
         setBookmarkList(bookmarks);
         console.log("reload BookMark OK");
+        setLoading(false);
       },
       () => {
+        setLoading(false);
         console.log("failed to load bookmark list");
       }
     );
@@ -170,7 +174,7 @@ const UserScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     setLoading(true);
-    service.get("users/me", {}).then(
+    service.get("/users/me", {}).then(
       (res) => {
         const userData = res.data.results;
         setFullName(userData.fullName);
@@ -178,6 +182,7 @@ const UserScreen = ({ route, navigation }) => {
         setAvatar(userData.avatar);
         setBookmarkList(userData.bookmarks);
         setLoading(false);
+        
       },
       () => {
         console.log("failed");
@@ -196,6 +201,17 @@ const UserScreen = ({ route, navigation }) => {
     };
     removeToken();
   };
+
+  const navigateToEditProfile = () => { 
+    navigation.navigate("EditProfile", {
+      userInfo: {
+        fullname: fullname,
+        username: username,
+        email: email,
+        avatar: avatar,
+      },
+    });
+  }
 
   return (
     <View style={styles.container}>
@@ -268,7 +284,7 @@ const UserScreen = ({ route, navigation }) => {
               <View style={styles.barIcon} />
               <View style={styles.flexColumn}>
                 <View style={styles.editProfile}>
-                  <TouchableOpacity style={styles.flexEditProfile}>
+                  <TouchableOpacity style={styles.flexEditProfile} onPress={navigateToEditProfile}>
                     <Ionicons name="settings-outline" size={30} />
                     <Text
                       style={{
@@ -277,7 +293,7 @@ const UserScreen = ({ route, navigation }) => {
                         paddingHorizontal: 10,
                       }}
                     >
-                      Edit profile
+                      Sửa hồ sơ
                     </Text>
                     <Feather
                       name="chevron-right"
@@ -292,7 +308,7 @@ const UserScreen = ({ route, navigation }) => {
                   </TouchableOpacity>
                 </View>
                 <TouchableOpacity style={styles.logOut} onPress={logOutHandler}>
-                  <Text style={{ fontSize: 26, fontWeight: "bold" }}>
+                  <Text style={{ fontSize: 26, fontWeight: "bold", color: "red" }}>
                     Đăng xuất
                   </Text>
                 </TouchableOpacity>
