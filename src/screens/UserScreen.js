@@ -17,33 +17,36 @@ import Loading from "../components/Loading";
 import Modal from "react-native-modal";
 import * as SecureStore from "expo-secure-store";
 import TokenContext from "../contexts/TokenContext";
+import { useFocusEffect } from "@react-navigation/native";
 
-const BottomTab = () => {
+const BottomTab = ({ bookmarks }) => {
   const Tab = createMaterialTopTabNavigator();
-  const Post = () => {
+  const BookMark = ({ bookmarks }) => {
     return (
       <View style={{ flex: 1, backgroundColor: "#0000" }}>
-        <View style={{ flex: 1 }}>
-          <ScrollView style={{ flex: 1 }}>
+        <View style={{ flex: 1, }}>
+          <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
             <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-              <View style={styles.content}>
-                <Image
-                  source={require("./../../assets/ho.jpg")}
-                  style={styles.img}
-                  resizeMode="center"
-                ></Image>
-                <View style={styles.name}>
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      flexWrap: "wrap",
-                      textAlign: "center",
-                    }}
-                  >
-                    Hồ Gươm
-                  </Text>
+              {bookmarks.map((bookmarks, index) => (
+                <View key={index} style={styles.content}>
+                  <Image
+                    source={{ uri: bookmarks.thumbnail }}
+                    style={styles.img}
+                    resizeMode="cover" //fix
+                  ></Image>
+                  <View style={styles.name}>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        flexWrap: "wrap",
+                        textAlign: "center",
+                      }}
+                    >
+                      {bookmarks.name}
+                    </Text>
+                  </View>
                 </View>
-              </View>
+              ))}
             </View>
           </ScrollView>
         </View>
@@ -110,7 +113,7 @@ const BottomTab = () => {
         },
         tabBarIcon: ({ focused, color }) => {
           let iconName;
-          if (route.name === "Post") {
+          if (route.name === "BookMark") {
             iconName = focused ? "bookmarks" : "bookmarks";
             color = focused ? "#52575D" : "#AEB5BC";
           } else if (route.name === "Save") {
@@ -124,7 +127,9 @@ const BottomTab = () => {
         },
       })}
     >
-      <Tab.Screen name="Post" component={Post}></Tab.Screen>
+      <Tab.Screen name="BookMark">
+        {() => <BookMark bookmarks={bookmarks} />}
+      </Tab.Screen>
       <Tab.Screen name="Save" component={Forums}></Tab.Screen>
       <Tab.Screen name="Forums" component={Forums}></Tab.Screen>
     </Tab.Navigator>
@@ -135,6 +140,7 @@ const UserScreen = ({ route, navigation }) => {
   const [fullname, setFullName] = useState("");
   const [username, setUsername] = useState("");
   const [avatar, setAvatar] = useState(null);
+  const [bookmarkList, setBookmarkList] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const [isModalVisible, setModalVisible] = useState(false);
@@ -142,6 +148,25 @@ const UserScreen = ({ route, navigation }) => {
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
+
+  const loadBookmarkList = () => {
+    service.get("/bookmarks", {}).then(
+      (res) => {
+        const bookmarks = res.data.results;
+        setBookmarkList(bookmarks);
+        console.log("reload BookMark OK");
+      },
+      () => {
+        console.log("failed to load bookmark list");
+      }
+    );
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      loadBookmarkList();
+    }, [])
+  );
 
   useEffect(() => {
     setLoading(true);
@@ -151,6 +176,7 @@ const UserScreen = ({ route, navigation }) => {
         setFullName(userData.fullName);
         setUsername(userData.username);
         setAvatar(userData.avatar);
+        setBookmarkList(userData.bookmarks);
         setLoading(false);
       },
       () => {
@@ -197,7 +223,9 @@ const UserScreen = ({ route, navigation }) => {
         <View style={{ alignSelf: "center" }}>
           <View style={styles.profileImage}>
             <Image
-              source={avatar ? { uri: avatar } : require("./../../assets/cho.jpg")}
+              source={
+                avatar ? { uri: avatar } : require("./../../assets/cho.jpg")
+              }
               style={styles.image}
               resizeMode="center"
             ></Image>
@@ -229,10 +257,10 @@ const UserScreen = ({ route, navigation }) => {
           onSwipeComplete={toggleModal}
           animationIn="bounceInUp"
           animationOut="bounceOutDown"
-          animationInTiming={900}
-          animationOutTiming={500}
-          backdropTransitionInTiming={1000}
-          backdropTransitionOutTiming={500}
+          animationInTiming={600}
+          animationOutTiming={300}
+          backdropTransitionInTiming={600}
+          backdropTransitionOutTiming={300}
           style={styles.modal}
         >
           <View style={styles.modalContent}>
@@ -273,7 +301,7 @@ const UserScreen = ({ route, navigation }) => {
           </View>
         </Modal>
       </ScrollView>
-      <BottomTab />
+      <BottomTab bookmarks={bookmarkList} />
     </View>
   );
 };
@@ -319,12 +347,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   content: {
-    flexDirection: "column",
     flexWrap: "wrap",
     margin: 5,
+    left: 5,
     borderRadius: 12,
     justifyContent: "center",
-    alignSelf: "center",
+    // alignSelf: "center",
     alignItems: "center",
   },
   img: {
@@ -342,8 +370,11 @@ const styles = StyleSheet.create({
   },
   name: {
     width: Dimensions.get("window").width / 3 - 13,
+    height: 46,
     backgroundColor: "#ffff",
-    marginTop: -4,
+    // marginTop: -4,
+    paddingHorizontal: 2,
+    paddingVertical: 2,
     alignSelf: "center",
     alignItems: "center",
     borderBottomRightRadius: 10,
