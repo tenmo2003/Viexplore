@@ -7,7 +7,6 @@ export default function SetFullNameScreen({ route, navigation }) {
   const [fullname, setFullName] = useState("");
 
   const { username } = route.params;
-  const { password } = route.params;
 
 
   const onChangeFullName = (text) => {
@@ -17,13 +16,11 @@ export default function SetFullNameScreen({ route, navigation }) {
   const onSubmit = () => {
     console.log("fullName: ", fullname);
     console.log("username: ", username);
-    console.log("password: ", password);
 
     service
       .post("/user", {
         fullName: fullname,
         username: username,
-        password: "admin",
       })
       .then(
         (res) => {
