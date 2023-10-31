@@ -7,6 +7,7 @@ import UserScreen from "../screens/UserScreen";
 import SignUpScreen from "../screens/SignupScreen";
 import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
 import ResetpassScreen from "../screens/ResetpassScreen";
+import EditProfileScreen from "../screens/EditProfileScreen";
 
 const Stack = createStackNavigator();
 
@@ -24,6 +25,7 @@ export default function UserTabs({ navigation }) {
         <Stack.Screen name="Signup" component={SignUpScreen} />
         <Stack.Screen name="MailResetPass" component={ForgotPasswordScreen} />
         <Stack.Screen name="ResetPass" component={ResetpassScreen} />
+        <Stack.Screen name="EditProfile" component={EditProfileScreen} />
       </Stack.Navigator>
     </View>
   );

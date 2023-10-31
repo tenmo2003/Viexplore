@@ -139,6 +139,7 @@ const BottomTab = ({ bookmarks }) => {
 const UserScreen = ({ route, navigation }) => {
   const [fullname, setFullName] = useState("");
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [avatar, setAvatar] = useState(null);
   const [bookmarkList, setBookmarkList] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -170,7 +171,7 @@ const UserScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     setLoading(true);
-    service.get("users/me", {}).then(
+    service.get("/users/me", {}).then(
       (res) => {
         const userData = res.data.results;
         setFullName(userData.fullName);
@@ -178,6 +179,7 @@ const UserScreen = ({ route, navigation }) => {
         setAvatar(userData.avatar);
         setBookmarkList(userData.bookmarks);
         setLoading(false);
+        
       },
       () => {
         console.log("failed");
@@ -196,6 +198,22 @@ const UserScreen = ({ route, navigation }) => {
     };
     removeToken();
   };
+
+  const editProfileHandler = () => {
+    service.get("/users/me", {}).then((res) => {
+      if (res.data.status === 200) {
+        navigation.navigate(
+          "EditProfile", {
+            userInfo: {
+              username: username,
+              email: email,
+            },
+          });
+      }
+    });
+    
+    navigation.navigate("EditProfile");
+  }
 
   return (
     <View style={styles.container}>
@@ -268,7 +286,7 @@ const UserScreen = ({ route, navigation }) => {
               <View style={styles.barIcon} />
               <View style={styles.flexColumn}>
                 <View style={styles.editProfile}>
-                  <TouchableOpacity style={styles.flexEditProfile}>
+                  <TouchableOpacity style={styles.flexEditProfile} onPress={editProfileHandler}>
                     <Ionicons name="settings-outline" size={30} />
                     <Text
                       style={{

@@ -22,7 +22,7 @@ export default function SignUpScreen({ navigation }) {
 
   
 
-  const onSubmit = () => {
+  const onSubmit = ({navigation}) => {
     console.log("username: ", username);
     console.log("password: ", password);
     console.log("confirmpass: ", confirmPassword);
@@ -44,9 +44,9 @@ export default function SignUpScreen({ navigation }) {
         (res) => {
           console.log(res.data.message);
           if (res.data.message === "User already exists") {
-            showAlert(res.data.message, false, "Login");
+            showAlert(res.data.message, false, "Login", navigation);
           } else {
-            showAlert("Signed up successfully", true, "Login");
+            showAlert("Signed up successfully", true, "Login", navigation);
           }
           setLoading(false);
         },

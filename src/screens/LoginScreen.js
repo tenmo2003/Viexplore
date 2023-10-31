@@ -24,6 +24,8 @@ export default function LoginScreen({ navigation }) {
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+
   const [loading, setLoading] = useState(false);
 
   const onSubmit = () => {
@@ -53,11 +55,17 @@ export default function LoginScreen({ navigation }) {
                   navigation.navigate(
                     "SetFullName",
                     { username: username },
-                    { password: password }
                   );
                 } else {
                   navigation.navigate("User");
                 }
+                navigation.navigate(
+                  "EditProfile", {
+                    userInfo: {
+                      username: username,
+                      email: email,
+                    },
+                  });
               }
             });
           } else {
