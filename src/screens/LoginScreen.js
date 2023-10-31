@@ -59,13 +59,7 @@ export default function LoginScreen({ navigation }) {
                 } else {
                   navigation.navigate("User");
                 }
-                navigation.navigate(
-                  "EditProfile", {
-                    userInfo: {
-                      username: username,
-                      email: email,
-                    },
-                  });
+                
               }
             });
           } else {

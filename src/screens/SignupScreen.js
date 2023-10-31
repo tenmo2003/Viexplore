@@ -5,24 +5,41 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   TouchableOpacity,
-  View
+  View,
+  Alert
 } from "react-native";
 import { Button, Input, Text } from "react-native-elements";
 import { ScreenHeight } from "react-native-elements/dist/helpers";
-import { showAlert } from "../helper/CustomAlert";
 import service from "../helper/axiosService";
 import Loading from "../components/Loading";
 
-export default function SignUpScreen({ navigation }) {
+export default function SignupScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const showAlert = (message, proceed, screen) => {
+    Alert.alert(
+      "Alert",
+      message,
+      [
+        {
+          text: "OK",
+          onPress: () => proceed && navigation.navigate(screen),
+          style: "cancel",
+        },
+      ],
+      {
+        cancelable: true,
+        onDismiss: () => proceed && navigation.navigate(screen),
+      }
+    );
+  };
   
 
-  const onSubmit = ({navigation}) => {
+  const onSubmit = () => {
     console.log("username: ", username);
     console.log("password: ", password);
     console.log("confirmpass: ", confirmPassword);
@@ -38,15 +55,14 @@ export default function SignUpScreen({ navigation }) {
         username: username,
         password: password,
         email: email,
-        role: "ROLE_USER",
       })
       .then(
         (res) => {
-          console.log(res.data.message);
+          console.log(res.data);
           if (res.data.message === "User already exists") {
-            showAlert(res.data.message, false, "Login", navigation);
+            showAlert(res.data.message, false, "Login");
           } else {
-            showAlert("Signed up successfully", true, "Login", navigation);
+            showAlert("Signed up successfully", true, "Login");
           }
           setLoading(false);
         },

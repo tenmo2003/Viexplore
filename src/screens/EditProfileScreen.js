@@ -9,6 +9,8 @@ import { showAlert } from "../helper/CustomAlert";
 export default function EditProfileScreen({ route, navigation }) {
   const [newFullname, setNewFullName] = useState("");
   const [newEmail, setNewEmail] = useState("");
+  const [avatar, setAvatar] = useState(null);
+
 
   const { userInfo } = route.params;
 

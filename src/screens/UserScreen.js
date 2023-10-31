@@ -151,13 +151,16 @@ const UserScreen = ({ route, navigation }) => {
   };
 
   const loadBookmarkList = () => {
+    setLoading(true);
     service.get("/bookmarks", {}).then(
       (res) => {
         const bookmarks = res.data.results;
         setBookmarkList(bookmarks);
         console.log("reload BookMark OK");
+        setLoading(false);
       },
       () => {
+        setLoading(false);
         console.log("failed to load bookmark list");
       }
     );
@@ -199,20 +202,15 @@ const UserScreen = ({ route, navigation }) => {
     removeToken();
   };
 
-  const editProfileHandler = () => {
-    service.get("/users/me", {}).then((res) => {
-      if (res.data.status === 200) {
-        navigation.navigate(
-          "EditProfile", {
-            userInfo: {
-              username: username,
-              email: email,
-            },
-          });
-      }
+  const navigateToEditProfile = () => { 
+    navigation.navigate("EditProfile", {
+      userInfo: {
+        fullname: fullname,
+        username: username,
+        email: email,
+        avatar: avatar,
+      },
     });
-    
-    navigation.navigate("EditProfile");
   }
 
   return (
@@ -286,7 +284,7 @@ const UserScreen = ({ route, navigation }) => {
               <View style={styles.barIcon} />
               <View style={styles.flexColumn}>
                 <View style={styles.editProfile}>
-                  <TouchableOpacity style={styles.flexEditProfile} onPress={editProfileHandler}>
+                  <TouchableOpacity style={styles.flexEditProfile} onPress={navigateToEditProfile}>
                     <Ionicons name="settings-outline" size={30} />
                     <Text
                       style={{
@@ -295,7 +293,7 @@ const UserScreen = ({ route, navigation }) => {
                         paddingHorizontal: 10,
                       }}
                     >
-                      Edit profile
+                      Sửa hồ sơ
                     </Text>
                     <Feather
                       name="chevron-right"
@@ -310,7 +308,7 @@ const UserScreen = ({ route, navigation }) => {
                   </TouchableOpacity>
                 </View>
                 <TouchableOpacity style={styles.logOut} onPress={logOutHandler}>
-                  <Text style={{ fontSize: 26, fontWeight: "bold" }}>
+                  <Text style={{ fontSize: 26, fontWeight: "bold", color: "red" }}>
                     Đăng xuất
                   </Text>
                 </TouchableOpacity>
