@@ -91,6 +91,7 @@ function MapScreen({ route, navigation }) {
       setLoading(true);
       service.get("/locations").then(
         (response) => {
+          console.log(response.data.results);
           setLocations(response.data.results);
           setLoading(false);
         },

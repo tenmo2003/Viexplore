@@ -9,7 +9,7 @@ import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
 import ResetpassScreen from "../screens/ResetpassScreen";
 import EditProfileScreen from "../screens/EditProfileScreen";
 import SetFullNameScreen from "../screens/SetFullNameScreen";
-import { useFocusEffect } from "@react-navigation/native";
+import SecurityScreen from "../screens/SecurityScreen";
 
 const Stack = createStackNavigator();
 
@@ -29,6 +29,7 @@ export default function UserTabs({ navigation }) {
         <Stack.Screen name="ResetPass" component={ResetpassScreen} />
         <Stack.Screen name="EditProfile" component={EditProfileScreen} />
         <Stack.Screen name="SetFullName" component={SetFullNameScreen} />
+        <Stack.Screen name="Security" component={SecurityScreen} />
       </Stack.Navigator>
     </View>
   );
