@@ -97,19 +97,6 @@ export default function LocationDetail({ route, navigation }) {
         }
       );
     }
-
-    // service
-    //   .get("/authenticate", {})
-    //   .then((res) => {
-    //     if (res.data.status === 200) {
-    //       setIsLogin(true);
-    //     } else {
-    //       setIsLogin(false);
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     console.error("Failed to authenticate:", error);
-    //   });
   }, [location, token]);
 
   const handleBookmarkPress = () => {
@@ -514,8 +501,6 @@ const styles = StyleSheet.create({
   audioPlayer: {
     flexDirection: "row",
     alignItems: "center",
-    // position: "absolute",
-    // bottom: 0,
   },
   audioBtn: {},
   audioSlider: {

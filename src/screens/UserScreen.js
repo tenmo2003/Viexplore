@@ -19,16 +19,19 @@ import * as SecureStore from "expo-secure-store";
 import TokenContext from "../contexts/TokenContext";
 import { useFocusEffect } from "@react-navigation/native";
 
+
 const BottomTab = ({ bookmarks }) => {
   const Tab = createMaterialTopTabNavigator();
   const BookMark = ({ bookmarks }) => {
+    
+
     return (
       <View style={{ flex: 1, backgroundColor: "#0000" }}>
         <View style={{ flex: 1 }}>
           <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
             <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
               {bookmarks.map((bookmarks, index) => (
-                <View key={index} style={styles.content}>
+                <TouchableOpacity key={index} style={styles.content}>
                   <Image
                     source={{ uri: bookmarks.thumbnail }}
                     style={styles.img}
@@ -45,7 +48,7 @@ const BottomTab = ({ bookmarks }) => {
                       {bookmarks.name}
                     </Text>
                   </View>
-                </View>
+                </TouchableOpacity>
               ))}
             </View>
           </ScrollView>
@@ -165,6 +168,8 @@ const UserScreen = ({ route, navigation }) => {
       }
     );
   };
+
+
 
   useFocusEffect(
     React.useCallback(() => {
