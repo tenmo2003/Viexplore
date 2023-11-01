@@ -1,18 +1,23 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button } from "react-native";
+import { View, Text, TextInput, StyleSheet } from "react-native";
 import service, {
   getAllHeaderConfig,
   updateHeaderConfig,
 } from "../helper/axiosService";
 import { showAlert } from "../helper/CustomAlert";
+import * as ImagePicker from "expo-image-picker";
+import { Avatar, Button } from "react-native-elements";
+import axios from "axios";
+import Loading from "../components/Loading";
 
 export default function EditProfileScreen({ route, navigation }) {
   const [newFullname, setNewFullName] = useState("");
   const [newEmail, setNewEmail] = useState("");
-  const [avatar, setAvatar] = useState(null);
+  const [avatar, setAvatar] = useState();
 
+  const [loading, setLoading] = useState(false);
 
-  const { userInfo } = route.params;
+  const { username } = route.params.userInfo;
 
   const onChangeFullName = (text) => {
     setNewFullName(text);
@@ -27,50 +32,101 @@ export default function EditProfileScreen({ route, navigation }) {
   };
 
   const onSubmit = () => {
-    console.log("fullName: ", newFullname);
-    console.log("email: ", userInfo.email);
-    console.log("username: ", userInfo.username);
+    const formData = new FormData();
+    formData.append("image", {
+      uri: avatar,
+      name: "avatar.jpg",
+      type: "image/jpg",
+    });
 
-    service
-      .put("/user", {
-        fullName: newFullname,
-        email: newEmail,
-      })
-      .then(
-        (res) => {
-          showAlert("Edited successfully", false, "EditProfile");
-          console.log("Edit ok", newFullname /*newEmail*/);
-          service.get("/users/me", {}).then((res) => {
-            if (res.data.status === 200) {
-              navigation.navigate("User");
-            }
-          });
-        },
-        () => {
-          console.log("Network failed");
-        }
-      );
+    setLoading(true);
+
+    if (avatar) {
+      axios
+        .all([
+          service.put("/user", {
+            username: username,
+            fullName: newFullname,
+            email: newEmail,
+          }),
+          service.put("/avatar", formData),
+        ])
+        .then(
+          axios.spread((res1, res2) => {
+            console.log(res1.data);
+            console.log(res2.data);
+            setLoading(false);
+          })
+        )
+        .catch((err) => {
+          console.log(err);
+          setLoading(false);
+        });
+    } else {
+      service
+        .put("/user", {
+          username: username,
+          fullName: newFullname,
+          email: newEmail,
+        })
+        .then((res) => {
+          console.log(res.data);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setLoading(false);
+        });
+    }
+  };
+
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 1,
+    });
+
+
+    if (!result.canceled) {
+      setAvatar(result.assets[0].uri);
+    }
   };
 
   return (
-    <View>
-      <Button title="Back" style={{
-          width: 100,
-          height: 40,
-          borderColor: "gray",
-          borderWidth: 1,
-          textAlign: "center",
-          justifyContent: "center",
-        }} onPress={() => onChangeBackToUser()} />
-      <Text style={{ marginVertical: 50, textAlign: "center", fontSize: 30 }} >
+    <View className="flex-1 px-3">
+      {loading && <Loading />}
+
+      <Button
+        title="Back"
+        containerStyle={{
+          width: "50%",
+        }}
+        onPress={() => onChangeBackToUser()}
+      />
+      <Text style={{ marginVertical: 50, textAlign: "center", fontSize: 30 }}>
         EditProfileScreen
       </Text>
+
+      {avatar && (
+        <Avatar
+          containerStyle={{ alignSelf: "center", marginBottom: 20 }}
+          source={{ uri: avatar }}
+          rounded
+          size="large"
+        />
+      )}
+
+      <Button
+        containerStyle={{ width: "50%", alignSelf: "center" }}
+        title="Choose avatar"
+        onPress={() => pickImage()}
+      />
+
       <TextInput
         style={{
-          width: 200,
-          height: 40,
           borderColor: "gray",
-          left: 10,
           borderWidth: 1,
           marginVertical: 10,
           textAlign: "center",
@@ -82,10 +138,7 @@ export default function EditProfileScreen({ route, navigation }) {
       />
       <TextInput
         style={{
-          width: 200,
-          height: 40,
           borderColor: "gray",
-          left: 10,
           borderWidth: 1,
           marginVertical: 10,
           textAlign: "center",

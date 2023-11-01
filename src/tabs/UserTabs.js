@@ -1,5 +1,5 @@
 import { createStackNavigator } from "@react-navigation/stack";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { View } from "react-native";
 import TokenContext from "../contexts/TokenContext";
 import LoginScreen from "../screens/LoginScreen";
