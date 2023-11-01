@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { TouchableOpacity } from "react-native";
 import { Ionicons } from "react-native-vector-icons";
-import { Feather, Octicons } from "react-native-vector-icons";
+import { Feather, Octicons, MaterialCommunityIcons } from "react-native-vector-icons";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import {
   Dimensions,
@@ -24,7 +24,7 @@ const BottomTab = ({ bookmarks }) => {
   const BookMark = ({ bookmarks }) => {
     return (
       <View style={{ flex: 1, backgroundColor: "#0000" }}>
-        <View style={{ flex: 1, }}>
+        <View style={{ flex: 1 }}>
           <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
             <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
               {bookmarks.map((bookmarks, index) => (
@@ -182,7 +182,6 @@ const UserScreen = ({ route, navigation }) => {
         setAvatar(userData.avatar);
         setBookmarkList(userData.bookmarks);
         setLoading(false);
-        
       },
       () => {
         console.log("failed");
@@ -202,7 +201,7 @@ const UserScreen = ({ route, navigation }) => {
     removeToken();
   };
 
-  const navigateToEditProfile = () => { 
+  const navigateToEditProfile = () => {
     navigation.navigate("EditProfile", {
       userInfo: {
         fullname: fullname,
@@ -211,7 +210,13 @@ const UserScreen = ({ route, navigation }) => {
         avatar: avatar,
       },
     });
-  }
+  };
+
+  const navigateToSecurity = () => {
+    navigation.navigate("Security",
+      { username: username },
+    )
+  };
 
   return (
     <View style={styles.container}>
@@ -284,7 +289,10 @@ const UserScreen = ({ route, navigation }) => {
               <View style={styles.barIcon} />
               <View style={styles.flexColumn}>
                 <View style={styles.editProfile}>
-                  <TouchableOpacity style={styles.flexEditProfile} onPress={navigateToEditProfile}>
+                  <TouchableOpacity
+                    style={styles.flexEditProfile}
+                    onPress={navigateToEditProfile}
+                  >
                     <Ionicons name="settings-outline" size={30} />
                     <Text
                       style={{
@@ -307,8 +315,38 @@ const UserScreen = ({ route, navigation }) => {
                     />
                   </TouchableOpacity>
                 </View>
+                <View style={styles.security}>
+                  <TouchableOpacity
+                    style={styles.flexEditProfile}
+                    onPress={navigateToSecurity}
+                  >
+                    <MaterialCommunityIcons name="security" size={30} />
+                    <Text
+                      style={{
+                        fontSize: 24,
+                        fontWeight: "bold",
+                        paddingHorizontal: 10,
+                      }}
+                    >
+                      Bảo mật
+                    </Text>
+                    <Feather
+                      name="chevron-right"
+                      style={{
+                        left: 18,
+                        paddingHorizontal:
+                          Platform.OS === "ios"
+                            ? screenWidth / 3
+                            : screenWidth / 2.8,
+                      }}
+                      size={30}
+                    />
+                  </TouchableOpacity>
+                </View>
                 <TouchableOpacity style={styles.logOut} onPress={logOutHandler}>
-                  <Text style={{ fontSize: 26, fontWeight: "bold", color: "red" }}>
+                  <Text
+                    style={{ fontSize: 26, fontWeight: "bold", color: "red" }}
+                  >
                     Đăng xuất
                   </Text>
                 </TouchableOpacity>
@@ -325,7 +363,7 @@ const UserScreen = ({ route, navigation }) => {
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
-const settingsHeight = screenHeight / 5;
+const settingsHeight = screenHeight / 4;
 const settingsWidth = screenWidth / 12;
 const paddingTopModalContent = 10;
 
@@ -456,6 +494,11 @@ const styles = StyleSheet.create({
     width: "100%",
     height: settingsHeight - paddingTopModalContent * 2,
   },
+  security: {
+    top: 40,
+    width: "auto",
+    height: "auto",
+  },
   flexEditProfile: {
     display: "flex",
     flexDirection: "row",
@@ -466,7 +509,7 @@ const styles = StyleSheet.create({
     height: "auto",
   },
   logOut: {
-    top: settingsHeight - 80,
+    top: settingsHeight - 120,
     alignItems: "center",
   },
 });

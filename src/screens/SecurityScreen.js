@@ -6,20 +6,18 @@ import service, {
 } from "../helper/axiosService";
 import { showAlert } from "../helper/CustomAlert";
 
-export default function EditProfileScreen({ route, navigation }) {
-  const [newFullname, setNewFullName] = useState("");
-  const [newEmail, setNewEmail] = useState("");
-  const [avatar, setAvatar] = useState(null);
+export default function SecurtityScreen({ route, navigation }) {
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
+  const { username } = route.params;
 
-  const { userInfo } = route.params;
-
-  const onChangeFullName = (text) => {
-    setNewFullName(text);
+  const onChangePassword = (text) => {
+    setPassword(text);
   };
 
-  const onChangeEmail = (text) => {
-    setNewEmail(text);
+  const onChangeConfirmPassword = (text) => {
+    setConfirmPassword(text);
   };
 
   const onChangeBackToUser = () => {
@@ -27,19 +25,23 @@ export default function EditProfileScreen({ route, navigation }) {
   };
 
   const onSubmit = () => {
-    console.log("fullName: ", newFullname);
-    console.log("email: ", userInfo.email);
-    console.log("username: ", userInfo.username);
+    console.log("username: ", username);
+    console.log("password: ", password);
+    console.log("confirmpass: ", confirmPassword);
+
+    if (password !== confirmPassword) {
+      showAlert("Mật khẩu không trùng khớp", false, "Securtity");
+      return;
+    }
 
     service
       .put("/user", {
-        fullName: newFullname,
-        email: newEmail,
+        password: password,
       })
       .then(
         (res) => {
-          showAlert("Edited successfully", false, "EditProfile");
-          console.log("Edit ok", newFullname /*newEmail*/);
+          showAlert("Đổi mật khẩu thành công", false, "Securtity");
+          console.log("Change ok", password);
           service.get("/users/me", {}).then((res) => {
             if (res.data.status === 200) {
               navigation.navigate("User");
@@ -54,16 +56,20 @@ export default function EditProfileScreen({ route, navigation }) {
 
   return (
     <View>
-      <Button title="Back" style={{
+      <Button
+        title="Back"
+        style={{
           width: 100,
           height: 40,
           borderColor: "gray",
           borderWidth: 1,
           textAlign: "center",
           justifyContent: "center",
-        }} onPress={() => onChangeBackToUser()} />
-      <Text style={{ marginVertical: 50, textAlign: "center", fontSize: 30 }} >
-        EditProfileScreen
+        }}
+        onPress={() => onChangeBackToUser()}
+      />
+      <Text style={{ marginVertical: 50, textAlign: "center", fontSize: 30 }}>
+        Đổi mật khẩu
       </Text>
       <TextInput
         style={{
@@ -76,9 +82,9 @@ export default function EditProfileScreen({ route, navigation }) {
           textAlign: "center",
           justifyContent: "center",
         }}
-        placeholder="New full name"
-        value={newFullname}
-        onChangeText={(text) => onChangeFullName(text)}
+        placeholder="Mật khẩu mới"
+        value={password}
+        onChangeText={(text) => onChangePassword(text)}
       />
       <TextInput
         style={{
@@ -91,24 +97,10 @@ export default function EditProfileScreen({ route, navigation }) {
           textAlign: "center",
           justifyContent: "center",
         }}
-        placeholder="Change email"
-        value={newEmail}
-        onChangeText={(text) => onChangeEmail(text)}
+        placeholder="Nhập lại mật khẩu mới"
+        value={confirmPassword}
+        onChangeText={(text) => onChangeConfirmPassword(text)}
       />
-      {/* <TextInput
-        style={{
-          width: 200,
-          height: 40,
-          borderColor: "gray",
-          borderWidth: 1,
-          marginVertical: 10,
-          textAlign: "center",
-          justifyContent: "center",
-        }}
-        placeholder="Choose avatar here"
-        value={fullname}
-        onChangeText={(text) => onChangeAvatar(text)}
-      /> */}
       <Button title="Xác nhận" onPress={() => onSubmit()} />
     </View>
   );
