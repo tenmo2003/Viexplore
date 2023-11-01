@@ -1,17 +1,25 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, TouchableOpacity,Image } from "react-native";
+import { View, Text, TextInput, Button, TouchableOpacity,Image, StyleSheet } from "react-native";
 import service, {
   getAllHeaderConfig,
   updateHeaderConfig,
 } from "../helper/axiosService";
 import { showAlert } from "../helper/CustomAlert";
 import { Ionicons } from "react-native-vector-icons";
+import * as ImagePicker from "expo-image-picker";
+import { Avatar, Button } from "react-native-elements";
+import axios from "axios";
+import Loading from "../components/Loading";
+
 
 export default function SetFullNameScreen({ route, navigation }) {
   const [newFullname, setNewFullName] = useState("");
   const [newEmail, setNewEmail] = useState("");
-  const [avatar, setAvatar] = useState(null);
-  const { userInfo } = route.params;
+  const [avatar, setAvatar] = useState();
+
+  const [loading, setLoading] = useState(false);
+
+  const { username } = route.params.userInfo;
 
   const onChangeFullName = (text) => {
     setNewFullName(text);
@@ -26,77 +34,137 @@ export default function SetFullNameScreen({ route, navigation }) {
   };
 
   const onSubmit = () => {
-    console.log("fullName: ", newFullname);
-    console.log("email: ", userInfo.email);
-    console.log("username: ", userInfo.username);
+    const formData = new FormData();
+    formData.append("image", {
+      uri: avatar,
+      name: "avatar.jpg",
+      type: "image/jpg",
+    });
 
-    service
-      .put("/user", {
-        fullName: newFullname,
-        email: newEmail,
-      })
-      .then(
-        (res) => {
-          showAlert("Edited successfully", false, "EditProfile");
-          console.log("Edit ok", newFullname /*newEmail*/);
-          service.get("/users/me", {}).then((res) => {
-            if (res.data.status === 200) {
-              navigation.navigate("User");
-            }
-          });
-        },
-        () => {
-          console.log("Network failed");
-        }
-      );
+    setLoading(true);
+
+    if (avatar) {
+      axios
+        .all([
+          service.put("/user", {
+            username: username,
+            fullName: newFullname,
+            email: newEmail,
+          }),
+          service.put("/avatar", formData),
+        ])
+        .then(
+          axios.spread((res1, res2) => {
+            console.log(res1.data);
+            console.log(res2.data);
+            setLoading(false);
+          })
+        )
+        .catch((err) => {
+          console.log(err);
+          setLoading(false);
+        });
+    } else {
+      service
+        .put("/user", {
+          username: username,
+          fullName: newFullname,
+          email: newEmail,
+        })
+        .then((res) => {
+          console.log(res.data);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setLoading(false);
+        });
+    }
+  };
+
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 1,
+    });
+
+
+    if (!result.canceled) {
+      setAvatar(result.assets[0].uri);
+    }
   };
 
   return (
+    <View className="flex-1 px-3">
+      {loading && <Loading />}
 
-    <View style={styles.headcontainer} >
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => onChangeBackToUser()}
-        >
-          <Ionicons name="close-outline" style={{ fontSize: 35 }}></Ionicons>
-        </TouchableOpacity>
-        <Text style={styles.textheader}>Chỉnh sửa hồ sơ</Text>
-        <TouchableOpacity
-          onPress={() => onSubmit()}
-        >
-          <Ionicons name="checkmark" style={{ fontSize: 35, color: '#3493D9' }}></Ionicons>
-        </TouchableOpacity>
-      </View>
+      <Button
+        title="Back"
+        containerStyle={{
+          width: "50%",
+        }}
+        onPress={() => onChangeBackToUser()}
+      />
+      <Text style={{ marginVertical: 50, textAlign: "center", fontSize: 30 }}>
+        EditProfileScreen
+      </Text>
 
-      <View style = {{padding:20,alignItems:'center'}}>
-        <Image 
-        source={require("./../../assets/cho.jpg")} 
-        style={styles.img}/>
-        <Text style = {styles.textchange}>
-          Thay đổi ảnh đại diện
-        </Text>
-      </View>
-      <View style = {{padding :10}}>
-        <Text style = {{opacity:0.5,fontSize:18}}>Tên đầy đủ</Text>
-          <TextInput 
-              placeholder="Tên đầy đủ"
-              defaultValue={userInfo.fullname}
-              style = {styles.Info}
-              value={newFullname}
-              onChangeText={(text) => onChangeFullName(text)}
-          />
-      </View>
+      {avatar && (
+        <Avatar
+          containerStyle={{ alignSelf: "center", marginBottom: 20 }}
+          source={{ uri: avatar }}
+          rounded
+          size="large"
+        />
+      )}
 
-      <View style = {{padding :10}}>
-        <Text style = {{opacity:0.5,fontSize:18}}>Email</Text>
-          <TextInput 
-              placeholder="Email"
-              defaultValue={userInfo.email}
-              style = {styles.Info}
-              value={newEmail}
-              onChangeText={(text) => onChangeEmail(text)}
-          />
-      </View>      
+      <Button
+        containerStyle={{ width: "50%", alignSelf: "center" }}
+        title="Choose avatar"
+        onPress={() => pickImage()}
+      />
+
+      <TextInput
+        style={{
+          borderColor: "gray",
+          borderWidth: 1,
+          marginVertical: 10,
+          textAlign: "center",
+          justifyContent: "center",
+        }}
+        placeholder="New full name"
+        value={newFullname}
+        onChangeText={(text) => onChangeFullName(text)}
+      />
+      <TextInput
+        style={{
+          borderColor: "gray",
+          borderWidth: 1,
+          marginVertical: 10,
+          textAlign: "center",
+          justifyContent: "center",
+        }}
+        placeholder="Change email"
+        value={newEmail}
+        onChangeText={(text) => onChangeEmail(text)}
+      />
+      {/* <TextInput
+        style={{
+          width: 200,
+          height: 40,
+          borderColor: "gray",
+          borderWidth: 1,
+          marginVertical: 10,
+          textAlign: "center",
+          justifyContent: "center",
+        }}
+        placeholder="Choose avatar here"
+        value={fullname}
+        onChangeText={(text) => onChangeAvatar(text)}
+      /> */}
+      <Button title="Xác nhận" onPress={() => onSubmit()} />
     </View>
   
   );

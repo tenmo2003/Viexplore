@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { TouchableOpacity } from "react-native";
+import { Platform, TouchableOpacity } from "react-native";
 import { Ionicons } from "react-native-vector-icons";
 import { Feather, Octicons, MaterialCommunityIcons } from "react-native-vector-icons";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
@@ -18,20 +18,35 @@ import Modal from "react-native-modal";
 import * as SecureStore from "expo-secure-store";
 import TokenContext from "../contexts/TokenContext";
 import { useFocusEffect } from "@react-navigation/native";
+import { Avatar } from "react-native-elements";
+const Tab = createMaterialTopTabNavigator();
 
 
-const BottomTab = ({ bookmarks }) => {
-  const Tab = createMaterialTopTabNavigator();
-  const BookMark = ({ bookmarks }) => {
-    
+const goToLocation = (id, navigation) => {
+  console.log("Navigating");
+  navigation.navigate("MapTab", {
+    screen: "Map",
+    params: {
+      id: id,
+    },
+  });
+};
 
+const BottomTab = ({ bookmarks, navigation }) => {
+  const BookMark = ({ bookmarks, userScreenNavigation }) => {
     return (
       <View style={{ flex: 1, backgroundColor: "#0000" }}>
         <View style={{ flex: 1 }}>
           <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
             <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
               {bookmarks.map((bookmarks, index) => (
-                <TouchableOpacity key={index} style={styles.content}>
+                <TouchableOpacity
+                  key={index}
+                  style={styles.content}
+                  onPress={() =>
+                    goToLocation(bookmarks.id, userScreenNavigation)
+                  }
+                >
                   <Image
                     source={{ uri: bookmarks.thumbnail }}
                     style={styles.img}
@@ -131,14 +146,15 @@ const BottomTab = ({ bookmarks }) => {
       })}
     >
       <Tab.Screen name="BookMark">
-        {() => <BookMark bookmarks={bookmarks} />}
+        {() => (
+          <BookMark bookmarks={bookmarks} userScreenNavigation={navigation} />
+        )}
       </Tab.Screen>
       <Tab.Screen name="Save" component={Forums}></Tab.Screen>
       <Tab.Screen name="Forums" component={Forums}></Tab.Screen>
     </Tab.Navigator>
   );
 };
-
 const UserScreen = ({ route, navigation }) => {
   const [fullname, setFullName] = useState("");
   const [username, setUsername] = useState("");
@@ -155,11 +171,12 @@ const UserScreen = ({ route, navigation }) => {
 
   const loadBookmarkList = () => {
     setLoading(true);
-    service.get("/bookmarks", {}).then(
+    service.get("/users/me", {}).then(
       (res) => {
-        const bookmarks = res.data.results;
+        const bookmarks = res.data.results.bookmarks;
         setBookmarkList(bookmarks);
-        console.log("reload BookMark OK");
+        setFullName(res.data.results.fullName);
+        setAvatar(res.data.results.avatar);
         setLoading(false);
       },
       () => {
@@ -207,6 +224,7 @@ const UserScreen = ({ route, navigation }) => {
   };
 
   const navigateToEditProfile = () => {
+    setModalVisible(false);
     navigation.navigate("EditProfile", {
       userInfo: {
         fullname: fullname,
@@ -246,17 +264,12 @@ const UserScreen = ({ route, navigation }) => {
           </TouchableOpacity>
         </View>
 
-        <View style={{ alignSelf: "center" }}>
-          <View style={styles.profileImage}>
-            <Image
-              source={
-                avatar ? { uri: avatar } : require("./../../assets/cho.jpg")
-              }
-              style={styles.image}
-              resizeMode="center"
-            ></Image>
-          </View>
-        </View>
+        <Avatar
+          containerStyle={{ alignSelf: "center", marginTop: 50 }}
+          source={avatar ? { uri: avatar } : require("./../../assets/cho.jpg")}
+          rounded
+          size={"large"}
+        />
         <View style={styles.info}>
           <Text style={[styles.text, { fontSize: 20, fontWeight: "bold" }]}>
             {fullname}
@@ -360,7 +373,7 @@ const UserScreen = ({ route, navigation }) => {
           </View>
         </Modal>
       </ScrollView>
-      <BottomTab bookmarks={bookmarkList} />
+      <BottomTab bookmarks={bookmarkList} navigation={navigation} />
     </View>
   );
 };

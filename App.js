@@ -30,6 +30,9 @@ export default function App() {
       if (storedToken) {
         service.get("/check-token").then(
           (res) => {
+            if (res.data.status === 200) {
+              setToken(storedToken);
+            }
             setLoading(false);
           },
           (reject) => {
