@@ -14,7 +14,7 @@ import TokenContext from "./src/contexts/TokenContext";
 import service, {
   removeHeaderConfig
 } from "./src/helper/axiosService";
-import ForumScreen from "./src/screens/ForumScreen";
+import ForumTabs from "./src/tabs/ForumTabs";
 import MapTabs from "./src/tabs/MapTabs";
 import UserTabs from "./src/tabs/UserTabs";
 
@@ -72,7 +72,7 @@ export default function App() {
                 tabBarLabel: "Diễn đàn",
               }}
               name="ForumTab"
-              component={ForumScreen}
+              component={ForumTabs}
             />
             <Tab.Screen
               options={{
