@@ -1,5 +1,5 @@
 import { createStackNavigator } from "@react-navigation/stack";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { View } from "react-native";
 import TokenContext from "../contexts/TokenContext";
 import LoginScreen from "../screens/LoginScreen";
@@ -9,6 +9,7 @@ import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
 import ResetpassScreen from "../screens/ResetpassScreen";
 import EditProfileScreen from "../screens/EditProfileScreen";
 import SetFullNameScreen from "../screens/SetFullNameScreen";
+import { useFocusEffect } from "@react-navigation/native";
 
 const Stack = createStackNavigator();
 

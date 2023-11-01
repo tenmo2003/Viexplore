@@ -9,7 +9,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 import MapView, { Geojson, Marker } from "react-native-maps";
 import Modal from "react-native-modal";
@@ -18,7 +18,7 @@ import service from "../helper/axiosService";
 import { initialCamera } from "../helper/camera";
 import { mapStyle, vietnam } from "../helper/vietnam";
 
-function MapScreen({ navigation }) {
+function MapScreen({ route, navigation }) {
   const mapViewRef = useRef(null);
 
   const [camera, setCamera] = useState(initialCamera);
@@ -33,6 +33,30 @@ function MapScreen({ navigation }) {
   const [showResults, setShowResults] = useState(false);
   const [haveResults, setHaveResults] = useState(false);
   // const translateY = useRef(new Animated.Value(0)).current;
+
+  const { id } = route.params || {};
+
+  useEffect(() => {
+    async function animate(location) {
+      const curCam = await mapViewRef.current.getCamera();
+      animateToCamera({
+        center: {
+          latitude: location.latitude,
+          longitude: location.longitude,
+        },
+        zoom: curCam.zoom > 11 ? curCam.zoom : 11,
+      });
+    }
+    if (id) {
+      let location = locations.find((location) => location.id === id);
+      setSelectedLocation(location);
+      animate(location);
+
+      setTimeout(() => {
+        toggleModal();
+      }, 450);
+    }
+  }, [route.params]);
 
   const onSearch = (location) => {
     setQuery(location.name);
@@ -106,7 +130,7 @@ function MapScreen({ navigation }) {
 
   return (
     <View className="flex-1 items-center justify-end bg-gray-200">
-      {loading && <Loading/>}
+      {loading && <Loading />}
       <MapView
         ref={mapViewRef}
         className="w-full h-full"
