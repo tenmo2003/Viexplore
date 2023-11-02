@@ -1,7 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Platform, TouchableOpacity } from "react-native";
 import { Ionicons } from "react-native-vector-icons";
-import { Feather, Octicons, MaterialCommunityIcons } from "react-native-vector-icons";
+import {
+  Feather,
+  Octicons,
+  MaterialCommunityIcons,
+} from "react-native-vector-icons";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import {
   Dimensions,
@@ -237,9 +241,7 @@ const UserScreen = ({ route, navigation }) => {
 
   const navigateToSecurity = () => {
     setModalVisible(false);
-    navigation.navigate("Security",
-      { username: username },
-    )
+    navigation.navigate("Security", { username: username });
   };
 
   return (

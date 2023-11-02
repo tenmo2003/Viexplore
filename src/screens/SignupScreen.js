@@ -6,13 +6,12 @@ import {
   ScrollView,
   TouchableOpacity,
   View,
-  Alert
 } from "react-native";
 import { Button, Input, Text } from "react-native-elements";
 import { ScreenHeight } from "react-native-elements/dist/helpers";
-import service from "../helper/axiosService";
 import Loading from "../components/Loading";
 import { showAlert } from "../helper/CustomAlert";
+import service from "../helper/axiosService";
 
 export default function SignupScreen({ navigation }) {
   const [email, setEmail] = useState("");
@@ -155,7 +154,14 @@ export default function SignupScreen({ navigation }) {
             />
           </TouchableOpacity>
 
-          <Text style={{ fontWeight: "bold", fontSize: 18, marginTop: 10, marginBottom: Dimensions.get("window").width < 768 ? 30 : 60, }}>
+          <Text
+            style={{
+              fontWeight: "bold",
+              fontSize: 18,
+              marginTop: 10,
+              marginBottom: Dimensions.get("window").width < 768 ? 30 : 60,
+            }}
+          >
             Already have an account?{" "}
             <Text
               onPress={() => navigation.navigate("Login")}
@@ -181,7 +187,7 @@ const styles = {
     flex: 1,
     alignItems: "center",
     backgroundColor: "#AACCFF", // Mã màu nền
-    height: Dimensions.get("window").height - ScreenHeight*0.09,
+    height: Dimensions.get("window").height - ScreenHeight * 0.09,
   },
 
   img: {
@@ -225,6 +231,5 @@ const styles = {
     borderColor: "black",
     borderWidth: 2,
     padding: 0,
-    
   },
 };

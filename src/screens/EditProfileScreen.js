@@ -1,23 +1,18 @@
+import * as ImagePicker from "expo-image-picker";
 import React, { useState } from "react";
 import {
-  View,
-  Text,
   Keyboard,
+  Platform,
+  Text,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  Platform,
+  View,
 } from "react-native";
-import service, {
-  getAllHeaderConfig,
-  updateHeaderConfig,
-} from "../helper/axiosService";
-import { showAlert } from "../helper/CustomAlert";
-import * as ImagePicker from "expo-image-picker";
-import { Avatar, Button } from "react-native-elements";
-import axios from "axios";
-import Loading from "../components/Loading";
-import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
+import { Avatar } from "react-native-elements";
 import { TextInput } from "react-native-paper";
+import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
+import Loading from "../components/Loading";
+import service from "../helper/axiosService";
 
 export default function EditProfileScreen({ route, navigation }) {
   const { username, fullname, email, avatar } = route.params.userInfo;
@@ -63,7 +58,10 @@ export default function EditProfileScreen({ route, navigation }) {
       const formData = new FormData();
       if (newAvatar !== avatar) {
         formData.append("avatar", {
-          uri: newAvatar,
+          uri:
+            Platform.OS === "android"
+              ? newAvatar
+              : newAvatar.replace("file://", ""),
           name: "avatar.jpg",
           type: "image/jpg",
         });
