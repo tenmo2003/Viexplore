@@ -91,7 +91,6 @@ function MapScreen({ route, navigation }) {
       setLoading(true);
       service.get("/locations").then(
         (response) => {
-          console.log(response.data.results);
           setLocations(response.data.results);
           setLoading(false);
         },
@@ -142,6 +141,7 @@ function MapScreen({ route, navigation }) {
         rotateEnabled={false}
         moveOnMarkerPress={false}
         onPress={() => Keyboard.dismiss()}
+        provider="google"
       >
         <Geojson
           geojson={vietnam}
