@@ -168,7 +168,7 @@ const UserScreen = ({ route, navigation }) => {
     setModalVisible(!isModalVisible);
   };
 
-  const loadBookmarkList = () => {
+  const refreshUserInfo = () => {
     setLoading(true);
     service.get("/users/me", {}).then(
       (res) => {
@@ -176,6 +176,7 @@ const UserScreen = ({ route, navigation }) => {
         setBookmarkList(bookmarks);
         setFullName(res.data.results.fullName);
         setAvatar(res.data.results.avatar);
+        setEmail(res.data.results.email);
         setLoading(false);
       },
       () => {
@@ -187,7 +188,7 @@ const UserScreen = ({ route, navigation }) => {
 
   useFocusEffect(
     React.useCallback(() => {
-      loadBookmarkList();
+      refreshUserInfo();
     }, [])
   );
 
@@ -196,9 +197,11 @@ const UserScreen = ({ route, navigation }) => {
     service.get("/users/me", {}).then(
       (res) => {
         const userData = res.data.results;
+        // console.log(userData);
         setFullName(userData.fullName);
         setUsername(userData.username);
         setAvatar(userData.avatar);
+        setEmail(userData.email);
         setBookmarkList(userData.bookmarks);
         setLoading(false);
       },
@@ -233,6 +236,7 @@ const UserScreen = ({ route, navigation }) => {
   };
 
   const navigateToSecurity = () => {
+    setModalVisible(false);
     navigation.navigate("Security",
       { username: username },
     )
@@ -263,7 +267,7 @@ const UserScreen = ({ route, navigation }) => {
 
         <Avatar
           containerStyle={{ alignSelf: "center", marginTop: 50 }}
-          source={avatar ? { uri: avatar } : require("./../../assets/cho.jpg")}
+          source={avatar ? { uri: avatar } : require("./../../assets/ava.png")}
           rounded
           size={"large"}
         />

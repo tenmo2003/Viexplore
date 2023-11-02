@@ -50,7 +50,7 @@ export default function App() {
 
   return (
     <TokenContext.Provider value={{ token, setToken }}>
-      {loading && <Loading/>}
+      {loading && <Loading full={true} />}
       <PaperProvider>
         <NavigationContainer>
           <Tab.Navigator
