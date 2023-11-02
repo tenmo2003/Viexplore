@@ -61,7 +61,7 @@ export default function EditProfileScreen({ route, navigation }) {
           uri:
             Platform.OS === "android"
               ? newAvatar
-              : newAvatar.replace("file://", ""),
+              : newAvatar.replace("file://", "/private"),
           name: "avatar.jpg",
           type: "image/jpg",
         });
