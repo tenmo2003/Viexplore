@@ -161,6 +161,7 @@ const BottomTab = ({ bookmarks, navigation }) => {
 const UserScreen = ({ route, navigation }) => {
   const [fullname, setFullName] = useState("");
   const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [avatar, setAvatar] = useState(null);
   const [bookmarkList, setBookmarkList] = useState([]);
@@ -241,7 +242,10 @@ const UserScreen = ({ route, navigation }) => {
 
   const navigateToSecurity = () => {
     setModalVisible(false);
-    navigation.navigate("Security", { username: username });
+    navigation.navigate("Security", {
+        username: username,
+      },
+    );
   };
 
   return (
