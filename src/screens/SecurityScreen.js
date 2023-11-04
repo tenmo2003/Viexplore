@@ -33,7 +33,6 @@ export default function SecurtityScreen({ route, navigation }) {
   const [isErrorCfPassword, setIsErrorCfPassword] = useState(false);
 
   const [loading, setLoading] = useState(false);
-
   const [keyboardIsShowing, setKeyboardIsShowing] = useState(false);
 
   const { username } = route.params;
@@ -151,7 +150,6 @@ export default function SecurtityScreen({ route, navigation }) {
       setIsErrorCfPassword(false);
       service
         .put(`/change-password`, {
-          oldPassword: nowpassword,
           newPassword: newpassword,
         })
         .then(

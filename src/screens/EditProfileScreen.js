@@ -66,6 +66,7 @@ export default function EditProfileScreen({ route, navigation }) {
           type: "image/jpg",
         });
       }
+      
       formData.append("username", username);
       formData.append("email", newEmail);
       formData.append("fullName", newFullname);
@@ -202,7 +203,7 @@ const styles = {
     justifyContent: "center",
     width: "auto",
     height: "auto",
-    shadowColor: "black",
+    // shadowColor: "black",
     elevation: 10,
   },
   profileImage: {

@@ -7,6 +7,7 @@ import {
   Dimensions,
   ScrollView,
   KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { Input, Button, Text } from "react-native-elements";
 import TokenContext from "../contexts/TokenContext";
@@ -177,7 +178,7 @@ const styles = {
     width: imgWidth,
     height: imgHeight,
     aspectRatio: 2.9 / 2,
-    marginTop: Dimensions.get("window").width < 768 ? 20 : 60,
+    marginTop: Platform.OS === "ios" ? (Dimensions.get("window").width < 768 ? 20 : 60) + 40 : 0,
   },
 
   inputContainer: {
