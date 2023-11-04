@@ -179,6 +179,7 @@ const UserScreen = ({ route, navigation }) => {
       (res) => {
         const bookmarks = res.data.results.bookmarks;
         setBookmarkList(bookmarks);
+        setUsername(res.data.results.username);
         setFullName(res.data.results.fullName);
         setAvatar(res.data.results.avatar);
         setEmail(res.data.results.email);

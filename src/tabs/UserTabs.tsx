@@ -6,6 +6,7 @@ import LoginScreen from "../screens/LoginScreen";
 import UserScreen from "../screens/UserScreen";
 import SignupScreen from "../screens/SignupScreen";
 import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
+import OtpScreen from "../screens/OtpScreen";
 import ResetpassScreen from "../screens/ResetpassScreen";
 import EditProfileScreen from "../screens/EditProfileScreen";
 import SetFullNameScreen from "../screens/SetFullNameScreen";
@@ -26,6 +27,7 @@ export default function UserTabs({ navigation }) {
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Signup" component={SignupScreen} />
         <Stack.Screen name="MailResetPass" component={ForgotPasswordScreen} />
+        <Stack.Screen name="Otp" component={OtpScreen} />
         <Stack.Screen name="ResetPass" component={ResetpassScreen} />
         <Stack.Screen name="EditProfile" component={EditProfileScreen} />
         <Stack.Screen name="SetFullName" component={SetFullNameScreen} />
