@@ -302,7 +302,7 @@ function MapScreen({ route, navigation }) {
         {showResults && (
           <View style={styles.dropDown}>
             {searchResults.map((location, index) => (
-              <TouchableOpacity //Touch? yes //ngon r
+              <TouchableOpacity 
                 onPress={() => {
                   onSearch(location);
                   setShowResults(false);

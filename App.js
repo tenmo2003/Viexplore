@@ -94,6 +94,14 @@ export default function App() {
                 ),
                 tabBarLabel: "Trang cá nhân",
               }}
+              listeners={({ navigation, route }) => ({
+                tabPress: (e) => {
+                  e.preventDefault();
+                  navigation.navigate("UserTab", {
+                    screen: token ? "Admin" : "Login",
+                  });
+                },
+              })}
               name="UserTab"
               component={UserTabs}
             />

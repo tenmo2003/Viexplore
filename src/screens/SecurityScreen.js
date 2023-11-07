@@ -6,10 +6,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
-import service, {
-  getAllHeaderConfig,
-  updateHeaderConfig,
-} from "../helper/axiosService";
+import service from "../helper/axiosService";
 import TokenContext from "../contexts/TokenContext";
 import * as SecureStore from "expo-secure-store";
 import { removeHeaderConfig } from "../helper/axiosService";

@@ -11,6 +11,10 @@ import ResetpassScreen from "../screens/ResetpassScreen";
 import EditProfileScreen from "../screens/EditProfileScreen";
 import SetFullNameScreen from "../screens/SetFullNameScreen";
 import SecurityScreen from "../screens/SecurityScreen";
+import AdminScreen from "../screens/AdminScreen";
+import UserListScreen from "../screens/UserListScreen";
+import TopicListScreen from "../screens/TopicListScreen";
+import LocaListScreen from "../screens/LocaListScreen";
 
 const Stack = createStackNavigator();
 
@@ -32,6 +36,10 @@ export default function UserTabs({ navigation }) {
         <Stack.Screen name="EditProfile" component={EditProfileScreen} />
         <Stack.Screen name="SetFullName" component={SetFullNameScreen} />
         <Stack.Screen name="Security" component={SecurityScreen} />
+        <Stack.Screen name="Admin" component={AdminScreen} />
+        <Stack.Screen name="UserList" component={UserListScreen} />
+        <Stack.Screen name="TopicList" component={TopicListScreen} />
+        <Stack.Screen name="LocaList" component={LocaListScreen} />
       </Stack.Navigator>
     </View>
   );
