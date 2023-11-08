@@ -61,7 +61,7 @@ export default function ForgotPasswordScreen({ navigation }) {
 
           <TouchableOpacity style={styles.inputContainer}>
             <Input
-              placeholder="username"
+              placeholder="Username"
               leftIcon={{
                 type: "font-awesome",
                 name: "envelope",
@@ -73,6 +73,7 @@ export default function ForgotPasswordScreen({ navigation }) {
               value={username}
               leftIconContainerStyle={styles.leftIconStyle}
               onChangeText={(text) => setUsernameText(text)}
+              autoCapitalize="none"
             />
           </TouchableOpacity>
           <TouchableOpacity style={styles.btn}>

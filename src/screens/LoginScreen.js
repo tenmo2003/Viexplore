@@ -106,6 +106,7 @@ export default function LoginScreen({ navigation }) {
               inputContainerStyle={styles.inputContainerStyle}
               inputStyle={styles.inputStyle}
               leftIconContainerStyle={styles.leftIconStyle}
+              autoCapitalize="none"
               onChangeText={(value) => onChangeUsername(value)}
             />
           </View>
