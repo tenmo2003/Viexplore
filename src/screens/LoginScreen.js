@@ -2,7 +2,6 @@ import React, { useContext, useState } from "react";
 import {
   View,
   Image,
-  TextInput,
   TouchableOpacity,
   Dimensions,
   ScrollView,
@@ -32,6 +31,9 @@ export default function LoginScreen({ navigation }) {
   const onSubmit = () => {
     console.log("username: ", username);
     console.log("password: ", password);
+    // if (username === "admin" && password === "admin") {
+    //   navigation.navigate("Admin");
+    // } else {
     setLoading(true);
     service
       .post("/authenticate", {
@@ -73,6 +75,7 @@ export default function LoginScreen({ navigation }) {
           setLoading(false);
         }
       );
+    
   };
 
   const onChangeUsername = (input) => {
