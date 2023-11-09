@@ -61,6 +61,8 @@ export default function OtpScreen({ route, navigation }) {
                 color: "#BABABA",
                 size: 20,
               }}
+              inputMode="numeric"
+              maxLength={6}
               inputContainerStyle={styles.inputContainerStyle}
               inputStyle={styles.inputStyle}
               value={otpInput}

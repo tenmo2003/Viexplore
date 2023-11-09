@@ -99,6 +99,7 @@ export default function SignupScreen({ navigation }) {
               inputStyle={styles.inputStyle}
               leftIconContainerStyle={styles.leftIconStyle}
               onChangeText={(value) => onChangeEmail(value)}
+              autoCapitalize="none"
             />
           </View>
           <View style={styles.inputContainer}>
@@ -113,6 +114,7 @@ export default function SignupScreen({ navigation }) {
               inputStyle={styles.inputStyle}
               leftIconContainerStyle={styles.leftIconStyle}
               onChangeText={(value) => onChangeUsername(value)}
+              autoCapitalize="none"
             />
           </View>
           <View style={styles.inputContainer}>
