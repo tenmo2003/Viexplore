@@ -98,7 +98,7 @@ export default function App() {
                 tabPress: (e) => {
                   e.preventDefault();
                   navigation.navigate("UserTab", {
-                    screen: token ? "Admin" : "Admin",
+                    screen: token ? "User" : "Login",
                   });
                 },
               })}
