@@ -72,12 +72,11 @@ export default function LocaListScreen({ navigation }) {
   };
 
   const renderItem = (item) => (
-    // console.log(item.name.length),
     <View style={[styles.showList]}>
       <Avatar
         source={
-          item.thumbnail
-            ? { uri: item.thumbnail }
+          item.item.thumbnail
+            ? { uri: item.item.thumbnail }
             : require("./../../assets/ava.png")
         }
         rounded
@@ -90,16 +89,16 @@ export default function LocaListScreen({ navigation }) {
         color="red"
       />
       <Text style={styles.informationLoca}>
-        {item.name
-          ? item.name.length <= 20
-            ? item.name
-            : item.name.substring(0, 20) + "..."
+        {item.item.name
+          ? item.item.name.length <= 20
+            ? item.item.name
+            : item.item.name.substring(0, 20) + "..."
           : "Unknown"}{" "}
-        {"\u00B7"} {item.generalLocation}
+        {"\u00B7"} {item.item.generalLocation}
       </Text>
       <Text style={styles.script}>
-        {item.script
-          ? item.script.substring(0, item.script.lastIndexOf(" ", 80)) + "..."
+        {item.item.script
+          ? item.item.script.substring(0, item.item.script.lastIndexOf(" ", 80)) + "..."
           : "No description"}
       </Text>
     </View>

@@ -12,7 +12,7 @@ import { Text, Avatar } from "react-native-elements";
 import service from "../helper/axiosService";
 import { showAlert } from "../helper/CustomAlert";
 import { MaterialIcons } from "react-native-vector-icons";
-import { Feather } from "@expo/vector-icons";
+import { Feather, FontAwesome } from "@expo/vector-icons";
 
 export default function TopicListScreen({ navigation }) {
   const [query, setQuery] = useState("");
@@ -49,7 +49,7 @@ export default function TopicListScreen({ navigation }) {
       const offset = perPage;
 
       service
-        .get(`/admin/users?index=${index}&offset=${offset}`)
+        .get(`/topics?index=${index}&offset=${offset}`)
         .then((res) => {
           if (res.data.status === 200) {
             const newData = res.data.results;
@@ -76,14 +76,24 @@ export default function TopicListScreen({ navigation }) {
   const renderItem = (item) => (
     <View style={[styles.showList]}>
       <Avatar
+        style={styles.imagesPost}
         source={
-          item.avatar ? { uri: item.avatar } : require("./../../assets/ava.png")
+          item.item.images[0] ? { uri: item.item.images[0] } : require("./../../assets/ava.png")
         }
-        rounded
-        size={60}
       />
-      {/* <Text style={styles.informationUser}>
-      </Text> */}
+      <FontAwesome style={styles.iconEdit} name="pencil-square-o" size={24} color="black" />
+      <Text style={styles.informationUser}>
+        {item.item.author}
+      </Text>
+      <Text style={styles.contentPost}>
+        {item.item.content}
+      </Text>
+      <Text style={styles.vote}>
+        {"Lượt thích: "}{item.item.votes}
+      </Text>
+      <Text style={styles.time}>
+        {item.item.createdAt}
+      </Text>
     </View>
   );
 
@@ -301,13 +311,46 @@ const styles = {
     height: 200,
     padding: 10,
     paddingLeft: 20,
-    borderBottomWidth: 10,
+    borderBottomWidth: 5,
     borderBottomColor: "#D9D9D9",
+  },
+  iconEdit: {
+    position: "absolute",
+    left: 10,
+    top: 10,
   },
   informationUser: {
     position: "absolute",
-    fontSize: 16,
-    left: 90,
+    fontSize: 18,
+    fontWeight: "600",
+    left: 35,
     top: 10,
   },
+  imagesPost: {
+    position: "absolute",
+    right: 0,
+    width: 250,
+    height: 195,
+  },
+  contentPost: {
+    position: "absolute",
+    width: 150,
+    height: 150,
+    fontSize: 18,
+    left: 10,
+    top: 35,
+  },
+  vote: {
+    position: "absolute",
+    fontSize: 12,
+    left: 10,
+    bottom: 15,
+  },
+  time: {
+    position: "absolute",
+    fontSize: 12,
+    left: 10,
+    bottom: 2,
+    color: "#888888",
+  }
 };
