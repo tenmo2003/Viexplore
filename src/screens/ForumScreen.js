@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useRef} from "react";
 import { Platform } from "react-native";
 import {
   Text,
@@ -8,14 +8,176 @@ import {
   Image,
   Dimensions,
   TouchableOpacity,
+  FlatList,
 } from "react-native";
-import { Input, Button, Icon } from "react-native-elements";
+import { Input, Button, Slider } from "react-native-elements";
+import { ImageSlider } from "react-native-image-slider-banner";
 import { Ionicons } from "react-native-vector-icons";
-
+import Loading from "../components/Loading";
+import service from "../helper/axiosService";
+import { useFocusEffect } from "@react-navigation/native";
 
 function ForumScreen({ navigation }) {
+  const [loading, setLoading] = useState(false);
+  const [query, setQuery] = useState("");
+  const [resetPage, setResetPage] = useState(0);
+
+  const [data, setData] = useState([]);
+  const [page, setPage] = useState(1);
+  const perPage = 20;
+  const isEndReached = useRef(false);
+
+  useEffect(() => {
+    const maximumAmountOfSearchResults = 10;
+  }, [query]);
+
+  useEffect(() => {
+    fetchData(page);
+  }, [resetPage]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      handleResetPage();
+    }, [])
+  );
+
+  const fetchData = async (pageNumber) => {
+    if (loading || isEndReached.current) return;
+
+    try {
+      setLoading(true);
+
+      const index = (pageNumber - 1) * perPage;
+      const offset = perPage;
+
+      service
+        .get(`/topics?index=${index}&offset=${offset}`)
+        .then((res) => {
+          console.log(res.data.results)
+          if (res.data.status === 200) {
+            const newData = res.data.results;
+
+            if (newData.length > 0) {
+              const reversedData = [...newData].reverse();
+              setData([...reversedData, ...data]);
+              setPage(pageNumber + 1);
+            } else {
+              isEndReached.current = true;
+            }
+          } else {
+            console.error("API request failed:", res.data.message);
+          }
+        });
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const renderItem = (item) => (
+    <View>
+      <View
+        style={{
+          flexDirection: "row",
+        }}
+      >
+        <View style={styles.profileImage}>
+          <Image
+            source={item.item.authorAvatar ? item.item.authorAvatar : require("./../../assets/ava.png")}
+            style={styles.image}
+            resizeMode="center"
+          ></Image>
+        </View>
+        <View>
+          <Text style={styles.Name}>{item.item.author}</Text>
+          <Text style={styles.Time}>{item.item.createdAt}</Text>
+        </View>
+      </View>
+      <Text style={styles.Decript}>{item.item.content}</Text>
+      <ImageSlider
+        data={item.item.images.map((img) => ({ img }))}
+        caroselImageContainerStyle={styles.caroselImageContainerStyle}
+        activeIndicatorStyle={styles.activeIndicatorStyle}
+        indicatorContainerStyle={styles.indicatorContainerStyle}
+        preview={false}
+      />
+
+      <View style={styles.center}>
+        <View
+          style={{
+            flexDirection: "row",
+            marginTop: 10,
+            marginBottom: 15,
+          }}
+        >
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <TouchableOpacity>
+              <Ionicons
+                name="arrow-up-outline"
+                size={30}
+                color="#52575D"
+                style={{
+                  marginRight: 5,
+                }}
+              />
+            </TouchableOpacity>
+            <Text
+              style={{
+                fontSize: 18,
+                color: "#52575D",
+              }}
+            >
+              Vote
+            </Text>
+            <TouchableOpacity>
+              <Ionicons
+                name="arrow-down-outline"
+                size={30}
+                color="#52575D"
+                style={{
+                  marginLeft: 5,
+                }}
+              />
+            </TouchableOpacity>
+          </View>
+          <Ionicons
+            name="chatbubble-outline"
+            size={27}
+            color="#52575D"
+            style={styles.iconStyle}
+            onPress={() => navigation.navigate("Comment")}
+          ></Ionicons>
+          <Ionicons
+            name="flag-outline"
+            size={27}
+            color="#52575D"
+            style={styles.iconStyle}
+          ></Ionicons>
+        </View>
+      </View>
+      <View style={styles.Rectangle} />
+    </View>
+  );
+
+  const handleEndReached = () => {
+    fetchData(page);
+  };
+
+  const handleResetPage = () => {
+    setResetPage((prev) => prev + 1);
+  };
+
   return (
-    <ScrollView style={Platform.OS === "ios" && { paddingTop: 30 }}>
+    <View>
+      {loading && <Loading full={true} />}
+    <View style={Platform.OS === "ios" && { paddingTop: 30 }}>
       <View style={{ flexDirection: "row", marginBottom: 15}}>
         <View style={styles.profileImage}>
           <Image
@@ -24,7 +186,6 @@ function ForumScreen({ navigation }) {
             resizeMode="center"
           ></Image>
         </View>
-
         <TouchableOpacity onPress={() => navigation.navigate("CreatePost")}>
           <View style={styles.inputContainer}>
             <Button
@@ -45,55 +206,19 @@ function ForumScreen({ navigation }) {
       <View style={styles.Rectangle} />
 
       {/* Code for ở đây */}
-      <View style={{ flexDirection: "row" }}>
-        <View style={styles.profileImage}>
-          <Image
-            source={require("./../../assets/cho.jpg")}
-            style={styles.image}
-            resizeMode="center"
-          ></Image>
-        </View>
-        <View>
-          <Text style={styles.Name}>MingMing</Text>
-          <Text style={styles.Time}>1 giờ trước</Text>
-        </View>
-      </View>
-      <Text style={styles.Decript}>Haizz xấu ỉa</Text>
-      <Image
-        source={require("./../../assets/cho.jpg")}
-        style={styles.image2}
-      ></Image>
-
-      <View style={styles.center}>
-        <View style={{ flexDirection: "row", marginTop: 10 , marginBottom: 15 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-            <TouchableOpacity>
-              <Ionicons name="arrow-up-outline" size={30} color="#52575D" style={{ marginRight: 5 }} />
-            </TouchableOpacity>
-            <Text style={{ fontSize: 18, color: '#52575D' }}>Vote</Text>
-            <TouchableOpacity>
-              <Ionicons name="arrow-down-outline" size={30} color="#52575D" style={{ marginLeft: 5 }} />
-            </TouchableOpacity>
-          </View>
-          <Ionicons
-            name="chatbubble-outline"
-            size={27}
-            color="#52575D"
-            style={styles.iconStyle}
-            onPress={() => navigation.navigate("Comment")}
-          ></Ionicons>
-          <Ionicons
-            name="flag-outline"
-            size={27}
-            color="#52575D"
-            style={styles.iconStyle}
-          ></Ionicons>
-        </View>
+      <View style={styles.body}> 
+        <FlatList
+          data={data}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderItem}
+          onEndReached={handleEndReached}
+          onEndReachedThreshold={0.8}
+        />
+        {loading && <ActivityIndicator />}
       </View>
       
-      <View style={styles.Rectangle} />
-      
-    </ScrollView>
+    </View>
+    </View>
   );
 }
 
@@ -106,6 +231,10 @@ const postHeight = screenHeight * 0.5;
 const postWidth = screenWidth;
 
 const styles = StyleSheet.create({
+  body: {
+    height: screenHeight*0.81,
+  },
+
   text: {
     color: "#52575D",
     top: 5,
@@ -173,6 +302,7 @@ const styles = StyleSheet.create({
   Decript: {
     marginTop: 10,
     marginLeft: 20,
+    marginBottom: 10,
     fontSize: 16,
     marginRight: 20,
   },
@@ -192,6 +322,20 @@ const styles = StyleSheet.create({
   iconStyle: {
     marginTop: 10,
     marginLeft: (75/standarWidth)*screenWidth,
+  },
+  activeIndicatorStyle: {
+    width: 12,
+    height: 12,
+    borderRadius: 12,
+  },
+  caroselImageContainerStyle: {
+    backgroundColor: "#000",
+    height: screenHeight * 0.65,
+    justifyContent: "center",
+  },
+  indicatorContainerStyle: {
+    position: "absolute",
+    bottom: -10,
   },
 
 });
