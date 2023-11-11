@@ -35,12 +35,6 @@ function ForumScreen({ navigation }) {
     fetchData(page);
   }, [resetPage]);
 
-  useFocusEffect(
-    React.useCallback(() => {
-      handleResetPage();
-    }, [])
-  );
-
   const fetchData = async (pageNumber) => {
     if (loading || isEndReached.current) return;
 
@@ -75,6 +69,13 @@ function ForumScreen({ navigation }) {
     }
   };
 
+  useFocusEffect(
+    React.useCallback(() => {
+      console.log("Focused!");
+      fetchData(page);
+    }, [])
+  );
+
   const renderItem = (item) => (
     <View>
       <View
@@ -84,7 +85,7 @@ function ForumScreen({ navigation }) {
       >
         <View style={styles.profileImage}>
           <Image
-            source={item.item.authorAvatar ? item.item.authorAvatar : require("./../../assets/ava.png")}
+            source={{uri: item.item.authorAvatar}}
             style={styles.image}
             resizeMode="center"
           ></Image>
@@ -94,6 +95,7 @@ function ForumScreen({ navigation }) {
           <Text style={styles.Time}>{item.item.createdAt}</Text>
         </View>
       </View>
+      <Text style={styles.topicName}>{item.item.name}</Text>
       <Text style={styles.Decript}>{item.item.content}</Text>
       <ImageSlider
         data={item.item.images.map((img) => ({ img }))}
@@ -168,10 +170,6 @@ function ForumScreen({ navigation }) {
 
   const handleEndReached = () => {
     fetchData(page);
-  };
-
-  const handleResetPage = () => {
-    setResetPage((prev) => prev + 1);
   };
 
   return (
@@ -300,12 +298,21 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   Decript: {
-    marginTop: 10,
     marginLeft: 20,
     marginBottom: 10,
     fontSize: 16,
     marginRight: 20,
   },
+
+  topicName: {
+    marginTop: 10,
+    marginLeft: 20,
+    fontWeight: "bold",
+    fontSize: 24,
+    marginRight: 20,
+    marginBottom: 5,
+  },
+
 
   center: {
     display: "flex",

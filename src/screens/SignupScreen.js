@@ -161,7 +161,6 @@ export default function SignupScreen({ navigation }) {
               fontWeight: "bold",
               fontSize: 18,
               marginTop: 10,
-              marginBottom: Dimensions.get("window").width < 768 ? 30 : 60,
             }}
           >
             Already have an account?{" "}
@@ -187,9 +186,10 @@ const imgHeight = (550 / standardHeight) * width;
 const styles = {
   container: {
     flex: 1,
+    justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#AACCFF", // Mã màu nền
-    height: Dimensions.get("window").height - ScreenHeight * 0.09,
+    height: height - ScreenHeight * 0.09,
   },
 
   img: {
