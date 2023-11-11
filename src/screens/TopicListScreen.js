@@ -55,6 +55,8 @@ export default function TopicListScreen({ navigation }) {
             const newData = res.data.results;
 
             if (newData.length > 0) {
+              newData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
               setData([...data, ...newData]);
               setPage(pageNumber + 1);
             } else {
