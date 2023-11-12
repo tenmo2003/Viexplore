@@ -156,7 +156,7 @@ function CreatePostScreen ({ navigation }) {
                             </View>
 
                             <View style={styles.center}>
-                            <View style={{...styles.postContent, height: 50,}}>
+                            <View style={{...styles.postContent, height: postHeight*0.15}}>
                                 <TextInput
                                     placeholder="Tiêu đề:"
                                     style={styles.textPost}

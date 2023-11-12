@@ -312,62 +312,63 @@ const UserScreen = ({ route, navigation }) => {
           <View style={styles.modalContent}>
             <View style={styles.center}>
               <View style={styles.barIcon} />
+            </View>
+
               <View style={styles.flexColumn}>
                 <View style={styles.editProfile}>
                   <TouchableOpacity
                     style={styles.flexEditProfile}
                     onPress={navigateToEditProfile}
                   >
-                    <Ionicons name="settings-outline" size={30} />
-                    <Text
-                      style={{
-                        fontSize: 24,
-                        fontWeight: "bold",
-                        paddingHorizontal: 10,
-                      }}
-                    >
-                      Sửa hồ sơ
-                    </Text>
+                    <View style={{flexDirection:"row"}}>
+                      <Ionicons name="settings-outline" size={30} />
+                      <Text
+                        style={{
+                          fontSize: 24,
+                          fontWeight: "bold",
+                          paddingHorizontal: 10,
+                        }}
+                      >
+                        Sửa hồ sơ
+                      </Text>
+                    </View>
                     <Feather
                       name="chevron-right"
                       style={{
-                        paddingHorizontal:
-                          Platform.OS === "ios"
-                            ? screenWidth / 3
-                            : screenWidth / 2.8,
+                        alignSelf: "flex-end",
                       }}
                       size={30}
                     />
                   </TouchableOpacity>
                 </View>
+
                 <View style={styles.security}>
                   <TouchableOpacity
                     style={styles.flexEditProfile}
                     onPress={navigateToSecurity}
                   >
-                    <MaterialCommunityIcons name="security" size={30} />
-                    <Text
-                      style={{
-                        fontSize: 24,
-                        fontWeight: "bold",
-                        paddingHorizontal: 10,
-                      }}
-                    >
-                      Bảo mật
-                    </Text>
+                    <View style={{flexDirection:"row"}}>
+                      <MaterialCommunityIcons name="security" size={30} />
+                      <Text
+                        style={{
+                          fontSize: 24,
+                          fontWeight: "bold",
+                          paddingHorizontal: 10,
+                        }}
+                      >
+                        Bảo mật
+                      </Text>
+                    </View>
                     <Feather
                       name="chevron-right"
                       style={{
-                        left: 18,
-                        paddingHorizontal:
-                          Platform.OS === "ios"
-                            ? screenWidth / 3
-                            : screenWidth / 2.8,
+                        alignSelf: "flex-end"
                       }}
                       size={30}
                     />
                   </TouchableOpacity>
                 </View>
+                
                 <TouchableOpacity style={styles.logOut} onPress={logOutHandler}>
                   <Text
                     style={{ fontSize: 26, fontWeight: "bold", color: "red" }}
@@ -376,8 +377,8 @@ const UserScreen = ({ route, navigation }) => {
                   </Text>
                 </TouchableOpacity>
               </View>
+              
             </View>
-          </View>
         </Modal>
       </ScrollView>
       <BottomTab bookmarks={bookmarkList} navigation={navigation} />
@@ -387,6 +388,8 @@ const UserScreen = ({ route, navigation }) => {
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
+const standarWidth = 360;
+const standardHeight = 800;
 
 const settingsHeight = screenHeight / 4;
 const settingsWidth = screenWidth / 12;
@@ -501,7 +504,10 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 35,
     minHeight: settingsHeight,
     paddingBottom: 20,
+    justifyContent: "center", 
+    alignItems: "center", 
   },
+  
   center: {
     display: "flex",
     alignItems: "center",
@@ -521,16 +527,15 @@ const styles = StyleSheet.create({
   },
   security: {
     top: 40,
-    width: "auto",
     height: "auto",
   },
   flexEditProfile: {
     display: "flex",
     flexDirection: "row",
+    justifyContent:"space-between",
   },
   editProfile: {
     top: 20,
-    width: "auto",
     height: "auto",
   },
   logOut: {

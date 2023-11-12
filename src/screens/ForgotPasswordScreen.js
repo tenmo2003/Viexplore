@@ -46,7 +46,6 @@ export default function ForgotPasswordScreen({ navigation }) {
   return (
     <KeyboardAvoidingView
       behavior="height"
-      style={styles.keyboardAvoidingContainer}
     >
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
@@ -55,7 +54,7 @@ export default function ForgotPasswordScreen({ navigation }) {
             style={styles.img}
           />
 
-          <Text style={{ fontWeight: "bold", fontSize: 30, marginBottom: 20 }}>
+          <Text style={{ fontWeight: "bold", fontSize: 30, marginBottom: 30, marginTop: 5 }}>
             Reset Password
           </Text>
 
@@ -120,16 +119,16 @@ const imgHeight = (550 / standardHeight) * width;
 const styles = {
   container: {
     flex: 1,
+    justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#AACCFF", // Mã màu nền
-    height: Dimensions.get("window").height - ScreenHeight * 0.09,
+    height: height - ScreenHeight * 0.09,
   },
 
   img: {
     width: imgWidth,
     height: imgHeight,
     aspectRatio: 2.9 / 2,
-    marginTop: Platform.OS === "ios" ? (Dimensions.get("window").width < 768 ? 20 : 60) + 50 : 0,
   },
   inputContainer: {
     width: "80%",

@@ -93,9 +93,10 @@ const imgHeight = (550 / standardHeight) * width;
 const styles = {
   container: {
     flex: 1,
+    justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#AACCFF", // Mã màu nền
-    height: Dimensions.get("window").height - ScreenHeight * 0.09,
+    height: height - ScreenHeight * 0.09,
   },
 
   img: {
