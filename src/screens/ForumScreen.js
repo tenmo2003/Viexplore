@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { Platform } from "react-native";
 import {
   Text,
@@ -9,6 +9,7 @@ import {
   Dimensions,
   TouchableOpacity,
   FlatList,
+  ActivityIndicator,
 } from "react-native";
 import { Input, Button, Slider } from "react-native-elements";
 import { ImageSlider } from "react-native-image-slider-banner";
@@ -16,11 +17,14 @@ import { Ionicons } from "react-native-vector-icons";
 import Loading from "../components/Loading";
 import service from "../helper/axiosService";
 import { useFocusEffect } from "@react-navigation/native";
+import TokenContext from "../contexts/TokenContext";
+import { showAlert } from "../helper/CustomAlert";
+import Topic from "../components/Topic";
 
 function ForumScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
-  const [query, setQuery] = useState("");
-  const [resetPage, setResetPage] = useState(0);
+  const [isLogin, setIsLogin] = useState(false);
+  const { token } = useContext(TokenContext);
 
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
@@ -28,12 +32,8 @@ function ForumScreen({ navigation }) {
   const isEndReached = useRef(false);
 
   useEffect(() => {
-    const maximumAmountOfSearchResults = 10;
-  }, [query]);
-
-  useEffect(() => {
-    fetchData(page);
-  }, [resetPage]);
+    token ? setIsLogin(true) : setIsLogin(false);
+  }, [token]);
 
   const fetchData = async (pageNumber) => {
     if (loading || isEndReached.current) return;
@@ -44,24 +44,21 @@ function ForumScreen({ navigation }) {
       const index = (pageNumber - 1) * perPage;
       const offset = perPage;
 
-      service
-        .get(`/topics?index=${index}&offset=${offset}`)
-        .then((res) => {
-          console.log(res.data.results)
-          if (res.data.status === 200) {
-            const newData = res.data.results;
+      service.get(`/topics?index=${index}&offset=${offset}`).then((res) => {
+        if (res.data.status === 200) {
+          const newData = res.data.results;
 
-            if (newData.length > 0) {
-              const reversedData = [...newData].reverse();
-              setData([...reversedData, ...data]);
-              setPage(pageNumber + 1);
-            } else {
-              isEndReached.current = true;
-            }
+          if (newData.length > 0) {
+            const reversedData = [...newData].reverse();
+            setData([...reversedData, ...data]);
+            setPage(pageNumber + 1);
           } else {
-            console.error("API request failed:", res.data.message);
+            isEndReached.current = true;
           }
-        });
+        } else {
+          console.error("API request failed:", res.data.message);
+        }
+      });
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -71,102 +68,17 @@ function ForumScreen({ navigation }) {
 
   useFocusEffect(
     React.useCallback(() => {
-      console.log("Focused!");
-      fetchData(page);
+      setPage(1);
+      setData([]);
+      fetchData(1);
     }, [])
   );
 
-  const renderItem = (item) => (
-    <View>
-      <View
-        style={{
-          flexDirection: "row",
-        }}
-      >
-        <View style={styles.profileImage}>
-          <Image
-            source={{uri: item.item.authorAvatar}}
-            style={styles.image}
-            resizeMode="center"
-          ></Image>
-        </View>
-        <View>
-          <Text style={styles.Name}>{item.item.author}</Text>
-          <Text style={styles.Time}>{item.item.createdAt}</Text>
-        </View>
-      </View>
-      <Text style={styles.topicName}>{item.item.name}</Text>
-      <Text style={styles.Decript}>{item.item.content}</Text>
-      <ImageSlider
-        data={item.item.images.map((img) => ({ img }))}
-        caroselImageContainerStyle={styles.caroselImageContainerStyle}
-        activeIndicatorStyle={styles.activeIndicatorStyle}
-        indicatorContainerStyle={styles.indicatorContainerStyle}
-        preview={false}
-      />
+  useEffect(() => {
+    fetchData(page);
+  }, [page]);
 
-      <View style={styles.center}>
-        <View
-          style={{
-            flexDirection: "row",
-            marginTop: 10,
-            marginBottom: 15,
-          }}
-        >
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <TouchableOpacity>
-              <Ionicons
-                name="arrow-up-outline"
-                size={30}
-                color="#52575D"
-                style={{
-                  marginRight: 5,
-                }}
-              />
-            </TouchableOpacity>
-            <Text
-              style={{
-                fontSize: 18,
-                color: "#52575D",
-              }}
-            >
-              Vote
-            </Text>
-            <TouchableOpacity>
-              <Ionicons
-                name="arrow-down-outline"
-                size={30}
-                color="#52575D"
-                style={{
-                  marginLeft: 5,
-                }}
-              />
-            </TouchableOpacity>
-          </View>
-          <Ionicons
-            name="chatbubble-outline"
-            size={27}
-            color="#52575D"
-            style={styles.iconStyle}
-            onPress={() => navigation.navigate("Comment")}
-          ></Ionicons>
-          <Ionicons
-            name="flag-outline"
-            size={27}
-            color="#52575D"
-            style={styles.iconStyle}
-          ></Ionicons>
-        </View>
-      </View>
-      <View style={styles.Rectangle} />
-    </View>
-  );
+  const renderItem = (item) => <Topic item={item} navigation={navigation}/>;
 
   const handleEndReached = () => {
     fetchData(page);
@@ -174,48 +86,48 @@ function ForumScreen({ navigation }) {
 
   return (
     <View>
-      {loading && <Loading full={true} />}
-    <View style={Platform.OS === "ios" && { paddingTop: 30 }}>
-      <View style={{ flexDirection: "row", marginBottom: 15}}>
-        <View style={styles.profileImage}>
-          <Image
-            source={require("./../../assets/cho.jpg")}
-            style={styles.image}
-            resizeMode="center"
-          ></Image>
-        </View>
-        <TouchableOpacity onPress={() => navigation.navigate("CreatePost")}>
-          <View style={styles.inputContainer}>
-            <Button
-              title="Hãy thêm kỷ niệm đẹp...."
-              iconRight
-              icon={{
-                type: "font-awesome",
-                name: "image",
-                color: "#BABABA",
-              }}
-              buttonStyle={styles.inputContainerStyle}
-              titleStyle={styles.titleStyle}
-              onPress={() => navigation.navigate("CreatePost")}
-            />
+      {loading && <Loading />}
+      <View style={Platform.OS === "ios" && { paddingTop: 30 }}>
+        <View style={{ flexDirection: "row", marginBottom: 15 }}>
+          <View style={styles.profileImage}>
+            <Image
+              source={require("./../../assets/cho.jpg")}
+              style={styles.image}
+              resizeMode="center"
+            ></Image>
           </View>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.Rectangle} />
+          <TouchableOpacity onPress={() => navigation.navigate("CreatePost")}>
+            <View style={styles.inputContainer}>
+              <Button
+                title="Hãy thêm kỷ niệm đẹp...."
+                iconRight
+                icon={{
+                  type: "font-awesome",
+                  name: "image",
+                  color: "#BABABA",
+                }}
+                buttonStyle={styles.inputContainerStyle}
+                titleStyle={styles.titleStyle}
+                onPress={() => navigation.navigate("CreatePost")}
+              />
+            </View>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.Rectangle} />
 
-      {/* Code for ở đây */}
-      <View style={styles.body}> 
-        <FlatList
-          data={data}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={renderItem}
-          onEndReached={handleEndReached}
-          onEndReachedThreshold={0.8}
-        />
-        {loading && <ActivityIndicator />}
+        {/* Code for ở đây */}
+        <View style={styles.body}>
+          <FlatList
+            data={data}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={renderItem}
+            onEndReached={handleEndReached}
+            onEndReachedThreshold={0.8}
+            windowSize={5}
+          />
+          {loading && <ActivityIndicator />}
+        </View>
       </View>
-      
-    </View>
     </View>
   );
 }
@@ -230,7 +142,7 @@ const postWidth = screenWidth;
 
 const styles = StyleSheet.create({
   body: {
-    height: screenHeight*0.81,
+    height: screenHeight * 0.81,
   },
 
   text: {
@@ -313,7 +225,6 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
 
-
   center: {
     display: "flex",
     alignItems: "center",
@@ -328,7 +239,7 @@ const styles = StyleSheet.create({
   },
   iconStyle: {
     marginTop: 10,
-    marginLeft: (75/standarWidth)*screenWidth,
+    marginLeft: (75 / standarWidth) * screenWidth,
   },
   activeIndicatorStyle: {
     width: 12,
@@ -344,7 +255,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: -10,
   },
-
 });
 
 export default ForumScreen;
