@@ -18,7 +18,7 @@ import Loading from "../components/Loading";
 import service from "../helper/axiosService";
 import { useFocusEffect } from "@react-navigation/native";
 
-function CommentScreen({ route,navigation }) {
+function CommentScreen({ route, navigation }) {
     const handleSendPress = () => {
         onSubmit();
     };
@@ -69,12 +69,12 @@ function CommentScreen({ route,navigation }) {
         for (let i = 0; i < image.length; i++) {
             formData.append("image", {
                 uri:
-                  Platform.OS === "android"
-                    ? image[i].uri
-                    : image[i].uri.replace("file://", "/private"),
+                    Platform.OS === "android"
+                        ? image[i].uri
+                        : image[i].uri.replace("file://", "/private"),
                 name: "image.jpg",
                 type: "image/jpg",
-              });
+            });
         }
 
         setLoading(true);
@@ -88,42 +88,46 @@ function CommentScreen({ route,navigation }) {
                         console.log("Content: " + res.data.content);
                     }
                 })
-                .catch((error) => {
-                    console.log("Network failed", error);
-                    setLoading(false);
-                });
+            .catch((error) => {
+                console.log("Network failed", error);
+                setLoading(false);
+            });
     };
 
     const onChangeContent = (input) => {
         setContent(input);
     };
 
-    const renderItem = ({item}) => (
+    const renderItem = ({ item }) => (
         <View>
             <View style={{ flexDirection: "row", marginBottom: 10 }}>
                 <View style={styles.profileImage}>
                     <Image
-                        source={{uri: item.userAvatar}}
+                        source={{ uri: item.userAvatar }}
                         style={styles.image}
                         resizeMode="center"
                     ></Image>
                 </View>
                 <View>
-                    <Text style={styles.Name}>{item.username}</Text>
+                    <View style={{ backgroundColor: "#D9D9D9", marginLeft: 15, borderRadius: 20, flexWrap: "wrap" }}>
+                        <Text style={styles.Name}>{item.username}</Text>
+                        <Text style={{ fontSize: 16, marginLeft: 10, marginRight: 10, marginBottom: 10, flexWrap: "wrap", maxWidth: screenWidth - 95 }}>{item.content}</Text>
+                    </View>
+
+                    {item.image && (
+                        <Image
+                            source={{ uri: item.image }}
+                            style={styles.cmtImg}
+                        />
+                    )}
                     <Text style={styles.Time}>{item.createdAt}</Text>
                 </View>
             </View>
-            <View>
-                <Text style={{marginLeft: 80, fontSize: 16}}>{item.content}</Text>
-            </View>
-            <Image
-                source={{uri: item.image}}
-                style={styles.cmtImg}
-            ></Image>
+
 
         </View>
     )
-        
+
     const reversedComments = [...comments].reverse();
     return (
         <View>
@@ -180,7 +184,7 @@ function CommentScreen({ route,navigation }) {
                     </View>
 
                     {image && (
-                        <View style={{ flexDirection: "row", justifyContent: "center", }}>
+                        <View style={{ flexDirection: "row", justifyContent: "center" }}>
                             {image.map((image, index) => (
                                 <View key={index} style={{ marginLeft: 5, marginBottom: 5 }}>
                                     <Image source={{ uri: image.uri }} style={styles.postimg} />
@@ -239,10 +243,11 @@ const styles = StyleSheet.create({
         marginRight: 5,
     },
     Name: {
-        marginLeft: 15,
         marginTop: 2,
         fontSize: 18,
         fontWeight: "bold",
+        marginLeft: 10,
+        marginRight: 10
     },
     Time: {
         color: "gray",
@@ -330,6 +335,9 @@ const styles = StyleSheet.create({
     cmtImg: {
         width: 100,
         height: 100,
+        marginLeft: 15,
+        borderRadius: 7,
+        marginTop: 5
     }
 
 });

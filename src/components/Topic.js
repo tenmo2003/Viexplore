@@ -7,7 +7,7 @@ import {
     Dimensions,
     TouchableOpacity,
 } from "react-native";
-
+import ImageSlider2 from "./ImageSlide2";
 import { ImageSlider } from "react-native-image-slider-banner";
 import { Ionicons } from "react-native-vector-icons";
 import TokenContext from "../contexts/TokenContext";
@@ -159,7 +159,7 @@ export default function Topic({ item, navigation }) {
       </View>
       <Text style={styles.topicName}>{item.item.name}</Text>
       <Text style={styles.Decript}>{item.item.content}</Text>
-      <ImageSlider
+      <ImageSlider2
         data={item.item.images.map((img) => ({
           img,
         }))}
@@ -360,7 +360,6 @@ const styles = StyleSheet.create({
   caroselImageContainerStyle: {
     backgroundColor: "#000",
     height: screenHeight * 0.65,
-    justifyContent: "center",
   },
   indicatorContainerStyle: {
     position: "absolute",

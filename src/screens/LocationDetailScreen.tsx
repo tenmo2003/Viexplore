@@ -16,7 +16,8 @@ import {
   View,
 } from "react-native";
 import { Slider } from "react-native-elements";
-import { ImageSlider } from "react-native-image-slider-banner";
+// import { ImageSlider } from "react-native-image-slider-banner";
+import ImageSlider from "../components/ImageSlide";
 import Modal from "react-native-modal";
 import Icon from "react-native-vector-icons/Ionicons";
 import service from "../helper/axiosService";
@@ -270,7 +271,7 @@ export default function LocationDetail({ route, navigation }) {
         />
       </View>
       <View style={styles.container}>
-        <View style={{ flexDirection: "row" }}>
+        <View style={{ flexDirection: "row" ,marginTop:10}}>
           <Text className=" text-2xl font-bold">{location.name}</Text>
           <TouchableOpacity
             style={styles.reportButton}
@@ -392,7 +393,7 @@ const styles = StyleSheet.create({
   caroselImageContainerStyle: {
     backgroundColor: "#000",
     height: screenHeight * 0.5,
-    justifyContent: "center",
+    // justifyContent: "center",
   },
   indicatorContainerStyle: {
     position: "absolute",
