@@ -17,6 +17,7 @@ import * as ImagePicker from 'expo-image-picker';
 import Loading from "../components/Loading";
 import service from "../helper/axiosService";
 import { useFocusEffect } from "@react-navigation/native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 function CommentScreen({ route, navigation }) {
     const handleSendPress = () => {
@@ -52,8 +53,8 @@ function CommentScreen({ route, navigation }) {
 
     const { topicId, comments } = route.params;
     useEffect(() => {
-        console.log(topicId);
-        console.log(comments);
+        //console.log(topicId);
+        //console.log(comments);
     }, [topicId, comments]);
 
     const [content, setContent] = useState("");
@@ -85,7 +86,7 @@ function CommentScreen({ route, navigation }) {
                     console.log("Message: " + res.data.message);
                     setLoading(false);
                     if (res.data.content) {
-                        console.log("Content: " + res.data.content);
+                        //console.log("Content: " + res.data.content);
                     }
                 })
             .catch((error) => {
@@ -123,8 +124,6 @@ function CommentScreen({ route, navigation }) {
                     <Text style={styles.Time}>{item.createdAt}</Text>
                 </View>
             </View>
-
-
         </View>
     )
 
@@ -147,7 +146,7 @@ function CommentScreen({ route, navigation }) {
                         ></Ionicons>
                     </TouchableOpacity>
                 </View>
-
+            
                 <View style={{ height: screenHeight - screenHeight * 0.09 }}>
                     <FlatList
                         data={reversedComments}
@@ -164,7 +163,7 @@ function CommentScreen({ route, navigation }) {
                         <Input
                             placeholder="Bình luận của bạn..."
                             leftIcon={{ type: "font-awesome", name: "user", color: "#BABABA" }}
-                            rightIcon={{ type: "font-awesome", name: "send", color: "#BABABA", size: 20, onPress: onSubmit }}
+                            rightIcon={{ type: "font-awesome", name: "send", color: "#BABABA", size: 20, onPress: handleSendPress }}
                             inputContainerStyle={styles.inputContainerStyle2}
                             inputStyle={styles.inputStyle2}
                             leftIconContainerStyle={styles.leftIconStyle}

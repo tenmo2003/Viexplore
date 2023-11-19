@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef, useContext } from "react";
+import React, { useState, useEffect, useRef, useContext, memo } from "react";
 import {
-    Text,
-    View,
-    StyleSheet,
-    Image,
-    Dimensions,
-    TouchableOpacity,
+  Text,
+  View,
+  StyleSheet,
+  Image,
+  Dimensions,
+  TouchableOpacity,
 } from "react-native";
 import ImageSlider2 from "./ImageSlide2";
 import { ImageSlider } from "react-native-image-slider-banner";
@@ -14,7 +14,7 @@ import TokenContext from "../contexts/TokenContext";
 import service from "../helper/axiosService";
 import Loading from "../components/Loading";
 
-export default function Topic({ item, navigation }) {
+const Topic = ({ item, navigation }) => {
   const [isLogin, setIsLogin] = useState(false);
   const { token } = useContext(TokenContext);
   const [saveTopic, setSaveTopic] = useState(false);
@@ -31,18 +31,21 @@ export default function Topic({ item, navigation }) {
           const savedTopics = res.data.results.savedTopics;
           const username = res.data.results.username;
           for (let i = 0; i < savedTopics.length; i++) {
-            if (savedTopics[i].id === item.item.id)
-              setSaveTopic(!saveTopic);
+            if (savedTopics[i].id === item.item.id) setSaveTopic(!saveTopic);
           }
 
           const votedList = item.item.votesList;
           for (let i = 0; i < votedList.length; i++) {
             if (votedList[i].username === username) {
-              if (votedList[i].value === 1) setUpVoted(!UpVoted);
-              if (votedList[i].value === -1) setDownVoted(!downVoted);
+              if (votedList[i].value === 1) {
+                setUpVoted(!UpVoted);
+              }
+              if (votedList[i].value === -1) {
+                setDownVoted(!downVoted);
+              }
             }
           }
-    
+
           setLoading(false);
         },
         () => {
@@ -50,7 +53,6 @@ export default function Topic({ item, navigation }) {
           console.log("failed to load savedTopic list");
         }
       );
-        
     }
   }, [token]);
 
@@ -82,57 +84,41 @@ export default function Topic({ item, navigation }) {
 
   const upVote = () => {
     if (isLogin) {
-      if (UpVoted) {
-        service
-          .delete("/unvote/" + item.item.id)
-          .then((res) => {
-            console.log("Message: " + res.data.message);
-            setUpVoted(!UpVoted);
-          })
-          .catch((error) => {
-            console.log("Network failed", error);
-          });
-      } else {
-        service
-          .put("/upvote/" + item.item.id)
-          .then((res) => {
-            console.log("Message: " + res.data.message);
-            setUpVoted(!UpVoted);
-          })
-          .catch((error) => {
-            console.log("Network failed", error);
-          });
-      }
+      const endpoint = UpVoted ? "/unvote/" : "/upvote/";
+      service
+        .request({
+          method: UpVoted ? "delete" : "put",
+          url: endpoint + item.item.id,
+        })
+        .then((res) => {
+          console.log("Message: " + res.data.message);
+          setUpVoted(!UpVoted);
+        })
+        .catch((error) => {
+          console.log("Network failed", error);
+        });
     } else {
-      showAlert("Bạn cần đăng nhập để thực hiện chức năng này!");
+      showAlert("Bạn cần đăng nhập để thực hiện chức năng này!");
     }
   };
-
+  
   const downVote = () => {
     if (isLogin) {
-      if (downVoted) {
-        service
-          .delete("/downvote/" + item.item.id)
-          .then((res) => {
-            console.log("Message: " + res.data.message);
-            setDownVoted(!downVoted);
-          })
-          .catch((error) => {
-            console.log("Network failed", error);
-          });
-      } else {
-        service
-          .put("/downvote/" + item.item.id)
-          .then((res) => {
-            console.log("Message: " + res.data.message);
-            setDownVoted(!downVoted);
-          })
-          .catch((error) => {
-            console.log("Network failed", error);
-          });
-      }
+      const endpoint = downVoted ? "/unvote/" : "/downvote/";
+      service
+        .request({
+          method: downVoted ? "delete" : "put",
+          url: endpoint + item.item.id,
+        })
+        .then((res) => {
+          console.log("Message: " + res.data.message);
+          setDownVoted(!downVoted);
+        })
+        .catch((error) => {
+          console.log("Network failed", error);
+        });
     } else {
-      showAlert("Bạn cần đăng nhập để thực hiện chức năng này!");
+      showAlert("Bạn cần đăng nhập để thực hiện chức năng này!");
     }
   };
 
@@ -159,6 +145,7 @@ export default function Topic({ item, navigation }) {
       </View>
       <Text style={styles.topicName}>{item.item.name}</Text>
       <Text style={styles.Decript}>{item.item.content}</Text>
+      {item.item.images.length > 0 && (
       <ImageSlider2
         data={item.item.images.map((img) => ({
           img,
@@ -167,7 +154,7 @@ export default function Topic({ item, navigation }) {
         activeIndicatorStyle={styles.activeIndicatorStyle}
         indicatorContainerStyle={styles.indicatorContainerStyle}
         preview={false}
-      />
+      />)}
 
       <View style={styles.center}>
         <View
@@ -235,13 +222,14 @@ export default function Topic({ item, navigation }) {
             style={styles.iconStyle}
             onPress={handleSaveTopicPress}
           ></Ionicons>
-
         </View>
       </View>
       <View style={styles.Rectangle} />
     </View>
   );
-}
+};
+
+export default memo(Topic);
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
