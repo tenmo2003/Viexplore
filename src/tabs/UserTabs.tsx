@@ -15,6 +15,7 @@ import AdminScreen from "../screens/AdminScreen";
 import UserListScreen from "../screens/UserListScreen";
 import TopicListScreen from "../screens/TopicListScreen";
 import LocaListScreen from "../screens/LocaListScreen";
+import TopicDetailScreen from "../screens/TopicDetailScreen";
 
 const Stack = createStackNavigator();
 
@@ -40,6 +41,7 @@ export default function UserTabs({ navigation }) {
         <Stack.Screen name="UserList" component={UserListScreen} />
         <Stack.Screen name="TopicList" component={TopicListScreen} />
         <Stack.Screen name="LocaList" component={LocaListScreen} />
+        <Stack.Screen name="Topic" component={TopicDetailScreen} />
       </Stack.Navigator>
     </View>
   );

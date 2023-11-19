@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import { Platform, TouchableOpacity } from "react-native";
 import { Ionicons } from "react-native-vector-icons";
 import {
@@ -13,6 +13,8 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  FlatList,
+  ActivityIndicator,
   View,
 } from "react-native";
 import service, { removeHeaderConfig } from "../helper/axiosService";
@@ -22,6 +24,7 @@ import * as SecureStore from "expo-secure-store";
 import TokenContext from "../contexts/TokenContext";
 import { useFocusEffect } from "@react-navigation/native";
 import { Avatar } from "react-native-elements";
+import Topic from "../components/Topic";
 const Tab = createMaterialTopTabNavigator();
 
 const goToLocation = (id, navigation) => {
@@ -34,7 +37,7 @@ const goToLocation = (id, navigation) => {
   });
 };
 
-const BottomTab = ({ bookmarks, navigation }) => {
+const BottomTab = ({ bookmarks, navigation, savedTopic }) => {
   const BookMark = ({ bookmarks, userScreenNavigation }) => {
     return (
       <View style={{ flex: 1, backgroundColor: "#0000" }}>
@@ -74,13 +77,13 @@ const BottomTab = ({ bookmarks, navigation }) => {
     );
   };
 
+
   const Forums = () => {
     return (
-      <View style={{ flex: 1, backgroundColor: "#000" }}>
+      <View style={{ flex: 1, backgroundColor: "#" }}>
         <View style={{ flex: 1 }}>
           <ScrollView style={{ flex: 1 }}>
             <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-              <Text style={styles.img}>2</Text>
               <Text style={styles.img}>2</Text>
               <Text style={styles.img}>2</Text>
               <Text style={styles.img}>2</Text>
@@ -98,29 +101,51 @@ const BottomTab = ({ bookmarks, navigation }) => {
       </View>
     );
   };
-  const Save = () => {
+
+  const goToTopicDetail = (id, navigation) => {
+    console.log("Navigating");
+    navigation.navigate("UserTab", {
+      screen: "Topic",
+      params: {
+        id: id,
+      },
+    });
+  };
+  
+  const Save = ({ savedTopic, userScreenNavigation}) => {
     return (
-      <View style={{ flex: 1, backgroundColor: "#000" }}>
+      <View style={{ flex: 1, backgroundColor: "#0000" }}>
         <View style={{ flex: 1 }}>
-          <ScrollView style={{ flex: 1 }}>
+          <ScrollView showsVerticalScrollIndicator={false}>
             <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-              <Text style={styles.img}>2</Text>
-              <Text style={styles.img}>2</Text>
-              <Text style={styles.img}>2</Text>
-              <Text style={styles.img}>2</Text>
-              <Text style={styles.img}>2</Text>
-              <Text style={styles.img}>2</Text>
-              <Text style={styles.img}>2</Text>
-              <Text style={styles.img}>2</Text>
-              <Text style={styles.img}>2</Text>
-              <Text style={styles.img}>2</Text>
-              <Text style={styles.img}>2</Text>
+              {savedTopic.map((topic, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={styles.content}
+                  onPress={() =>
+                    goToTopicDetail(topic.id, userScreenNavigation)
+                  }
+                >
+                  <View style={styles.saveTopic}>
+                    <Text style={{...styles.saveTopicContent, fontWeight: "bold"}}>
+                      {topic.name}
+                    </Text>
+                    <Text style={styles.saveTopicContent}>
+                      {topic.author}
+                    </Text>
+                    <Text style={{...styles.saveTopicContent, fontStyle: "italic"}}>
+                      {topic.createdAt}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              ))}
             </View>
           </ScrollView>
         </View>
+        
       </View>
     );
-  };
+  };  
 
   return (
     <Tab.Navigator
@@ -137,10 +162,10 @@ const BottomTab = ({ bookmarks, navigation }) => {
             iconName = focused ? "bookmarks" : "bookmarks";
             color = focused ? "#52575D" : "#AEB5BC";
           } else if (route.name === "Save") {
-            iconName = focused ? "heart" : "heart";
+            iconName = focused ? "flag" : "flag";
             color = focused ? "#52575D" : "#AEB5BC";
           } else {
-            iconName = focused ? "heart" : "heart";
+            iconName = focused ? "chatbox-ellipses" : "chatbox-ellipses";
             color = focused ? "#52575D" : "#AEB5BC";
           }
           return <Ionicons name={iconName} color={color} size={23} />;
@@ -152,19 +177,24 @@ const BottomTab = ({ bookmarks, navigation }) => {
           <BookMark bookmarks={bookmarks} userScreenNavigation={navigation} />
         )}
       </Tab.Screen>
-      <Tab.Screen name="Save" component={Forums}></Tab.Screen>
       <Tab.Screen name="Forums" component={Forums}></Tab.Screen>
+      <Tab.Screen name="Save">
+        {() => (
+          <Save savedTopic={savedTopic} userScreenNavigation={navigation}/>
+        )}
+      </Tab.Screen>
     </Tab.Navigator>
   );
 };
+
 const UserScreen = ({ route, navigation }) => {
   const [fullname, setFullName] = useState("");
   const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [avatar, setAvatar] = useState(null);
   const [bookmarkList, setBookmarkList] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [savedTopic, setSavedTopic] = useState([]);
 
   const [isModalVisible, setModalVisible] = useState(false);
 
@@ -177,11 +207,13 @@ const UserScreen = ({ route, navigation }) => {
     service.get("/users/me", {}).then(
       (res) => {
         const bookmarks = res.data.results.bookmarks;
+        const savedTopic = res.data.results.savedTopics;
         setBookmarkList(bookmarks);
         setUsername(res.data.results.username);
         setFullName(res.data.results.fullName);
         setAvatar(res.data.results.avatar);
         setEmail(res.data.results.email);
+        setSavedTopic(res.data.results.savedTopics);
         setLoading(false);
       },
       () => {
@@ -202,12 +234,14 @@ const UserScreen = ({ route, navigation }) => {
     service.get("/users/me", {}).then(
       (res) => {
         const userData = res.data.results;
+        const savedTopic = res.data.results.savedTopics;
         // console.log(userData);
         setFullName(userData.fullName);
         setUsername(userData.username);
         setAvatar(userData.avatar);
         setEmail(userData.email);
         setBookmarkList(userData.bookmarks);
+        setSavedTopic(res.data.results.savedTopics);
         setLoading(false);
       },
       () => {
@@ -381,7 +415,8 @@ const UserScreen = ({ route, navigation }) => {
             </View>
         </Modal>
       </ScrollView>
-      <BottomTab bookmarks={bookmarkList} navigation={navigation} />
+      <BottomTab bookmarks={bookmarkList} navigation={navigation} savedTopic={savedTopic}/>
+      
     </View>
   );
 };
@@ -434,7 +469,6 @@ const styles = StyleSheet.create({
     left: 5,
     borderRadius: 12,
     justifyContent: "center",
-    // alignSelf: "center",
     alignItems: "center",
   },
   img: {
@@ -467,6 +501,21 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flex: 0.3,
     justifyContent: "center",
+  },
+  saveTopic: {
+    height: screenHeight/6, 
+    width: screenWidth/2-13, 
+    borderRadius:10,
+    borderColor: "black",
+    borderWidth: 1,
+    backgroundColor: "#ffff",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  saveTopicContent: {
+    fontSize: 16,
+    flexWrap: "wrap",
+    textAlign: "center",
   },
   profileImage: {
     marginTop: 50,

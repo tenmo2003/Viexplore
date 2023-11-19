@@ -49,28 +49,29 @@ function ForumScreen({ navigation }) {
           const newData = res.data.results;
 
           if (newData.length > 0) {
-            const reversedData = [...newData].reverse();
-            setData([...reversedData, ...data]);
+            //const reversedData = [...newData].reverse();
+            setData([...newData, ...data]);
             setPage(pageNumber + 1);
           } else {
             isEndReached.current = true;
           }
+          setLoading(false);
         } else {
           console.error("API request failed:", res.data.message);
+          setLoading(false);
         }
       });
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
-      setLoading(false);
     }
   };
 
   useFocusEffect(
     React.useCallback(() => {
-      setPage(1);
       setData([]);
-      fetchData(1);
+      setPage(1);
+      // fetchData(1);
     }, [])
   );
 
@@ -78,16 +79,19 @@ function ForumScreen({ navigation }) {
     fetchData(page);
   }, [page]);
 
-  const renderItem = (item) => <Topic item={item} navigation={navigation}/>;
+  const renderItem = (item) => <Topic item={item} navigation={navigation} />;
 
   const handleEndReached = () => {
     fetchData(page);
   };
 
   return (
-    <View>
-      {loading && <Loading />}
-      <View style={Platform.OS === "ios" && { paddingTop: 30 }}>
+    <View className="flex-1">
+      {/* {loading && <Loading />} */}
+      <View
+        style={Platform.OS === "ios" && { paddingTop: 30 }}
+        className="flex-1"
+      >
         <View style={{ flexDirection: "row", marginBottom: 15 }}>
           <View style={styles.profileImage}>
             <Image
@@ -116,16 +120,19 @@ function ForumScreen({ navigation }) {
         <View style={styles.Rectangle} />
 
         {/* Code for ở đây */}
-        <View style={styles.body}>
-          <FlatList
-            data={data}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={renderItem}
-            onEndReached={handleEndReached}
-            onEndReachedThreshold={0.8}
-            windowSize={5}
-          />
-          {loading && <ActivityIndicator />}
+        <View className="flex-1">
+          {data.length > 0 && (
+            <FlatList
+              data={data}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={renderItem}
+              onEndReached={handleEndReached}
+              onEndReachedThreshold={0.6}
+              windowSize={10}
+              showsVerticalScrollIndicator={false}
+            />
+          )}
+          {loading && <ActivityIndicator color="black" size="large" />}
         </View>
       </View>
     </View>
@@ -142,7 +149,8 @@ const postWidth = screenWidth;
 
 const styles = StyleSheet.create({
   body: {
-    height: screenHeight * 0.81,
+    backgroundColor: "green",
+    flex: 1,
   },
 
   text: {
