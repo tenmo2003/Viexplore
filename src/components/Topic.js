@@ -12,6 +12,7 @@ import { ImageSlider } from "react-native-image-slider-banner";
 import { Ionicons } from "react-native-vector-icons";
 import TokenContext from "../contexts/TokenContext";
 import service from "../helper/axiosService";
+import { showAlert } from "../helper/CustomAlert";
 import Loading from "../components/Loading";
 
 const Topic = ({ item, navigation }) => {
@@ -21,6 +22,7 @@ const Topic = ({ item, navigation }) => {
   const [loading, setLoading] = useState(false);
   const [UpVoted, setUpVoted] = useState(false);
   const [downVoted, setDownVoted] = useState(false);
+  const [votes, setVotes] = useState(item.item.votes);
 
   useEffect(() => {
     token ? setIsLogin(true) : setIsLogin(false);
@@ -93,6 +95,8 @@ const Topic = ({ item, navigation }) => {
         .then((res) => {
           console.log("Message: " + res.data.message);
           setUpVoted(!UpVoted);
+          if (downVoted === true) setDownVoted(!downVoted);
+          setVotes(UpVoted ? votes - 1 : votes + 1);
         })
         .catch((error) => {
           console.log("Network failed", error);
@@ -113,6 +117,8 @@ const Topic = ({ item, navigation }) => {
         .then((res) => {
           console.log("Message: " + res.data.message);
           setDownVoted(!downVoted);
+          if (UpVoted === true) setUpVoted(!UpVoted);
+          setVotes(downVoted ? votes + 1 : votes - 1);
         })
         .catch((error) => {
           console.log("Network failed", error);
@@ -197,7 +203,7 @@ const Topic = ({ item, navigation }) => {
                 color: "#52575D",
               }}
             >
-              {item.item.votes}
+              {votes}
             </Text>
             <TouchableOpacity>
               <Ionicons
