@@ -50,9 +50,10 @@ function ForumScreen({ navigation }) {
 
           if (newData.length > 0) {
             //const reversedData = [...newData].reverse();
-            setData([...newData, ...data]);
+            setData([...data, ...newData]);
             setPage(pageNumber + 1);
-          } else {
+          } 
+          if (newData.length < offset) {
             isEndReached.current = true;
           }
           setLoading(false);
@@ -67,11 +68,25 @@ function ForumScreen({ navigation }) {
     }
   };
 
+  const [avatar, setAvatar] = useState(null);
+  useEffect(() => {
+    setLoading(true);
+    service.get("/users/me", {}).then(
+      (res) => {
+        setAvatar(res.data.results.avatar);
+        setLoading(false);
+      },
+      () => {
+        console.log("failed");
+      }
+    );
+  }, []);
+
   useFocusEffect(
     React.useCallback(() => {
       setData([]);
       setPage(1);
-      // fetchData(1);
+      //fetchData(1);
     }, [])
   );
 
@@ -95,7 +110,7 @@ function ForumScreen({ navigation }) {
         <View style={{ flexDirection: "row", marginBottom: 15 }}>
           <View style={styles.profileImage}>
             <Image
-              source={require("./../../assets/cho.jpg")}
+              source={{uri: avatar}}
               style={styles.image}
               resizeMode="center"
             ></Image>

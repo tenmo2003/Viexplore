@@ -37,7 +37,7 @@ const goToLocation = (id, navigation) => {
   });
 };
 
-const BottomTab = ({ bookmarks, navigation, savedTopic }) => {
+const BottomTab = ({ bookmarks, navigation, savedTopic, username }) => {
   const BookMark = ({ bookmarks, userScreenNavigation }) => {
     return (
       <View style={{ flex: 1, backgroundColor: "#0000" }}>
@@ -76,27 +76,31 @@ const BottomTab = ({ bookmarks, navigation, savedTopic }) => {
       </View>
     );
   };
+  
+  const Forums = ({username}) => {
+    const [data, setData] = useState([]);
+    useEffect(() => {
+      service.get('/topics/' + username).then(
+        (res) => {
+          setData(res.data.results);
+      })
+    });
 
+    const renderItem = (item) => <Topic item={item} navigation={navigation} />;
 
-  const Forums = () => {
     return (
       <View style={{ flex: 1, backgroundColor: "#" }}>
         <View style={{ flex: 1 }}>
-          <ScrollView style={{ flex: 1 }}>
-            <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-              <Text style={styles.img}>2</Text>
-              <Text style={styles.img}>2</Text>
-              <Text style={styles.img}>2</Text>
-              <Text style={styles.img}>2</Text>
-              <Text style={styles.img}>2</Text>
-              <Text style={styles.img}>2</Text>
-              <Text style={styles.img}>2</Text>
-              <Text style={styles.img}>2</Text>
-              <Text style={styles.img}>2</Text>
-              <Text style={styles.img}>2</Text>
-              <Text style={styles.img}>2</Text>
-            </View>
-          </ScrollView>
+          {data.length > 0 && (
+            <FlatList
+              data={data.reverse()}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={renderItem}
+              onEndReachedThreshold={0.6}
+              windowSize={10}
+              showsVerticalScrollIndicator={false}
+            />
+          )}
         </View>
       </View>
     );
@@ -142,7 +146,6 @@ const BottomTab = ({ bookmarks, navigation, savedTopic }) => {
             </View>
           </ScrollView>
         </View>
-        
       </View>
     );
   };  
@@ -177,7 +180,11 @@ const BottomTab = ({ bookmarks, navigation, savedTopic }) => {
           <BookMark bookmarks={bookmarks} userScreenNavigation={navigation} />
         )}
       </Tab.Screen>
-      <Tab.Screen name="Forums" component={Forums}></Tab.Screen>
+      <Tab.Screen name="Forums">
+        {() => (
+          <Forums username={username}/>
+        )}
+      </Tab.Screen>
       <Tab.Screen name="Save">
         {() => (
           <Save savedTopic={savedTopic} userScreenNavigation={navigation}/>
@@ -208,6 +215,7 @@ const UserScreen = ({ route, navigation }) => {
       (res) => {
         const bookmarks = res.data.results.bookmarks;
         const savedTopic = res.data.results.savedTopics;
+        const user = res.data.results.username;
         setBookmarkList(bookmarks);
         setUsername(res.data.results.username);
         setFullName(res.data.results.fullName);
@@ -235,6 +243,7 @@ const UserScreen = ({ route, navigation }) => {
       (res) => {
         const userData = res.data.results;
         const savedTopic = res.data.results.savedTopics;
+        const user = res.data.results.username;
         // console.log(userData);
         setFullName(userData.fullName);
         setUsername(userData.username);
@@ -415,7 +424,7 @@ const UserScreen = ({ route, navigation }) => {
             </View>
         </Modal>
       </ScrollView>
-      <BottomTab bookmarks={bookmarkList} navigation={navigation} savedTopic={savedTopic}/>
+      <BottomTab bookmarks={bookmarkList} navigation={navigation} savedTopic={savedTopic} username={username}/>
       
     </View>
   );
