@@ -180,10 +180,10 @@ export default function EditProfileScreen({ route, navigation }) {
 const styles = {
   container: {
     padding: 24,
-    paddingTop: Platform.OS === "ios" ? 80 : 50,
+    paddingTop: Platform.OS === "ios" ? 80 : 20,
   },
   title: {
-    fontSize: 30,
+    fontSize: 20,
     fontWeight: "500",
     marginBottom: 20,
   },

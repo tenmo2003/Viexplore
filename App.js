@@ -18,6 +18,8 @@ import ForumTabs from "./src/tabs/ForumTabs";
 import MapTabs from "./src/tabs/MapTabs";
 import UserTabs from "./src/tabs/UserTabs";
 
+
+
 const Tab = createMaterialBottomTabNavigator();
 
 export default function App() {
@@ -55,7 +57,7 @@ export default function App() {
         <NavigationContainer>
           <Tab.Navigator
             initialRouteName="MapTab"
-            screenOptions={{ tabBarShowLabel: false }}
+            screenOptions={{ tabBarShowLabel: false,pressColor:"#AACCFF" }}
             // labeled={false}
             shifting={true}
             backBehavior="history"

@@ -62,7 +62,7 @@ const Topic = ({ item, navigation }) => {
         setSaveTopic(false);
         service
           .delete("/unsave-topic/" + item.item.id)
-          .then((res) => {})
+          .then((res) => { })
           .catch((error) => {
             setSaveTopic(true);
             console.error("Delete Failed:", error);
@@ -71,7 +71,7 @@ const Topic = ({ item, navigation }) => {
         setSaveTopic(true);
         service
           .post("/save-topic/" + item.item.id)
-          .then((res) => {})
+          .then((res) => { })
           .catch((error) => {
             setBookmarked(false);
             console.error("Post Failed:", error);
@@ -101,7 +101,7 @@ const Topic = ({ item, navigation }) => {
       showAlert("Bạn cần đăng nhập để thực hiện chức năng này!");
     }
   };
-  
+
   const downVote = () => {
     if (isLogin) {
       const endpoint = downVoted ? "/unvote/" : "/downvote/";
@@ -123,7 +123,15 @@ const Topic = ({ item, navigation }) => {
   };
 
   return (
-    <View>
+    <View style = {{
+      backgroundColor:'white',
+      marginBottom:10,
+      marginLeft:10,
+      marginRight:10,
+      borderRadius:10,
+      borderColor:"gray",
+      borderWidth:1
+      }}>
       <View
         style={{
           flexDirection: "row",
@@ -146,15 +154,15 @@ const Topic = ({ item, navigation }) => {
       <Text style={styles.topicName}>{item.item.name}</Text>
       <Text style={styles.Decript}>{item.item.content}</Text>
       {item.item.images.length > 0 && (
-      <ImageSlider2
-        data={item.item.images.map((img) => ({
-          img,
-        }))}
-        caroselImageContainerStyle={styles.caroselImageContainerStyle}
-        activeIndicatorStyle={styles.activeIndicatorStyle}
-        indicatorContainerStyle={styles.indicatorContainerStyle}
-        preview={false}
-      />)}
+        <ImageSlider2
+          data={item.item.images.map((img) => ({
+            img,
+          }))}
+          caroselImageContainerStyle={styles.caroselImageContainerStyle}
+          activeIndicatorStyle={styles.activeIndicatorStyle}
+          indicatorContainerStyle={styles.indicatorContainerStyle}
+          preview={false}
+        />)}
 
       <View style={styles.center}>
         <View
@@ -169,6 +177,7 @@ const Topic = ({ item, navigation }) => {
               flexDirection: "row",
               alignItems: "center",
               justifyContent: "center",
+              marginTop:10
             }}
           >
             <TouchableOpacity>
@@ -224,7 +233,7 @@ const Topic = ({ item, navigation }) => {
           ></Ionicons>
         </View>
       </View>
-      <View style={styles.Rectangle} />
+      {/* <View style={styles.Rectangle} /> */}
     </View>
   );
 };
@@ -242,6 +251,9 @@ const postWidth = screenWidth;
 const styles = StyleSheet.create({
   body: {
     height: screenHeight * 0.81,
+    borderRadius: 20, // Add this to round the corners
+    marginBottom: 10, // Add this for spacing between topics
+    overflow: "hidden", // Add this to ensure the rounded corners are applied
   },
 
   text: {
@@ -295,7 +307,7 @@ const styles = StyleSheet.create({
   Rectangle: {
     width: Dimensions.get("window").width,
     height: 10,
-    backgroundColor: "#AEB5BC",
+    backgroundColor: "#C0D8FC",
   },
   Name: {
     marginLeft: 15,
@@ -319,7 +331,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginLeft: 20,
     fontWeight: "bold",
-    fontSize: 24,
+    fontSize: 20,
     marginRight: 20,
     marginBottom: 5,
   },
@@ -345,10 +357,7 @@ const styles = StyleSheet.create({
     height: 12,
     borderRadius: 12,
   },
-  caroselImageContainerStyle: {
-    backgroundColor: "#000",
-    height: screenHeight * 0.65,
-  },
+  
   indicatorContainerStyle: {
     position: "absolute",
     bottom: -10,

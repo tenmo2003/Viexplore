@@ -86,8 +86,7 @@ function ForumScreen({ navigation }) {
   };
 
   return (
-    <View className="flex-1">
-      {/* {loading && <Loading />} */}
+    <View className="flex-1" style ={{backgroundColor:"#C0D8FC"}}>
       <View
         style={Platform.OS === "ios" && { paddingTop: 30 }}
         className="flex-1"
@@ -117,10 +116,10 @@ function ForumScreen({ navigation }) {
             </View>
           </TouchableOpacity>
         </View>
-        <View style={styles.Rectangle} />
+        {/* <View style={styles.Rectangle} /> */}
 
         {/* Code for ở đây */}
-        <View className="flex-1">
+        <View className="flex-1" >
           {data.length > 0 && (
             <FlatList
               data={data}
@@ -201,11 +200,11 @@ const styles = StyleSheet.create({
   leftIconStyle: {
     marginRight: 5,
   },
-  Rectangle: {
-    width: Dimensions.get("window").width,
-    height: 10,
-    backgroundColor: "#AEB5BC",
-  },
+  // Rectangle: {
+  //   width: Dimensions.get("window").width,
+  //   height: 10,
+  //   backgroundColor: "#AEB5BC",
+  // },
   Name: {
     marginLeft: 15,
     marginTop: 22,
