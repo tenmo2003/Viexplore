@@ -14,6 +14,12 @@ import TokenContext from "../contexts/TokenContext";
 import service from "../helper/axiosService";
 import { showAlert } from "../helper/CustomAlert";
 import Loading from "../components/Loading";
+import Modal from "react-native-modal";
+import {
+  Feather,
+  Octicons,
+  MaterialCommunityIcons,
+} from "react-native-vector-icons";
 
 const Topic = ({ item, navigation }) => {
   const [isLogin, setIsLogin] = useState(false);
@@ -23,6 +29,8 @@ const Topic = ({ item, navigation }) => {
   const [UpVoted, setUpVoted] = useState(false);
   const [downVoted, setDownVoted] = useState(false);
   const [votes, setVotes] = useState(item.item.votes);
+  const [username, setUsername] = useState("");
+  const [checkAuthor, setCheckAuthor] = useState(false);
 
   useEffect(() => {
     token ? setIsLogin(true) : setIsLogin(false);
@@ -31,7 +39,8 @@ const Topic = ({ item, navigation }) => {
       service.get("/users/me", {}).then(
         (res) => {
           const savedTopics = res.data.results.savedTopics;
-          const username = res.data.results.username;
+          setUsername(res.data.results.username);
+          if (res.data.results.username === item.item.author) setCheckAuthor(true);
           for (let i = 0; i < savedTopics.length; i++) {
             if (savedTopics[i].id === item.item.id) setSaveTopic(!saveTopic);
           }
@@ -128,6 +137,21 @@ const Topic = ({ item, navigation }) => {
     }
   };
 
+  const [isModalVisible, setModalVisible] = useState(false);
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
+
+  const deleteTopic = () => {
+    service
+      .delete("/topic/" + item.item.id)
+      .then((res) => {console.log(res.data.message)})
+      .catch((error) => {
+        setSaveTopic(true);
+        console.error("Delete Failed:", error);
+      });
+  }
+
   return (
     <View style = {{
       backgroundColor:'white',
@@ -156,7 +180,16 @@ const Topic = ({ item, navigation }) => {
           <Text style={styles.Name}>{item.item.author}</Text>
           <Text style={styles.Time}>{item.item.createdAt}</Text>
         </View>
+        <TouchableOpacity>
+          <Ionicons
+            name={checkAuthor ? 'ellipsis-horizontal' : 'ellipsis-horizontal'}
+            color={checkAuthor ? 'black' : '#D9D9D9'}
+            size = {30}
+            onPress={() => checkAuthor && setModalVisible(true)}
+          />
+        </TouchableOpacity>
       </View>
+
       <Text style={styles.topicName}>{item.item.name}</Text>
       <Text style={styles.Decript}>{item.item.content}</Text>
       {item.item.images.length > 0 && (
@@ -240,6 +273,83 @@ const Topic = ({ item, navigation }) => {
         </View>
       </View>
       {/* <View style={styles.Rectangle} /> */}
+
+      <Modal
+          onBackdropPress={() => setModalVisible(false)}
+          onBackButtonPress={() => setModalVisible(false)}
+          isVisible={isModalVisible}
+          swipeDirection="down"
+          onSwipeComplete={toggleModal}
+          animationIn="bounceInUp"
+          animationOut="bounceOutDown"
+          animationInTiming={600}
+          animationOutTiming={300}
+          backdropTransitionInTiming={600}
+          backdropTransitionOutTiming={300}
+          style={styles.modal}
+        >
+          <View style={styles.modalContent}>
+            <View style={styles.center}>
+              <View style={styles.barIcon} />
+            </View>
+
+              <View style={styles.flexColumn}>
+                <View style={styles.editTopic}>
+                  <TouchableOpacity
+                    style={styles.flexEdit}
+                  >
+                    <View style={{flexDirection:"row"}}>
+                      <Text
+                        style={{
+                          fontSize: 24,
+                          fontWeight: "bold",
+                          paddingHorizontal: 10,
+                        }}
+                      >
+                        Sửa bài viết
+                      </Text>
+                    </View>
+                    <Feather
+                      name="chevron-right"
+                      style={{
+                        alignSelf: "flex-end",
+                      }}
+                      size={30}
+                    />
+                  </TouchableOpacity>
+                </View>
+
+                <View style={styles.delete}>
+                  <TouchableOpacity
+                    style={styles.flexEdit}
+                    onPress={deleteTopic}
+                  >
+                    <View style={{flexDirection:"row"}}>
+                      <Text
+                        style={{
+                          fontSize: 24,
+                          fontWeight: "bold",
+                          paddingHorizontal: 10,
+                        }}
+                      >
+                        Xoá
+                      </Text>
+                    </View>
+                    <Feather
+                      name="chevron-right"
+                      style={{
+                        alignSelf: "flex-end"
+                      }}
+                      size={30}
+                    />
+                  </TouchableOpacity>
+                </View>
+                
+              </View>
+              
+            </View>
+        </Modal>
+
     </View>
   );
 };
@@ -251,15 +361,19 @@ const screenHeight = Dimensions.get("window").height;
 const standarWidth = 360;
 const standardHeight = 800;
 
+const settingsHeight = screenHeight / 4;
+const settingsWidth = screenWidth / 12;
+const paddingTopModalContent = 10;
+
 const postHeight = screenHeight * 0.5;
 const postWidth = screenWidth;
 
 const styles = StyleSheet.create({
   body: {
     height: screenHeight * 0.81,
-    borderRadius: 20, // Add this to round the corners
-    marginBottom: 10, // Add this for spacing between topics
-    overflow: "hidden", // Add this to ensure the rounded corners are applied
+    borderRadius: 20, 
+    marginBottom: 10, 
+    overflow: "hidden", 
   },
 
   text: {
@@ -367,5 +481,53 @@ const styles = StyleSheet.create({
   indicatorContainerStyle: {
     position: "absolute",
     bottom: -10,
+  },
+
+  modal: {
+    justifyContent: "flex-end",
+    margin: 0,
+  },
+  modalContent: {
+    backgroundColor: "#fff",
+    paddingTop: paddingTopModalContent,
+    paddingHorizontal: settingsWidth,
+    borderWidth: 5,
+    borderColor: "#000",
+    borderTopRightRadius: 35,
+    borderTopLeftRadius: 35,
+    minHeight: settingsHeight,
+    paddingBottom: 20,
+    justifyContent: "center", 
+    alignItems: "center", 
+  },
+  center: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  barIcon: {
+    width: 60,
+    height: 5,
+    backgroundColor: "#bbb",
+    borderRadius: 3,
+  },
+  flexColumn: {
+    display: "flex",
+    flexDirection: "column",
+    width: "100%",
+    height: settingsHeight - paddingTopModalContent * 2,
+  },
+  delete: {
+    top: 60,
+    height: "auto",
+  },
+  flexEdit: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent:"space-between",
+  },
+  editTopic: {
+    top: 30,
+    height: "auto",
   },
 });
