@@ -6,9 +6,9 @@ import {
   Image,
   Dimensions,
   TouchableOpacity,
+  TextInput,
 } from "react-native";
 import ImageSlider2 from "./ImageSlide2";
-import { ImageSlider } from "react-native-image-slider-banner";
 import { Ionicons } from "react-native-vector-icons";
 import TokenContext from "../contexts/TokenContext";
 import service from "../helper/axiosService";
@@ -17,8 +17,6 @@ import Loading from "../components/Loading";
 import Modal from "react-native-modal";
 import {
   Feather,
-  Octicons,
-  MaterialCommunityIcons,
 } from "react-native-vector-icons";
 
 const Topic = ({ item, navigation }) => {
@@ -140,6 +138,11 @@ const Topic = ({ item, navigation }) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
+  };
+
+  const [isModalVisible2, setModalVisible2] = useState(false);
+  const toggleModal2 = () => {
+    setModalVisible2(!isModalVisible2);
   };
 
   const deleteTopic = () => {
@@ -297,6 +300,10 @@ const Topic = ({ item, navigation }) => {
                 <View style={styles.editTopic}>
                   <TouchableOpacity
                     style={styles.flexEdit}
+                    onPress={() => {
+                      setModalVisible2(true);
+                      setModalVisible(false);
+                    }}
                   >
                     <View style={{flexDirection:"row"}}>
                       <Text
@@ -345,6 +352,49 @@ const Topic = ({ item, navigation }) => {
                   </TouchableOpacity>
                 </View>
                 
+              </View>
+              
+            </View>
+        </Modal>
+
+        <Modal
+          onBackdropPress={() => setModalVisible2(false)}
+          onBackButtonPress={() => setModalVisible2(false)}
+          isVisible={isModalVisible2}
+          swipeDirection="down"
+          onSwipeComplete={toggleModal2}
+          animationIn="bounceInUp"
+          animationOut="bounceOutDown"
+          animationInTiming={600}
+          animationOutTiming={300}
+          backdropTransitionInTiming={600}
+          backdropTransitionOutTiming={300}
+          style={styles.modal}
+        >
+          <View style={{...styles.modalContent, minHeight: screenHeight / 1.7}}>
+              <View style={{...styles.barIcon, marginBottom: 20}} />
+            
+              <View style={styles.center}>
+                <View style={{...styles.postContent, marginBottom: 10, height: postHeight*0.15}}>
+                    <TextInput
+                        placeholder="Tiêu đề:"
+                        style={styles.textPost}
+                    />
+                </View>
+                <View style={{...styles.postContent, marginBottom: 10}}>
+                    <TextInput
+                    multiline={true}
+                    maxLength={400}
+                    style={styles.textPost}
+                    placeholder="Hãy thêm kỷ niệm đẹp...."
+                    ></TextInput>
+                </View>
+
+                <View style={styles.containerButton}>
+                    <TouchableOpacity style={styles.button}>
+                        <Text style={styles.buttonText}>Sửa</Text>
+                    </TouchableOpacity>
+                </View>
               </View>
               
             </View>
@@ -529,5 +579,37 @@ const styles = StyleSheet.create({
   editTopic: {
     top: 30,
     height: "auto",
+  },
+  postContent: {
+    borderWidth: 3,
+    height: postHeight * 0.65,
+    alignItems: "center",
+    width: postWidth * 0.85,
+    borderColor: "#000",
+    borderRadius: 20,
+  },
+  textPost: {
+    marginVertical: Platform.OS === "ios" ? 10 : -5,
+    padding: 15,
+    borderColor: "#000",
+    maxHeight: postHeight * 0.6,
+    width: postWidth * 0.82,
+    lineHeight: -0.5,
+    fontSize: screenWidth / 25,
+  },
+  containerButton: {
+    width: postHeight * 0.7,
+  },
+  button: {
+      backgroundColor: "#687DAA",
+      borderRadius: 50,
+      justifyContent: "center",
+      alignItems: "center",
+      padding: 8,
+  },
+  buttonText: {
+      color: "white",
+      fontSize: 24,
+      fontWeight: "bold",
   },
 });
