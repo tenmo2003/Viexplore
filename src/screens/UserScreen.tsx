@@ -412,6 +412,35 @@ const UserScreen = ({ route, navigation }) => {
                   </TouchableOpacity>
                 </View>
                 
+                {username === "admin" && (
+                  <View style={{...styles.security, top: 40}}>
+                    <TouchableOpacity
+                      style={styles.flexEditProfile}
+                      onPress={() => navigation.navigate("Admin")}
+                    >
+                      <View style={{flexDirection:"row"}}>
+                        <MaterialCommunityIcons name="account-tie" size={30} />
+                        <Text
+                          style={{
+                            fontSize: 24,
+                            fontWeight: "bold",
+                            paddingHorizontal: 10,
+                          }}
+                        >
+                          Admin
+                        </Text>
+                      </View>
+                      <Feather
+                        name="chevron-right"
+                        style={{
+                          alignSelf: "flex-end"
+                        }}
+                        size={30}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                )}
+                
                 <TouchableOpacity style={styles.logOut} onPress={logOutHandler}>
                   <Text
                     style={{ fontSize: 26, fontWeight: "bold", color: "red" }}
@@ -435,7 +464,7 @@ const screenHeight = Dimensions.get("window").height;
 const standarWidth = 360;
 const standardHeight = 800;
 
-const settingsHeight = screenHeight / 4;
+const settingsHeight = screenHeight / 3.8;
 const settingsWidth = screenWidth / 12;
 const paddingTopModalContent = 10;
 
@@ -584,7 +613,7 @@ const styles = StyleSheet.create({
     height: settingsHeight - paddingTopModalContent * 2,
   },
   security: {
-    top: 40,
+    top: 30,
     height: "auto",
   },
   flexEditProfile: {
@@ -597,7 +626,10 @@ const styles = StyleSheet.create({
     height: "auto",
   },
   logOut: {
-    top: settingsHeight - 120,
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
     alignItems: "center",
   },
 });
