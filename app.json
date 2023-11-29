@@ -22,18 +22,22 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "softwareKeyboardLayoutMode": "pan"
+      "softwareKeyboardLayoutMode": "pan",
+      "package": "com.tenmo2003.Viexplore",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyCrc5CeYFHAnJgPrYDpZcPFxyzyjFvLXbM"
+        }
+      },
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "a35c155a-e957-4fa8-89ee-41e158b3ee5b"
+      }
     }
-    // "plugins": [
-    //   [
-    //     "expo-image-picker",
-    //     {
-    //       "photosPermission": "Allow $(PRODUCT_NAME) to access your photos",
-    //     }
-    //   ]
-    // ]
   }
 }
