@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import MapView, { Geojson, Marker } from "react-native-maps";
+import MapView, { Geojson, Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import Modal from "react-native-modal";
 import Loading from "../components/Loading";
 import service from "../helper/axiosService";
@@ -61,13 +61,17 @@ function MapScreen({ route, navigation }) {
   const onSearch = (location) => {
     setQuery(location.name);
     setSelectedLocation(location);
-    animateToCamera({
-      center: {
-        latitude: location.latitude,
-        longitude: location.longitude,
-      },
-      zoom: 8,
-    });
+    async function animate() {
+      const curCam = await mapViewRef.current.getCamera();
+      animateToCamera({
+        center: {
+          latitude: location.latitude,
+          longitude: location.longitude,
+        },
+        zoom: curCam.zoom > 11 ? curCam.zoom : 11,
+      });
+    }
+    animate();
     setTimeout(() => {
       setModalVisible(true);
     }, 450);
@@ -96,7 +100,6 @@ function MapScreen({ route, navigation }) {
         },
         () => setLoading(false)
       );
-      // setLocations(locationsJson);
     } catch (error) {
       console.error(error);
     }
@@ -141,7 +144,7 @@ function MapScreen({ route, navigation }) {
         rotateEnabled={false}
         moveOnMarkerPress={false}
         onPress={() => Keyboard.dismiss()}
-        provider="google"
+        provider={PROVIDER_GOOGLE}
       >
         <Geojson
           geojson={vietnam}
@@ -159,6 +162,9 @@ function MapScreen({ route, navigation }) {
               }}
               description={location.name}
               onPress={() => {
+                if (showResults && haveResults) {
+                  return;
+                }
                 setSelectedLocation(location);
                 async function animate() {
                   const curCam = await mapViewRef.current.getCamera();
@@ -303,7 +309,8 @@ function MapScreen({ route, navigation }) {
           <View style={styles.dropDown}>
             {searchResults.map((location, index) => (
               <TouchableOpacity 
-                onPress={() => {
+                onPress={(event) => {
+                  event.stopPropagation();
                   onSearch(location);
                   setShowResults(false);
                   Keyboard.dismiss();
@@ -515,7 +522,7 @@ const styles = StyleSheet.create({
     cursor: "pointer",
     padding: 10,
     alignItems: "flex-start",
-    zIndex: 100,
+    zIndex: 10,
   },
   input: {
     position: "absolute",

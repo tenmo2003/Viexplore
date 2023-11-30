@@ -110,7 +110,7 @@ function ForumScreen({ navigation }) {
         <View style={{ flexDirection: "row", marginBottom: 15 }}>
           <View style={styles.profileImage}>
             <Image
-              source={avatar ? { uri: avatar } : require("./../../assets/ava.png")}
+              source={ avatar ? {uri: avatar} : require("./../../assets/ava.png")}
               style={styles.image}
               resizeMode="center"
             ></Image>
