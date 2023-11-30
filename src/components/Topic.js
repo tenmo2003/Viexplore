@@ -7,6 +7,7 @@ import {
   Dimensions,
   TouchableOpacity,
   TextInput,
+  KeyboardAvoidingView,
 } from "react-native";
 import ImageSlider2 from "./ImageSlide2";
 import { Ionicons } from "react-native-vector-icons";
@@ -15,11 +16,9 @@ import service from "../helper/axiosService";
 import { showAlert } from "../helper/CustomAlert";
 import Loading from "../components/Loading";
 import Modal from "react-native-modal";
-import {
-  Feather,
-} from "react-native-vector-icons";
+import { Feather } from "react-native-vector-icons";
 
-const Topic = ({ item, navigation }) => {
+const Topic = ({ item, navigation, data, setData }) => {
   const [isLogin, setIsLogin] = useState(false);
   const { token } = useContext(TokenContext);
   const [saveTopic, setSaveTopic] = useState(false);
@@ -30,6 +29,9 @@ const Topic = ({ item, navigation }) => {
   const [username, setUsername] = useState("");
   const [checkAuthor, setCheckAuthor] = useState(false);
 
+  const [topicName, setTopicName] = useState(item.item.name);
+  const [topicContent, setTopicContent] = useState(item.item.content);
+
   useEffect(() => {
     token ? setIsLogin(true) : setIsLogin(false);
 
@@ -38,7 +40,8 @@ const Topic = ({ item, navigation }) => {
         (res) => {
           const savedTopics = res.data.results.savedTopics;
           setUsername(res.data.results.username);
-          if (res.data.results.username === item.item.author) setCheckAuthor(true);
+          if (res.data.results.username === item.item.author)
+            setCheckAuthor(true);
           for (let i = 0; i < savedTopics.length; i++) {
             if (savedTopics[i].id === item.item.id) setSaveTopic(!saveTopic);
           }
@@ -71,7 +74,7 @@ const Topic = ({ item, navigation }) => {
         setSaveTopic(false);
         service
           .delete("/unsave-topic/" + item.item.id)
-          .then((res) => { })
+          .then((res) => {})
           .catch((error) => {
             setSaveTopic(true);
             console.error("Delete Failed:", error);
@@ -80,7 +83,7 @@ const Topic = ({ item, navigation }) => {
         setSaveTopic(true);
         service
           .post("/save-topic/" + item.item.id)
-          .then((res) => { })
+          .then((res) => {})
           .catch((error) => {
             setBookmarked(false);
             console.error("Post Failed:", error);
@@ -146,138 +149,189 @@ const Topic = ({ item, navigation }) => {
   };
 
   const deleteTopic = () => {
+    setLoading(true);
     service
       .delete("/topic/" + item.item.id)
-      .then((res) => {console.log(res.data.message)})
+      .then((res) => {
+        console.log(res.data.message);
+        setData(data.filter((el) => el.id !== item.item.id));
+        setLoading(false);
+      })
       .catch((error) => {
-        setSaveTopic(true);
         console.error("Delete Failed:", error);
+        setLoading(false);
       });
-  }
+  };
+
+  //Edit Topic
+  const [newName, setNewName] = useState(item.item.name);
+  const [newContent, setNewContent] = useState(item.item.content);
+
+  const onChangeNewName = (text) => {
+    setNewName(text);
+  };
+
+  const onChangeNewContent = (text) => {
+    setNewContent(text);
+  };
+
+  const onSubmit = () => {
+    const formData = new FormData();
+    formData.append("id", item.item.id);
+    formData.append("name", newName);
+    formData.append("content", newContent);
+    formData.append("author", item.item.author);
+
+    setLoading(true);
+
+    service
+      .put("/topic", {
+        id: item.item.id,
+        name: newName,
+        content: newContent,
+        author: item.item.author,
+      })
+      .then((res) => {
+        console.log(res.data.message);
+        setLoading(false);
+        setModalVisible2(false);
+        setTopicName(newName);
+        setTopicContent(newContent);
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+      });
+  };
 
   return (
-    <View style = {{
-      backgroundColor:'white',
-      marginBottom:10,
-      marginLeft:10,
-      marginRight:10,
-      borderRadius:10,
-      borderColor:"gray",
-      borderWidth:1
-      }}>
+    <>
+      {loading && <Loading />}
       <View
         style={{
-          flexDirection: "row",
+          backgroundColor: "white",
+          marginBottom: 10,
+          marginLeft: 10,
+          marginRight: 10,
+          borderRadius: 10,
+          borderColor: "gray",
+          borderWidth: 1,
         }}
       >
-        <View style={styles.profileImage}>
-          <Image
-            source={{
-              uri: item.item.authorAvatar,
-            }}
-            style={styles.image}
-            resizeMode="center"
-          ></Image>
-        </View>
-        <View>
-          <Text style={styles.Name}>{item.item.author}</Text>
-          <Text style={styles.Time}>{item.item.createdAt}</Text>
-        </View>
-        <TouchableOpacity>
-          <Ionicons
-            name={checkAuthor ? 'ellipsis-horizontal' : 'ellipsis-horizontal'}
-            color={checkAuthor ? 'black' : '#D9D9D9'}
-            size = {30}
-            onPress={() => checkAuthor && setModalVisible(true)}
-          />
-        </TouchableOpacity>
-      </View>
-
-      <Text style={styles.topicName}>{item.item.name}</Text>
-      <Text style={styles.Decript}>{item.item.content}</Text>
-      {item.item.images.length > 0 && (
-        <ImageSlider2
-          data={item.item.images.map((img) => ({
-            img,
-          }))}
-          caroselImageContainerStyle={styles.caroselImageContainerStyle}
-          activeIndicatorStyle={styles.activeIndicatorStyle}
-          indicatorContainerStyle={styles.indicatorContainerStyle}
-          preview={false}
-        />)}
-
-      <View style={styles.center}>
         <View
           style={{
             flexDirection: "row",
-            marginTop: 10,
-            marginBottom: 15,
           }}
         >
+          <View style={styles.profileImage}>
+            <Image
+              source={{
+                uri: item.item.authorAvatar,
+              }}
+              style={styles.image}
+              resizeMode="center"
+            ></Image>
+          </View>
+          <View>
+            <Text style={styles.Name}>{item.item.author}</Text>
+            <Text style={styles.Time}>{item.item.createdAt}</Text>
+          </View>
+          <TouchableOpacity>
+            <Ionicons
+              name={checkAuthor ? "ellipsis-horizontal" : "ellipsis-horizontal"}
+              color={checkAuthor ? "black" : "#D9D9D9"}
+              size={30}
+              onPress={() => checkAuthor && setModalVisible(true)}
+            />
+          </TouchableOpacity>
+        </View>
+
+        <Text style={styles.topicName}>{topicName}</Text>
+        <Text style={styles.Decript}>{topicContent}</Text>
+        {item.item.images.length > 0 && (
+          <ImageSlider2
+            data={item.item.images.map((img) => ({
+              img,
+            }))}
+            caroselImageContainerStyle={styles.caroselImageContainerStyle}
+            activeIndicatorStyle={styles.activeIndicatorStyle}
+            indicatorContainerStyle={styles.indicatorContainerStyle}
+            preview={false}
+          />
+        )}
+
+        <View style={styles.center}>
           <View
             style={{
               flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-              marginTop:10
+              marginTop: 10,
+              marginBottom: 15,
             }}
           >
-            <TouchableOpacity>
-              <Ionicons
-                name={UpVoted ? "arrow-up-outline" : "arrow-up-outline"}
-                size={30}
-                color={UpVoted ? "#AACCFF" : "#52575D"}
-                style={{
-                  marginRight: 5,
-                }}
-                onPress={upVote}
-              />
-            </TouchableOpacity>
-            <Text
+            <View
               style={{
-                fontSize: 18,
-                color: "#52575D",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                marginTop: 10,
               }}
             >
-              {votes}
-            </Text>
-            <TouchableOpacity>
-              <Ionicons
-                name={downVoted ? "arrow-down-outline" : "arrow-down-outline"}
-                size={30}
-                color={downVoted ? "#AACCFF" : "#52575D"}
+              <TouchableOpacity>
+                <Ionicons
+                  name={UpVoted ? "arrow-up-outline" : "arrow-up-outline"}
+                  size={30}
+                  color={UpVoted ? "#AACCFF" : "#52575D"}
+                  style={{
+                    marginRight: 5,
+                  }}
+                  onPress={upVote}
+                />
+              </TouchableOpacity>
+              <Text
                 style={{
-                  marginLeft: 5,
+                  fontSize: 18,
+                  color: "#52575D",
                 }}
-                onPress={downVote}
-              />
-            </TouchableOpacity>
+              >
+                {votes}
+              </Text>
+              <TouchableOpacity>
+                <Ionicons
+                  name={downVoted ? "arrow-down-outline" : "arrow-down-outline"}
+                  size={30}
+                  color={downVoted ? "#AACCFF" : "#52575D"}
+                  style={{
+                    marginLeft: 5,
+                  }}
+                  onPress={downVote}
+                />
+              </TouchableOpacity>
+            </View>
+            <Ionicons
+              name="chatbubble-outline"
+              size={27}
+              color="#52575D"
+              style={styles.iconStyle}
+              onPress={() =>
+                navigation.navigate("Comment", {
+                  topicId: item.item.id,
+                  comments: item.item.comments,
+                })
+              }
+            ></Ionicons>
+
+            <Ionicons
+              name={saveTopic ? "flag" : "flag-outline"}
+              size={27}
+              color={saveTopic ? "#AACCFF" : "#52575D"}
+              style={styles.iconStyle}
+              onPress={handleSaveTopicPress}
+            ></Ionicons>
           </View>
-          <Ionicons
-            name="chatbubble-outline"
-            size={27}
-            color="#52575D"
-            style={styles.iconStyle}
-            onPress={() =>
-              navigation.navigate("Comment", {
-                topicId: item.item.id,
-                comments: item.item.comments,
-              })
-            }
-          ></Ionicons>
-
-          <Ionicons
-            name={saveTopic ? "flag" : "flag-outline"}
-            size={27}
-            color={saveTopic ? "#AACCFF" : "#52575D"}
-            style={styles.iconStyle}
-            onPress={handleSaveTopicPress}
-          ></Ionicons>
         </View>
-      </View>
-      {/* <View style={styles.Rectangle} /> */}
+        {/* <View style={styles.Rectangle} /> */}
 
-      <Modal
+        <Modal
           onBackdropPress={() => setModalVisible(false)}
           onBackButtonPress={() => setModalVisible(false)}
           isVisible={isModalVisible}
@@ -296,65 +350,60 @@ const Topic = ({ item, navigation }) => {
               <View style={styles.barIcon} />
             </View>
 
-              <View style={styles.flexColumn}>
-                <View style={styles.editTopic}>
-                  <TouchableOpacity
-                    style={styles.flexEdit}
-                    onPress={() => {
-                      setModalVisible2(true);
-                      setModalVisible(false);
+            <View style={styles.flexColumn}>
+              <View style={styles.editTopic}>
+                <TouchableOpacity
+                  style={styles.flexEdit}
+                  onPress={() => {
+                    setModalVisible2(true);
+                    setModalVisible(false);
+                  }}
+                >
+                  <View style={{ flexDirection: "row" }}>
+                    <Text
+                      style={{
+                        fontSize: 24,
+                        fontWeight: "bold",
+                        paddingHorizontal: 10,
+                      }}
+                    >
+                      Sửa bài viết
+                    </Text>
+                  </View>
+                  <Feather
+                    name="chevron-right"
+                    style={{
+                      alignSelf: "flex-end",
                     }}
-                  >
-                    <View style={{flexDirection:"row"}}>
-                      <Text
-                        style={{
-                          fontSize: 24,
-                          fontWeight: "bold",
-                          paddingHorizontal: 10,
-                        }}
-                      >
-                        Sửa bài viết
-                      </Text>
-                    </View>
-                    <Feather
-                      name="chevron-right"
-                      style={{
-                        alignSelf: "flex-end",
-                      }}
-                      size={30}
-                    />
-                  </TouchableOpacity>
-                </View>
-
-                <View style={styles.delete}>
-                  <TouchableOpacity
-                    style={styles.flexEdit}
-                    onPress={deleteTopic}
-                  >
-                    <View style={{flexDirection:"row"}}>
-                      <Text
-                        style={{
-                          fontSize: 24,
-                          fontWeight: "bold",
-                          paddingHorizontal: 10,
-                        }}
-                      >
-                        Xoá
-                      </Text>
-                    </View>
-                    <Feather
-                      name="chevron-right"
-                      style={{
-                        alignSelf: "flex-end"
-                      }}
-                      size={30}
-                    />
-                  </TouchableOpacity>
-                </View>
-                
+                    size={30}
+                  />
+                </TouchableOpacity>
               </View>
-              
+
+              <View style={styles.delete}>
+                <TouchableOpacity style={styles.flexEdit} onPress={deleteTopic}>
+                  <View style={{ flexDirection: "row" }}>
+                    <Text
+                      style={{
+                        fontSize: 24,
+                        fontWeight: "bold",
+                        paddingHorizontal: 10,
+                      }}
+                    >
+                      Xoá
+                    </Text>
+                  </View>
+                  <Feather
+                    name="chevron-right"
+                    style={{
+                      alignSelf: "flex-end",
+                    }}
+                    size={30}
+                  />
+                </TouchableOpacity>
+              </View>
             </View>
+          </View>
         </Modal>
 
         <Modal
@@ -371,36 +420,50 @@ const Topic = ({ item, navigation }) => {
           backdropTransitionOutTiming={300}
           style={styles.modal}
         >
-          <View style={{...styles.modalContent, minHeight: screenHeight / 1.7}}>
-              <View style={{...styles.barIcon, marginBottom: 20}} />
-            
-              <View style={styles.center}>
-                <View style={{...styles.postContent, marginBottom: 10, height: postHeight*0.15}}>
-                    <TextInput
-                        placeholder="Tiêu đề:"
-                        style={styles.textPost}
-                    />
-                </View>
-                <View style={{...styles.postContent, marginBottom: 10}}>
-                    <TextInput
-                    multiline={true}
-                    maxLength={400}
-                    style={styles.textPost}
-                    placeholder="Hãy thêm kỷ niệm đẹp...."
-                    ></TextInput>
-                </View>
+          <View
+            style={{ ...styles.modalContent, minHeight: screenHeight / 1.7 }}
+          >
+            <View style={{ ...styles.barIcon, marginBottom: 20 }} />
 
-                <View style={styles.containerButton}>
-                    <TouchableOpacity style={styles.button}>
-                        <Text style={styles.buttonText}>Sửa</Text>
-                    </TouchableOpacity>
-                </View>
+            <View style={styles.center}>
+              <View
+                style={{
+                  ...styles.postContent,
+                  marginBottom: 10,
+                  height: postHeight * 0.15,
+                }}
+              >
+                <TextInput
+                  placeholder="Tiêu đề:"
+                  style={styles.textPost}
+                  value={newName}
+                  onChangeText={(text) => onChangeNewName(text)}
+                />
               </View>
-              
-            </View>
-        </Modal>
+              <View style={{ ...styles.postContent, marginBottom: 10 }}>
+                <TextInput
+                  multiline={true}
+                  maxLength={400}
+                  style={styles.textPost}
+                  placeholder="Hãy thêm kỷ niệm đẹp...."
+                  value={newContent}
+                  onChangeText={(text) => onChangeNewContent(text)}
+                ></TextInput>
+              </View>
 
-    </View>
+              <View style={styles.containerButton}>
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={() => onSubmit()}
+                >
+                  <Text style={styles.buttonText}>Sửa</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
+      </View>
+    </>
   );
 };
 
@@ -421,9 +484,9 @@ const postWidth = screenWidth;
 const styles = StyleSheet.create({
   body: {
     height: screenHeight * 0.81,
-    borderRadius: 20, 
-    marginBottom: 10, 
-    overflow: "hidden", 
+    borderRadius: 20,
+    marginBottom: 10,
+    overflow: "hidden",
   },
 
   text: {
@@ -527,7 +590,7 @@ const styles = StyleSheet.create({
     height: 12,
     borderRadius: 12,
   },
-  
+
   indicatorContainerStyle: {
     position: "absolute",
     bottom: -10,
@@ -547,8 +610,8 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 35,
     minHeight: settingsHeight,
     paddingBottom: 20,
-    justifyContent: "center", 
-    alignItems: "center", 
+    justifyContent: "center",
+    alignItems: "center",
   },
   center: {
     display: "flex",
@@ -574,7 +637,7 @@ const styles = StyleSheet.create({
   flexEdit: {
     display: "flex",
     flexDirection: "row",
-    justifyContent:"space-between",
+    justifyContent: "space-between",
   },
   editTopic: {
     top: 30,
@@ -594,22 +657,21 @@ const styles = StyleSheet.create({
     borderColor: "#000",
     maxHeight: postHeight * 0.6,
     width: postWidth * 0.82,
-    lineHeight: -0.5,
     fontSize: screenWidth / 25,
   },
   containerButton: {
     width: postHeight * 0.7,
   },
   button: {
-      backgroundColor: "#687DAA",
-      borderRadius: 50,
-      justifyContent: "center",
-      alignItems: "center",
-      padding: 8,
+    backgroundColor: "#687DAA",
+    borderRadius: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 8,
   },
   buttonText: {
-      color: "white",
-      fontSize: 24,
-      fontWeight: "bold",
+    color: "white",
+    fontSize: 24,
+    fontWeight: "bold",
   },
 });

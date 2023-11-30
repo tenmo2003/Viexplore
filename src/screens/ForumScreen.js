@@ -84,6 +84,7 @@ function ForumScreen({ navigation }) {
 
   useFocusEffect(
     React.useCallback(() => {
+      isEndReached.current = false;
       setData([]);
       setPage(1);
       //fetchData(1);
@@ -94,7 +95,7 @@ function ForumScreen({ navigation }) {
     fetchData(page);
   }, [page]);
 
-  const renderItem = (item) => <Topic item={item} navigation={navigation} />;
+  const renderItem = (item) => <Topic item={item} navigation={navigation} data={data} setData={setData} />;
 
   const handleEndReached = () => {
     fetchData(page);
