@@ -22,7 +22,7 @@ export default function TopicListScreen({ navigation }) {
 
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
-  const perPage = 20;
+  const perPage = 5;
   const isEndReached = useRef(false);
 
   const [loading, setLoading] = useState(false);
@@ -48,24 +48,23 @@ export default function TopicListScreen({ navigation }) {
       const index = (pageNumber - 1) * perPage;
       const offset = perPage;
 
-      service
-        .get(`/topics?index=${index}&offset=${offset}`)
-        .then((res) => {
-          if (res.data.status === 200) {
-            const newData = res.data.results;
+      service.get(`/topics?index=${index}&offset=${offset}`).then((res) => {
+        if (res.data.status === 200) {
+          const newData = res.data.results;
 
-            if (newData.length > 0) {
-              newData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-              setData([...data, ...newData]);
-              setPage(pageNumber + 1);
-            } else {
-              isEndReached.current = true;
-            }
-          } else {
-            console.error("API request failed:", res.data.message);
+          if (newData.length > 0) {
+            //const reversedData = [...newData].reverse();
+            setData([...data, ...newData]);
           }
-        });
+          if (newData.length < offset) {
+            isEndReached.current = true;
+          }
+          setLoading(false);
+        } else {
+          console.error("API request failed:", res.data.message);
+          setLoading(false);
+        }
+      });
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -73,29 +72,29 @@ export default function TopicListScreen({ navigation }) {
     }
   };
 
-
-
   const renderItem = (item) => (
     <View style={[styles.showList]}>
       <Avatar
         style={styles.imagesPost}
         source={
-          item.item.images[0] ? { uri: item.item.images[0] } : require("./../../assets/ava.png")
+          item.item.images[0]
+            ? { uri: item.item.images[0] }
+            : require("./../../assets/ava.png")
         }
       />
-      <FontAwesome style={styles.iconEdit} name="pencil-square-o" size={24} color="black" />
-      <Text style={styles.informationUser}>
-        {item.item.author}
-      </Text>
-      <Text style={styles.contentPost}>
-        {item.item.content}
-      </Text>
+      <FontAwesome
+        style={styles.iconEdit}
+        name="pencil-square-o"
+        size={24}
+        color="black"
+      />
+      <Text style={styles.informationUser}>{item.item.author}</Text>
+      <Text style={styles.contentPost}>{item.item.content}</Text>
       <Text style={styles.vote}>
-        {"Lượt thích: "}{item.item.votes}
+        {"Lượt thích: "}
+        {item.item.votes}
       </Text>
-      <Text style={styles.time}>
-        {item.item.createdAt}
-      </Text>
+      <Text style={styles.time}>{item.item.createdAt}</Text>
     </View>
   );
 
@@ -104,7 +103,8 @@ export default function TopicListScreen({ navigation }) {
   };
 
   const handleEndReached = () => {
-    fetchData(page);
+    setPage(page + 1);
+    fetchData(page + 1);
   };
 
   return (
@@ -187,7 +187,7 @@ export default function TopicListScreen({ navigation }) {
           )} */}
         </View>
       </View>
-      <View style={styles.body}> 
+      <View style={styles.body}>
         <FlatList
           data={data}
           keyExtractor={(item) => item.id.toString()}
@@ -354,5 +354,5 @@ const styles = {
     left: 10,
     bottom: 2,
     color: "#888888",
-  }
+  },
 };

@@ -113,7 +113,7 @@ function MapScreen({ route, navigation }) {
         const searchTerm = query.toLowerCase();
         const locationName = location.name.toLowerCase();
 
-        return searchTerm && locationName.startsWith(searchTerm);
+        return searchTerm && locationName.includes(searchTerm);
       })
       .slice(0, maximumAmountOfSearchResults);
     setSearchResults(results);
@@ -511,9 +511,11 @@ const styles = StyleSheet.create({
     borderWidth: 0,
   },
   dropDownRow: {
+    position: "relative",
     cursor: "pointer",
     padding: 10,
     alignItems: "flex-start",
+    zIndex: 100,
   },
   input: {
     position: "absolute",
@@ -524,8 +526,10 @@ const styles = StyleSheet.create({
     width: searchBarWidth,
   },
   searchInner: {
+    position: "relative",
     display: "flex",
     justifyContent: "center",
     height: 40,
+    zIndex: 100,
   },
 });

@@ -83,8 +83,10 @@ const BottomTab = ({ bookmarks, navigation, savedTopic, username }) => {
       service.get('/topics/' + username).then(
         (res) => {
           setData(res.data.results);
+      }).catch((err) => {
+        console.log("Topics failed");
       })
-    });
+    }, []);
 
     const renderItem = (item) => <Topic item={item} navigation={navigation} />;
 
@@ -256,7 +258,9 @@ const UserScreen = ({ route, navigation }) => {
       () => {
         console.log("failed");
       }
-    );
+    ).catch((err) => {
+      console.log("info error")
+    });
   }, []);
 
   const { token, setToken } = useContext(TokenContext);
