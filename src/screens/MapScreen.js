@@ -61,13 +61,17 @@ function MapScreen({ route, navigation }) {
   const onSearch = (location) => {
     setQuery(location.name);
     setSelectedLocation(location);
-    animateToCamera({
-      center: {
-        latitude: location.latitude,
-        longitude: location.longitude,
-      },
-      zoom: 8,
-    });
+    async function animate() {
+      const curCam = await mapViewRef.current.getCamera();
+      animateToCamera({
+        center: {
+          latitude: location.latitude,
+          longitude: location.longitude,
+        },
+        zoom: curCam.zoom > 11 ? curCam.zoom : 11,
+      });
+    }
+    animate();
     setTimeout(() => {
       setModalVisible(true);
     }, 450);
@@ -92,7 +96,6 @@ function MapScreen({ route, navigation }) {
       service.get("/locations").then(
         (response) => {
           setLocations(response.data.results);
-          console.log("Success");
           setLoading(false);
         },
         () => setLoading(false)
@@ -159,6 +162,9 @@ function MapScreen({ route, navigation }) {
               }}
               description={location.name}
               onPress={() => {
+                if (showResults && haveResults) {
+                  return;
+                }
                 setSelectedLocation(location);
                 async function animate() {
                   const curCam = await mapViewRef.current.getCamera();
@@ -303,7 +309,8 @@ function MapScreen({ route, navigation }) {
           <View style={styles.dropDown}>
             {searchResults.map((location, index) => (
               <TouchableOpacity 
-                onPress={() => {
+                onPress={(event) => {
+                  event.stopPropagation();
                   onSearch(location);
                   setShowResults(false);
                   Keyboard.dismiss();
@@ -514,6 +521,7 @@ const styles = StyleSheet.create({
     cursor: "pointer",
     padding: 10,
     alignItems: "flex-start",
+    zIndex: 10,
   },
   input: {
     position: "absolute",
