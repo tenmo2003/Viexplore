@@ -4,7 +4,7 @@
     "slug": "Viexplore",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/ava.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -18,22 +18,22 @@
       "supportsTablet": true
     },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+      "softwareKeyboardLayoutMode": "pan",
+      "package": "com.tenmo2003.Viexplore",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyB0e22lvPcDP9d06lWIcw4NlRz5dULt3f0"
+        }
       },
-      "softwareKeyboardLayoutMode": "pan"
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "a35c155a-e957-4fa8-89ee-41e158b3ee5b"
+      }
     }
-    // "plugins": [
-    //   [
-    //     "expo-image-picker",
-    //     {
-    //       "photosPermission": "Allow $(PRODUCT_NAME) to access your photos",
-    //     }
-    //   ]
-    // ]
   }
 }

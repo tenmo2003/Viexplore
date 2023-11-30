@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "328630362618",
+    "project_id": "viexplore",
+    "storage_bucket": "viexplore.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:328630362618:android:d589bb80685b80b016c443",
+        "android_client_info": {
+          "package_name": "com.example.viexplore"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCxIKyPVse4vxVbqhuboUIOt_UhDEnP-7E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:328630362618:android:d93b2ffb153a3d8916c443",
+        "android_client_info": {
+          "package_name": "com.tenmo2003.Viexplore"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCxIKyPVse4vxVbqhuboUIOt_UhDEnP-7E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

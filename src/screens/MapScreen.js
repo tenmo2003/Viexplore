@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import MapView, { Geojson, Marker } from "react-native-maps";
+import MapView, { Geojson, Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import Modal from "react-native-modal";
 import Loading from "../components/Loading";
 import service from "../helper/axiosService";
@@ -92,11 +92,11 @@ function MapScreen({ route, navigation }) {
       service.get("/locations").then(
         (response) => {
           setLocations(response.data.results);
+          console.log("Success");
           setLoading(false);
         },
         () => setLoading(false)
       );
-      // setLocations(locationsJson);
     } catch (error) {
       console.error(error);
     }
@@ -141,7 +141,7 @@ function MapScreen({ route, navigation }) {
         rotateEnabled={false}
         moveOnMarkerPress={false}
         onPress={() => Keyboard.dismiss()}
-        provider="google"
+        provider={PROVIDER_GOOGLE}
       >
         <Geojson
           geojson={vietnam}
