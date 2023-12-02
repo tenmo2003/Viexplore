@@ -1,4 +1,9 @@
-import { AntDesign, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
+import {
+  AntDesign,
+  Feather,
+  Ionicons,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 import { NavigationContainer } from "@react-navigation/native";
 import * as SecureStore from "expo-secure-store";
 import React, { useEffect, useRef, useState } from "react";
@@ -15,6 +20,8 @@ import UserTabs from "./src/tabs/UserTabs";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
+import { showAlert } from "./src/helper/CustomAlert";
+import NotificationScreen from "./src/screens/NotificationScreen";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -187,6 +194,30 @@ export default function App() {
               name="MapTab"
               component={MapTabs}
             />
+            <Tab.Screen
+              options={{
+                tabBarIcon: ({ color, size }) => (
+                  <Ionicons
+                    name="ios-notifications-outline"
+                    size={24}
+                    color="black"
+                  />
+                ),
+                tabBarLabel: "Thông báo",
+              }}
+              name="NotificationScreen"
+              component={NotificationScreen}
+              listeners={({ navigation, route }) => ({
+                tabPress: (e) => {
+                  e.preventDefault();
+                  if (!token) {
+                    showAlert("Bạn cần đăng nhập để dùng chức năng này");
+                    return;
+                  }
+                  navigation.navigate("NotificationScreen");
+                },
+              })}
+            ></Tab.Screen>
             <Tab.Screen
               options={{
                 tabBarIcon: ({ color, size }) => (
