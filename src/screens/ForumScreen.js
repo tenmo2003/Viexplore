@@ -70,11 +70,9 @@ function ForumScreen({ navigation }) {
 
   const [avatar, setAvatar] = useState(null);
   useEffect(() => {
-    setLoading(true);
     service.get("/users/me", {}).then(
       (res) => {
         setAvatar(res.data.results.avatar);
-        setLoading(false);
       },
       () => {
         console.log("failed");

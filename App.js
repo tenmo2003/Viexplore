@@ -1,32 +1,33 @@
-import { AntDesign, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
+import {
+  AntDesign,
+  Feather,
+  Ionicons,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 import { NavigationContainer } from "@react-navigation/native";
 import * as SecureStore from "expo-secure-store";
 import React, { useEffect, useRef, useState } from "react";
-import {
-  Platform,
-  StatusBar,
-  StyleSheet
-} from "react-native";
+import { Platform, StatusBar, StyleSheet } from "react-native";
 import { ScreenHeight } from "react-native-elements/dist/helpers";
 import { PaperProvider } from "react-native-paper";
 import { createMaterialBottomTabNavigator } from "react-native-paper/react-navigation";
 import Loading from "./src/components/Loading";
 import TokenContext from "./src/contexts/TokenContext";
-import service, {
-  removeHeaderConfig
-} from "./src/helper/axiosService";
+import service, { removeHeaderConfig } from "./src/helper/axiosService";
 import ForumTabs from "./src/tabs/ForumTabs";
 import MapTabs from "./src/tabs/MapTabs";
 import UserTabs from "./src/tabs/UserTabs";
-import * as Device from 'expo-device';
-import * as Notifications from 'expo-notifications';
-import Constants from 'expo-constants';
+import * as Device from "expo-device";
+import * as Notifications from "expo-notifications";
+import Constants from "expo-constants";
+import { showAlert } from "./src/helper/CustomAlert";
+import NotificationScreen from "./src/screens/NotificationScreen";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
-    shouldPlaySound: false,
-    shouldSetBadge: false,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
   }),
 });
 
@@ -34,18 +35,18 @@ Notifications.setNotificationHandler({
 async function sendPushNotification(expoPushToken) {
   const message = {
     to: expoPushToken,
-    sound: 'default',
-    title: 'Original Title',
-    body: 'And here is the body!',
-    data: { someData: 'goes here' },
+    sound: "default",
+    title: "Original Title",
+    body: "And here is the body!",
+    data: { someData: "goes here" },
   };
 
-  await fetch('https://exp.host/--/api/v2/push/send', {
-    method: 'POST',
+  await fetch("https://exp.host/--/api/v2/push/send", {
+    method: "POST",
     headers: {
-      Accept: 'application/json',
-      'Accept-encoding': 'gzip, deflate',
-      'Content-Type': 'application/json',
+      Accept: "application/json",
+      "Accept-encoding": "gzip, deflate",
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(message),
   });
@@ -54,24 +55,25 @@ async function sendPushNotification(expoPushToken) {
 async function registerForPushNotificationsAsync() {
   let token;
 
-  if (Platform.OS === 'android') {
-    Notifications.setNotificationChannelAsync('default', {
-      name: 'default',
+  if (Platform.OS === "android") {
+    Notifications.setNotificationChannelAsync("default", {
+      name: "default",
       importance: Notifications.AndroidImportance.MAX,
       vibrationPattern: [0, 250, 250, 250],
-      lightColor: '#FF231F7C',
+      lightColor: "#FF231F7C",
     });
   }
 
   if (Device.isDevice) {
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
-    if (existingStatus !== 'granted') {
+    if (existingStatus !== "granted") {
       const { status } = await Notifications.requestPermissionsAsync();
       finalStatus = status;
     }
-    if (finalStatus !== 'granted') {
-      alert('Failed to get push token for push notification!');
+    if (finalStatus !== "granted") {
+      alert("Failed to get push token for push notification!");
       return;
     }
     token = await Notifications.getExpoPushTokenAsync({
@@ -79,7 +81,7 @@ async function registerForPushNotificationsAsync() {
     });
     console.log(token);
   } else {
-    alert('Must use physical device for Push Notifications');
+    alert("Must use physical device for Push Notifications");
   }
 
   return token.data;
@@ -91,10 +93,12 @@ export default function App() {
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const [expoPushToken, setExpoPushToken] = useState('');
+  const [expoPushToken, setExpoPushToken] = useState("");
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();
+
+  const navigationRef = useRef();
 
   useEffect(() => {
     const loadToken = async () => {
@@ -119,30 +123,48 @@ export default function App() {
 
     loadToken();
 
-    registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
-
-    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-      setNotification(notification);
+    registerForPushNotificationsAsync().then((token) => {
+      setExpoPushToken(token);
     });
 
-    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-      console.log(response);
-    });
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        setNotification(notification);
+      });
+
+    responseListener.current =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        navigationRef.current?.navigate("NotificationScreen");
+      });
 
     return () => {
-      Notifications.removeNotificationSubscription(notificationListener.current);
+      Notifications.removeNotificationSubscription(
+        notificationListener.current
+      );
       Notifications.removeNotificationSubscription(responseListener.current);
     };
   }, []);
+
+  useEffect(() => {
+    if (expoPushToken !== "") {
+      service
+        .post("/notification-token", {
+          token: expoPushToken,
+        })
+        .catch((err) => {
+          console.log("Error registering for push notifications ", err);
+        });
+    }
+  }, [expoPushToken]);
 
   return (
     <TokenContext.Provider value={{ token, setToken }}>
       {loading && <Loading full={true} />}
       <PaperProvider>
-        <NavigationContainer>
+        <NavigationContainer ref={navigationRef}>
           <Tab.Navigator
             initialRouteName="MapTab"
-            screenOptions={{ tabBarShowLabel: false,pressColor:"#AACCFF" }}
+            screenOptions={{ tabBarShowLabel: false, pressColor: "#AACCFF" }}
             // labeled={false}
             shifting={true}
             backBehavior="history"
@@ -174,6 +196,30 @@ export default function App() {
               name="MapTab"
               component={MapTabs}
             />
+            <Tab.Screen
+              options={{
+                tabBarIcon: ({ color, size }) => (
+                  <Ionicons
+                    name="ios-notifications-outline"
+                    size={24}
+                    color="black"
+                  />
+                ),
+                tabBarLabel: "Thông báo",
+              }}
+              name="NotificationScreen"
+              component={NotificationScreen}
+              listeners={({ navigation, route }) => ({
+                tabPress: (e) => {
+                  e.preventDefault();
+                  if (!token) {
+                    showAlert("Bạn cần đăng nhập để dùng chức năng này");
+                    return;
+                  }
+                  navigation.navigate("NotificationScreen");
+                },
+              })}
+            ></Tab.Screen>
             <Tab.Screen
               options={{
                 tabBarIcon: ({ color, size }) => (
