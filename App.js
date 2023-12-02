@@ -26,8 +26,8 @@ import NotificationScreen from "./src/screens/NotificationScreen";
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
-    shouldPlaySound: false,
-    shouldSetBadge: false,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
   }),
 });
 
@@ -98,6 +98,8 @@ export default function App() {
   const notificationListener = useRef();
   const responseListener = useRef();
 
+  const navigationRef = useRef();
+
   useEffect(() => {
     const loadToken = async () => {
       const storedToken = await SecureStore.getItemAsync("token");
@@ -132,7 +134,7 @@ export default function App() {
 
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
-        console.log(response);
+        navigationRef.current?.navigate("NotificationScreen");
       });
 
     return () => {
@@ -159,7 +161,7 @@ export default function App() {
     <TokenContext.Provider value={{ token, setToken }}>
       {loading && <Loading full={true} />}
       <PaperProvider>
-        <NavigationContainer>
+        <NavigationContainer ref={navigationRef}>
           <Tab.Navigator
             initialRouteName="MapTab"
             screenOptions={{ tabBarShowLabel: false, pressColor: "#AACCFF" }}
