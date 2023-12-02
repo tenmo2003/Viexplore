@@ -13,7 +13,7 @@ import { TextInput } from "react-native-paper";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 import Loading from "../components/Loading";
 import service from "../helper/axiosService";
-import CommentScreen from "./CommentScreen";
+import CommentScreen from "../components/CommentScreen";
 
 export default function EditProfileScreen({ route, navigation }) {
   const { username, fullname, email, avatar } = route.params.userInfo;
