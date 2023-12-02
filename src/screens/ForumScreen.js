@@ -95,7 +95,7 @@ function ForumScreen({ navigation }) {
     fetchData(page);
   }, [page]);
 
-  const renderItem = (item) => <Topic item={item} navigation={navigation} data={data} setData={setData} />;
+  const renderItem = ({item, index}) => <Topic item={item} navigation={navigation} data={data} setData={setData} />;
 
   const handleEndReached = () => {
     fetchData(page);
@@ -164,7 +164,6 @@ const postWidth = screenWidth;
 
 const styles = StyleSheet.create({
   body: {
-    backgroundColor: "green",
     flex: 1,
   },
 

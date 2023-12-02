@@ -6,6 +6,7 @@ import {
     Image,
     Dimensions,
     TouchableOpacity,
+    ScrollView,
 } from "react-native";
 import { Icon } from "react-native-elements";
 import { ImageSlider } from "react-native-image-slider-banner";
@@ -14,10 +15,16 @@ import TokenContext from "../contexts/TokenContext";
 import service from "../helper/axiosService";
 import Loading from "../components/Loading";
 import Topic from "../components/Topic";
+import ImageSlider2 from "../components/ImageSlide2";
 
 export default function TopicDetailScreen({ route, navigation }) {
-    const { id } = route.params
-    const {topic, setTopic} = useState([]);
+    const { topic } = route.params;
+    const [isLogin, setIsLogin] = useState(false);
+  const { token } = useContext(TokenContext);
+  const [saveTopic, setSaveTopic] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [UpVoted, setUpVoted] = useState(false);
+  const [downVoted, setDownVoted] = useState(false);
 
     return (
         <View style={styles.sheetScreen}>
@@ -29,6 +36,104 @@ export default function TopicDetailScreen({ route, navigation }) {
             </View>
         
         {/* Component hiện ở đây */}
+        <ScrollView>
+            <Topic item={topic} navigation={navigation}/>
+            {/* <View style={{flexDirection: "row",}}>
+                <View style={styles.profileImage}>
+                <Image
+                    source={{uri: topic.authorAvatar ? topic.authorAvatar : require("./../../assets/cho.jpg")}}
+                    style={styles.image}
+                    resizeMode="center"
+                ></Image>
+                </View>
+                <View>
+                <Text style={styles.Name}>{topic.author}</Text>
+                <Text style={styles.Time}>{topic.createdAt}</Text>
+                </View>
+            </View>
+            <Text style={styles.topicName}>{topic.name}</Text>
+            <Text style={styles.Decript}>{topic.content}</Text>
+
+            {topic.images.length > 0 && (
+                <ImageSlider2
+                data={topic.images.map((img) => ({
+                  img,
+                }))}
+                caroselImageContainerStyle={styles.caroselImageContainerStyle}
+                activeIndicatorStyle={styles.activeIndicatorStyle}
+                indicatorContainerStyle={styles.indicatorContainerStyle}
+                preview={false}
+              />
+            )}
+
+            <View style={styles.center}>
+                <View
+                style={{
+                    flexDirection: "row",
+                    marginTop: 10,
+                    marginBottom: 15,
+                }}
+                >
+                <View
+                    style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginTop:10
+                    }}
+                >
+                    <TouchableOpacity>
+                    <Ionicons
+                        name={UpVoted ? "arrow-up-outline" : "arrow-up-outline"}
+                        size={30}
+                        color={UpVoted ? "#AACCFF" : "#52575D"}
+                        style={{
+                        marginRight: 5,
+                        }}
+                        //onPress={upVote}
+                    />
+                    </TouchableOpacity>
+                    <Text
+                    style={{
+                        fontSize: 18,
+                        color: "#52575D",
+                    }}
+                    >
+                    Vote
+                    </Text>
+                    <TouchableOpacity>
+                    <Ionicons
+                        name={downVoted ? "arrow-down-outline" : "arrow-down-outline"}
+                        size={30}
+                        color={downVoted ? "#AACCFF" : "#52575D"}
+                        style={{
+                        marginLeft: 5,
+                        }}
+                        //onPress={downVote}
+                    />
+                    </TouchableOpacity>
+                </View>
+                <Ionicons
+                    name="chatbubble-outline"
+                    size={27}
+                    color="#52575D"
+                    style={styles.iconStyle}
+                ></Ionicons>
+
+                <Ionicons
+                    name={saveTopic ? "flag" : "flag-outline"}
+                    size={27}
+                    color={saveTopic ? "#AACCFF" : "#52575D"}
+                    style={styles.iconStyle}
+                    //onPress={handleSaveTopicPress}
+                ></Ionicons>
+
+                </View>
+            </View>
+            <View style={styles.Rectangle} />
+
+            <Text>List comment nma tao mệc quá làm sau nhe :D</Text> */}
+            </ScrollView>
         </View>
     )
 }
@@ -102,7 +207,7 @@ const styles = StyleSheet.create({
     },
     Rectangle: {
         width: Dimensions.get("window").width,
-        height: 10,
+        height: 2,
         backgroundColor: "#AEB5BC",
     },
     Name: {
@@ -127,7 +232,7 @@ const styles = StyleSheet.create({
         marginTop: 10,
         marginLeft: 20,
         fontWeight: "bold",
-        fontSize: 24,
+        fontSize: 20,
         marginRight: 20,
         marginBottom: 5,
     },
@@ -156,7 +261,7 @@ const styles = StyleSheet.create({
     caroselImageContainerStyle: {
         backgroundColor: "#000",
         height: screenHeight * 0.65,
-        justifyContent: "center",
+        // justifyContent: "center",
     },
     indicatorContainerStyle: {
         position: "absolute",

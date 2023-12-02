@@ -84,11 +84,11 @@ const BottomTab = ({ bookmarks, navigation, savedTopic, username }) => {
         (res) => {
           setData(res.data.results);
       }).catch((err) => {
-        console.log("Topics failed");
+        console.log("Topics failed ", err);
       })
     }, []);
 
-    const renderItem = (item) => <Topic item={item} navigation={navigation} />;
+    const renderItem = ({item, index}) => <Topic item={item} navigation={navigation} />;
 
     return (
       <View style={{ flex: 1, backgroundColor: "#" }}>
@@ -108,17 +108,17 @@ const BottomTab = ({ bookmarks, navigation, savedTopic, username }) => {
     );
   };
 
-  const goToTopicDetail = (id, navigation) => {
+  const goToTopicDetail = (topic, navigation) => {
     console.log("Navigating");
     navigation.navigate("UserTab", {
       screen: "Topic",
       params: {
-        id: id,
+        topic: topic,
       },
     });
   };
   
-  const Save = ({ savedTopic, userScreenNavigation}) => {
+  const Save = ({ savedTopic, userScreenNavigation, goToTopicDetail}) => {
     return (
       <View style={{ flex: 1, backgroundColor: "#0000" }}>
         <View style={{ flex: 1 }}>
@@ -129,15 +129,22 @@ const BottomTab = ({ bookmarks, navigation, savedTopic, username }) => {
                   key={index}
                   style={styles.content}
                   onPress={() =>
-                    goToTopicDetail(topic.id, userScreenNavigation)
+                    goToTopicDetail(topic, userScreenNavigation)
                   }
                 >
                   <View style={styles.saveTopic}>
-                    <Text style={{...styles.saveTopicContent, fontWeight: "bold"}}>
-                      {topic.name}
-                    </Text>
-                    <Text style={styles.saveTopicContent}>
+                    <Image
+                      source={{
+                        uri: topic.authorAvatar,
+                      }}
+                      style={{height: 50, width: 50, marginBottom:5, borderRadius: 100}}
+                      resizeMode="center"
+                    ></Image>
+                    <Text style={{...styles.saveTopicContent, fontWeight: "bold", fontSize: 20}}>
                       {topic.author}
+                    </Text>
+                    <Text style={{...styles.saveTopicContent, fontStyle:"italic", fontWeight:"bold"}}>
+                      {topic.name}
                     </Text>
                     <Text style={{...styles.saveTopicContent, fontStyle: "italic"}}>
                       {topic.createdAt}
@@ -189,7 +196,7 @@ const BottomTab = ({ bookmarks, navigation, savedTopic, username }) => {
       </Tab.Screen>
       <Tab.Screen name="Save">
         {() => (
-          <Save savedTopic={savedTopic} userScreenNavigation={navigation}/>
+          <Save savedTopic={savedTopic} userScreenNavigation={navigation} goToTopicDetail={goToTopicDetail}/>
         )}
       </Tab.Screen>
     </Tab.Navigator>
@@ -545,7 +552,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   saveTopic: {
-    height: screenHeight/6, 
+    height: screenHeight/5, 
     width: screenWidth/2-13, 
     borderRadius:10,
     borderColor: "black",

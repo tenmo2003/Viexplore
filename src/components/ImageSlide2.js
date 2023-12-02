@@ -69,10 +69,10 @@ class ImageSlider2 extends React.Component {
           onScroll={this.handleScroll}
         >
           {data.map((item, index) => (
-            <View key={index} style={{ marginLeft:10,marginRight:10,width: containerWidth -42.25, height: containerHeight }}>
+            <View key={index} style={{ marginLeft:10,width: containerWidth - 10 , height: containerHeight }}>
               <Image
                 source={{ uri: item.img }}
-                style={{ flex: 1, width: null, height: null,borderRadius:10}}
+                style={{ flex: 1, width: containerWidth -42, height: null,borderRadius:10}}
                 resizeMode="cover"
               />
             </View>

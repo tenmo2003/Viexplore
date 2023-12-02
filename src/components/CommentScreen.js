@@ -10,16 +10,18 @@ import {
     TouchableOpacity,
     FlatList,
     ActivityIndicator,
+    TextInput,
 } from "react-native";
 import { Icon, Input } from "react-native-elements";
 import { Ionicons } from "react-native-vector-icons";
 import * as ImagePicker from 'expo-image-picker';
-import Loading from "../components/Loading";
+import Loading from "./Loading";
 import service from "../helper/axiosService";
 import { useFocusEffect } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 function CommentScreen({ route, navigation }) {
+    const [checkAuthor, setCheckAuthor] = useState(false);
     const handleSendPress = () => {
         onSubmit();
     };
@@ -51,10 +53,8 @@ function CommentScreen({ route, navigation }) {
         setImage(updatedImages);
     };
 
-    const { topicId, comments } = route.params;
+    const { topicId, comments, username } = route.params;
     useEffect(() => {
-        //console.log(topicId);
-        //console.log(comments);
     }, [topicId, comments]);
 
     const [content, setContent] = useState("");
@@ -99,6 +99,30 @@ function CommentScreen({ route, navigation }) {
         setContent(input);
     };
 
+    //Edit, delete comment
+    const [reversedComments, setReversedComments] = useState([...comments].reverse());
+    const [editingCommentId, setEditingCommentId] = useState(null);
+    const [editedContent, setEditedContent] = useState("");
+
+    const deleteComment = (commentId) => {
+        setLoading(true);
+        service
+            .delete("/comment/" + commentId)
+            .then((res) => {
+                setReversedComments(reversedComments.filter((el) => el.id !== commentId));
+                setLoading(false);
+            })
+            .catch((error) => {
+                console.error("Delete Failed:", error);
+                setLoading(false);
+            });
+    };
+    
+    const onCancelEdit = () => {
+        setEditingCommentId(null);
+        setEditedContent("");
+    };
+
     const renderItem = ({ item }) => (
         <View>
             <View style={{ flexDirection: "row", marginBottom: 10 }}>
@@ -110,10 +134,24 @@ function CommentScreen({ route, navigation }) {
                     ></Image>
                 </View>
                 <View>
-                    <View style={{ backgroundColor: "#D9D9D9", marginLeft: 15, borderRadius: 20, flexWrap: "wrap" }}>
-                        <Text style={styles.Name}>{item.username}</Text>
-                        <Text style={{ fontSize: 16, marginLeft: 10, marginRight: 10, marginBottom: 10, flexWrap: "wrap", maxWidth: screenWidth - 95 }}>{item.content}</Text>
-                    </View>
+                    {editingCommentId === item.id ? (
+                        <View style={styles.commentInput}>
+                            <View style={{...styles.inputContainer2, width: screenWidth - 95}}>
+                                <Input
+                                    placeholder="Chỉnh sửa bình luận..."
+                                    inputContainerStyle={styles.inputContainerStyle2}
+                                    inputStyle={styles.inputStyle2}
+                                    value={editedContent}
+                                />
+                            </View>
+        
+                        </View>
+                    ) : (
+                        <View style={{ backgroundColor: "#D9D9D9", marginLeft: 15, borderRadius: 20, flexWrap: "wrap" }}>
+                            <Text style={styles.Name}>{item.username}</Text>
+                            <Text style={{ fontSize: 16, marginLeft: 10, marginRight: 10, marginBottom: 10, flexWrap: "wrap", maxWidth: screenWidth - 95 }}>{item.content}</Text>
+                        </View>
+                    )}
 
                     {item.image && (
                         <Image
@@ -121,33 +159,63 @@ function CommentScreen({ route, navigation }) {
                             style={styles.cmtImg}
                         />
                     )}
-                    <Text style={styles.Time}>{item.createdAt}</Text>
+
+                    <View style={{flexDirection: "row"}}>
+                        <Text style={styles.Time}>{item.createdAt}</Text>
+                        {editingCommentId !== item.id ? (
+                            <>
+                                <TouchableOpacity
+                                    style={styles.Time}
+                                    onPress={() => {
+                                        if (item.username === username || username === "admin") {
+                                            setEditedContent(item.content); // Cập nhật editedContent với nội dung của comment ban đầu
+                                            setEditingCommentId(item.id);
+                                        }
+                                    }}
+                                >
+                                    <Text style={{fontWeight:"bold", color: item.username === username || username === "admin" ? "black" : "#D9D9D9",}}>
+                                        Chỉnh sửa
+                                    </Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={styles.Time}
+                                    onPress={() => (item.username === username || username === "admin") && deleteComment(item.id)}
+                                >
+                                    <Text style={{fontWeight:"bold", color: item.username === username || username === "admin" ? "black" : "#D9D9D9",}}>Xoá</Text>
+                                </TouchableOpacity>
+                            </>
+                        ) : (
+                            <>
+                                <TouchableOpacity
+                                    style={styles.Time}
+                                >
+                                    <Text style={{fontWeight:"bold", color: "black"}}>
+                                        Lưu
+                                    </Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={styles.Time}
+                                    onPress={() => onCancelEdit()}
+                                >
+                                    <Text style={{fontWeight:"bold", color: "red"}}>
+                                        Hủy
+                                    </Text>
+                                </TouchableOpacity>
+                            </>
+                        )}
+                    </View>
                 </View>
             </View>
+            
         </View>
     )
 
-    const reversedComments = [...comments].reverse();
     return (
         <View>
             {loading && <Loading />}
             <View style={styles.sheetScreen}>
-                <View style={{ flexDirection: "row", justifyContent: 'space-between', paddingRight: 15, paddingLeft: 10, paddingTop: 10, paddingBottom: 10, }}>
-                    <TouchableOpacity>
-                        <Icon name="chevron-left" type="font-awesome" color="#000" size={24} onPress={() => navigation.navigate("Forum")} />
-                    </TouchableOpacity>
-                    <Text style={{ fontSize: 18, alignItems: "center", paddingLeft: 15 }}> Bình luận </Text>
-                    <TouchableOpacity>
-                        <Ionicons
-                            name="flag-outline"
-                            size={27}
-                            color="#52575D"
-                            style={styles.iconStyle}
-                        ></Ionicons>
-                    </TouchableOpacity>
-                </View>
-            
-                <View style={{ height: screenHeight - screenHeight * 0.09 }}>
+                
+                <View style= {{height: screenHeight - screenHeight * 0.3}}>
                     <FlatList
                         data={reversedComments}
                         keyExtractor={(reversedComments) => reversedComments.id.toString()}
@@ -156,7 +224,6 @@ function CommentScreen({ route, navigation }) {
                     />
                     {loading && <ActivityIndicator />}
                 </View>
-
 
                 <View style={styles.commentInput}>
                     <View style={styles.inputContainer2}>
@@ -285,7 +352,7 @@ const styles = StyleSheet.create({
         borderColor: "#000",
         maxHeight: postHeight * 0.6,
         width: postWidth * 0.82,
-        lineHeight: -0.5,
+    
         fontSize: screenWidth / 25,
     },
 
@@ -294,7 +361,6 @@ const styles = StyleSheet.create({
         paddingTop: 12,
         paddingHorizontal: 12,
         paddingBottom: 20,
-        minHeight: screenHeight - screenHeight * 0.09,
     },
     closeButton: {
         position: 'absolute',
@@ -306,9 +372,6 @@ const styles = StyleSheet.create({
     },
 
     commentInput: {
-        position: 'absolute',
-        marginLeft: 10,
-        bottom: 70,
         backgroundColor: "white",
     },
     inputContainer2: {
