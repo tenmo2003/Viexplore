@@ -16,9 +16,10 @@ import { Feather, FontAwesome } from "@expo/vector-icons";
 
 export default function TopicListScreen({ navigation }) {
   const [query, setQuery] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
   const [haveResults, setHaveResults] = useState(false);
+  const [searchSuggestions, setSearchSuggestions] = useState([]);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
@@ -28,12 +29,14 @@ export default function TopicListScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const maximumAmountOfSearchResults = 10;
-    // const results =
-    //   .slice(0, maximumAmountOfSearchResults);
-    // setSearchResults(results);
-    // setHaveResults(results.length !== 0);
-  }, [query]);
+    // Fetch or filter data for search suggestions based on the query
+    const results = data.filter((item) =>
+      item.author.toLowerCase().includes(query.toLowerCase())
+    );
+
+    setSearchSuggestions(results.slice(0, 10));
+    setHaveResults(results.length !== 0);
+  }, [query, data]);
 
   useEffect(() => {
     fetchData(page);
@@ -72,8 +75,36 @@ export default function TopicListScreen({ navigation }) {
     }
   };
 
+  const deleteTopic = (id) => {
+    setLoading(true);
+    service
+      .delete("/topic/" + id)
+      .then((res) => {
+        console.log(res.data.message);
+        setData(data.filter((el) => el.id !== id));
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Delete Failed:", error);
+        setLoading(false);
+      });
+  };
+
+  const goToTopicDetail = (topic) => {
+    console.log("Navigating");
+    navigation.navigate("UserTab", {
+      screen: "Topic",
+      params: {
+        topic: topic,
+      },
+    });
+  };
+
   const renderItem = (item) => (
-    <View style={[styles.showList]}>
+    <TouchableOpacity
+      style={[styles.showList]}
+      onPress={() => goToTopicDetail(item.item)}
+    >
       <Avatar
         style={styles.imagesPost}
         source={
@@ -88,6 +119,12 @@ export default function TopicListScreen({ navigation }) {
         size={24}
         color="black"
       />
+      <TouchableOpacity
+        style={styles.deleteButton}
+        onPress={() => deleteTopic(item.item.id)}
+      >
+        <MaterialIcons name="delete" size={24} color="black" />
+      </TouchableOpacity>
       <Text style={styles.informationUser}>{item.item.author}</Text>
       <Text style={styles.contentPost}>
         {item.item.content
@@ -102,7 +139,7 @@ export default function TopicListScreen({ navigation }) {
         {item.item.votes}
       </Text>
       <Text style={styles.time}>{item.item.createdAt}</Text>
-    </View>
+    </TouchableOpacity>
   );
 
   const backToAdminHome = () => {
@@ -113,6 +150,8 @@ export default function TopicListScreen({ navigation }) {
     setPage(page + 1);
     fetchData(page + 1);
   };
+
+  const renderData = haveResults && isSearchFocused ? searchSuggestions : data;
 
   return (
     <View style={styles.container}>
@@ -130,13 +169,7 @@ export default function TopicListScreen({ navigation }) {
           />
         </TouchableOpacity>
         <Text style={styles.TextAdmin}>Bài đăng</Text>
-        <View
-          style={
-            haveResults && showResults
-              ? styles.searchContainer
-              : styles.searchContainerEmpty
-          }
-        >
+        <View style={styles.searchContainerEmpty}>
           <View style={styles.searchInner}>
             <Feather
               name="search"
@@ -146,7 +179,7 @@ export default function TopicListScreen({ navigation }) {
               left={iconSearchBarPos}
             />
             <TextInput
-              placeholder="Tìm kiếm bài đăng"
+              placeholder="Tìm kiếm bài đăng (theo tác giả)"
               style={styles.input}
               value={query}
               onChangeText={(value) => {
@@ -155,48 +188,33 @@ export default function TopicListScreen({ navigation }) {
               }}
               onFocus={() => {
                 setShowResults(true);
+                setIsSearchFocused(true);
               }}
               onBlur={() => {
                 setShowResults(false);
+                setIsSearchFocused(false);
               }}
             />
-            {/* {query.length > 0 && ( */}
-            <TouchableOpacity
-              onPress={() => setQuery("")}
-              style={{ position: "absolute", right: iconSearchBarPos - 10 }}
-            >
-              {query.length > 0 && (
-                <MaterialIcons
-                  name="clear"
-                  size={26}
-                  color="rgba(127, 127, 127, 0.5)"
-                />
-              )}
-            </TouchableOpacity>
-            {/* )} */}
+            {query.length > 0 && (
+              <TouchableOpacity
+                onPress={() => setQuery("")}
+                style={{ position: "absolute", right: iconSearchBarPos - 10 }}
+              >
+                {query.length > 0 && (
+                  <MaterialIcons
+                    name="clear"
+                    size={26}
+                    color="rgba(127, 127, 127, 0.5)"
+                  />
+                )}
+              </TouchableOpacity>
+            )}
           </View>
-          {/* {showResults && (
-            <View style={styles.dropDown}>
-              {searchResults.map((location, index) => (
-                <TouchableOpacity
-                  onPress={() => {
-                    onSearch(location);
-                    setShowResults(false);
-                    Keyboard.dismiss();
-                  }}
-                  style={styles.dropDownRow}
-                  key={index}
-                >
-                  <Text>{location.name}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          )} */}
         </View>
       </View>
       <View style={styles.body}>
         <FlatList
-          data={data}
+          data={renderData}
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderItem}
           onEndReached={handleEndReached}
@@ -275,37 +293,6 @@ const styles = {
     borderColor: "#BABABA",
     alignSelf: "center",
   },
-  searchContainer: {
-    position: "absolute",
-    top: Platform.OS === "ios" ? searchBarPosIOS : searchBarPosANDR,
-    backgroundColor: "white",
-    width: searchBarWidth,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    display: "flex",
-    height: 40,
-    borderBottomWidth: 1,
-    borderColor: "#BABABA",
-    alignSelf: "center",
-  },
-  dropDown: {
-    position: "absolute",
-    top: 40,
-    backgroundColor: "white",
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10,
-    width: searchBarWidth,
-    display: "flex",
-    flexDirection: "column",
-  },
-  dropDownempty: {
-    borderWidth: 0,
-  },
-  dropDownRow: {
-    cursor: "pointer",
-    padding: 10,
-    alignItems: "flex-start",
-  },
   input: {
     paddingLeft: 40,
     width: searchBarWidth,
@@ -361,5 +348,10 @@ const styles = {
     left: 10,
     bottom: 2,
     color: "#888888",
+  },
+  deleteButton: {
+    position: "absolute",
+    right: 255,
+    top: 10,
   },
 };
