@@ -149,6 +149,7 @@ const Topic = ({ item, navigation, data, setData }) => {
 
   const [isModalVisible, setModalVisible] = useState(false);
   const toggleModal = () => {
+    console.log("tongling modal");
     setModalVisible(!isModalVisible);
   };
 
@@ -238,7 +239,6 @@ const Topic = ({ item, navigation, data, setData }) => {
             onPress={() => {
               navigation.navigate("OtherUser", {
                 username: item.author,
-                avatar: item.authorAvatar,
               });
             }}
           >
@@ -258,10 +258,12 @@ const Topic = ({ item, navigation, data, setData }) => {
           </TouchableOpacity>
           <TouchableOpacity style = {{paddingRight: 5}}>
             <Ionicons
-              name={checkAuthor || username === "admin" ? "ellipsis-vertical" : "ellipsis-vertical"}
-              color={checkAuthor || username === "admin" ? "black" : "#D9D9D9"}
+              name={(checkAuthor || username === "admin") ? "ellipsis-vertical" : "ellipsis-vertical"}
+              color={(checkAuthor || username === "admin") ? "black" : "#D9D9D9"}
               size={30}
-              onPress={() => checkAuthor || username === "admin" && setModalVisible(true)}
+              onPress={() => {
+                (checkAuthor || username === "admin") && setModalVisible(true);
+              }}
               style={{ marginTop: 15 }}
             />
           </TouchableOpacity>
