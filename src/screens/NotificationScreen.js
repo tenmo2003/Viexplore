@@ -62,12 +62,16 @@ export default function NotificationScreen({ route, navigation }) {
       {loading && <Loading />}
       <Text className="text-3xl font-bold mt-3 ml-3">Notifications</Text>
       <ScrollView className="flex-1">
-        {notifications.length > 0 &&
+        {notifications &&
+          notifications.length > 0 &&
           notifications.map((notification) => (
             <TouchableOpacity
               key={notification.id}
               onPress={() => {
-                if (notification.type === "BROADCAST") {
+                if (
+                  notification.type === "BROADCAST" ||
+                  notification.type === "REPORT"
+                ) {
                   return;
                 }
                 // TODO: Redirect to topic

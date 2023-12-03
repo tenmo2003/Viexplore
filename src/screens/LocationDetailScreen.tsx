@@ -62,8 +62,6 @@ export default function LocationDetail({ route, navigation }) {
     await playbackObject.unloadAsync();
   }
 
-  const [report, setReport] = useState("");
-
   const [loading, setLoading] = useState(false);
   const [autoPlayCarousel, setAutoPlayCarousel] = useState(true);
   const [isModalVisible, setModalVisible] = useState(false);
@@ -226,41 +224,6 @@ export default function LocationDetail({ route, navigation }) {
     </TouchableWithoutFeedback>
   );
 
-  const onSubmitedReport = () => {
-    console.log("Report: ", report);
-
-    if (report == "") {
-      showAlert("Vui lòng điền thông tin", false, "LocationDetail");
-      return;
-    }
-
-    setLoading(true);
-    service
-    .post("/report", {
-      reason: report,
-      locationId: location.id,
-    })
-    .then(
-      (res) => {
-        if (res.data.status === 200) {
-          console.log(res.data.message);
-          setLoading(false);
-          toggleModal();
-        } else {
-          console.log(res.data.message);
-          setLoading(false);
-          toggleModal();
-        }
-      }
-    )
-    .catch((err) => {
-      console.log(err);
-      setLoading(false);
-      toggleModal();
-    })
-    setReport("");
-  }
-
   // if (loading) {
   //   return <Loading />;
   // }
@@ -376,7 +339,7 @@ export default function LocationDetail({ route, navigation }) {
       >
         <View style={styles.bottomSheetScreen}>
           <View style={styles.center}>
-            {/* <DismissKeyboard> */}
+            <DismissKeyboard>
               <View style={styles.flexColumn}>
                 <View style={styles.center}>
                   <View style={styles.iconReport}>
@@ -392,17 +355,16 @@ export default function LocationDetail({ route, navigation }) {
                       maxLength={400}
                       style={styles.textReport}
                       placeholder="Viết báo cáo ở đây...(tối đa 400 chữ)"
-                      onChangeText={(text) => setReport(text)}
                     ></TextInput>
                   </View>
                   <View style={styles.containerButton}>
-                    <TouchableOpacity style={styles.button} onPress={onSubmitedReport}>
-                      <Text style={styles.buttonText}>Gửi đi</Text>
+                    <TouchableOpacity style={styles.button}>
+                      <Text style={styles.buttonText}>Send</Text>
                     </TouchableOpacity>
                   </View>
                 </View>
               </View>
-            {/* </DismissKeyboard> */}
+            </DismissKeyboard>
           </View>
         </View>
       </Modal>

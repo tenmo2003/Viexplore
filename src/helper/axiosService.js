@@ -29,7 +29,7 @@ async function removeToken() {
 
 service.interceptors.response.use(
   (response) => {
-    if (response.data.status === 401) {
+    if (response.data.status === 401 && response.data.message !== "Unauthorized") {
       removeToken();
       console.log("Token invalid")
       showAlert("Phiên đăng nhập đã hết hạn");
