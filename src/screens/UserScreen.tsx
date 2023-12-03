@@ -133,22 +133,22 @@ const BottomTab = ({ bookmarks, navigation, savedTopic, username }) => {
                   }
                 >
                   <View style={styles.saveTopic}>
-                    <Image
+                    {/* <Image
                       source={{
                         uri: topic.authorAvatar,
                       }}
                       style={{height: 50, width: 50, marginBottom:5, borderRadius: 100}}
                       resizeMode="center"
-                    ></Image>
-                    <Text style={{...styles.saveTopicContent, fontWeight: "bold", fontSize: 20}}>
+                    ></Image> */}
+                    {/* <Text style={{...styles.saveTopicContent, fontWeight: "bold", fontSize: 20}}>
                       {topic.author}
-                    </Text>
-                    <Text style={{...styles.saveTopicContent, fontStyle:"italic", fontWeight:"bold"}}>
+                    </Text> */}
+                    {/* <Text style={{...styles.saveTopicContent, fontStyle:"italic", fontWeight:"bold"}}>
                       {topic.name}
                     </Text>
                     <Text style={{...styles.saveTopicContent, fontStyle: "italic"}}>
                       {topic.createdAt}
-                    </Text>
+                    </Text> */}
                   </View>
                 </TouchableOpacity>
               ))}

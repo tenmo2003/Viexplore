@@ -17,9 +17,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function UserListScreen({ navigation, route }) {
   const [query, setQuery] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
   const [haveResults, setHaveResults] = useState(false);
+  const [searchSuggestions, setSearchSuggestions] = useState([]);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
@@ -55,11 +56,13 @@ export default function UserListScreen({ navigation, route }) {
   };
 
   useEffect(() => {
-    const maximumAmountOfSearchResults = 10;
-    // const results =
-    //   .slice(0, maximumAmountOfSearchResults);
-    // setSearchResults(results);
-    // setHaveResults(results.length !== 0);
+    // Fetch or filter data for search suggestions based on the query
+    const results = data.filter((item) =>
+      item.username.toLowerCase().includes(query.toLowerCase())
+    );
+
+    setSearchSuggestions(results.slice(0, 10));
+    setHaveResults(results.length !== 0);
   }, [query]);
 
   useEffect(() => {
@@ -182,6 +185,8 @@ export default function UserListScreen({ navigation, route }) {
     fetchData(page);
   };
 
+  const renderData = haveResults ? searchSuggestions : data;
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -198,13 +203,7 @@ export default function UserListScreen({ navigation, route }) {
           />
         </TouchableOpacity>
         <Text style={styles.TextAdmin}>Người dùng</Text>
-        <View
-          style={
-            haveResults && showResults
-              ? styles.searchContainer
-              : styles.searchContainerEmpty
-          }
-        >
+        <View style={styles.searchContainerEmpty}>
           <View style={styles.searchInner}>
             <Feather
               name="search"
@@ -223,61 +222,39 @@ export default function UserListScreen({ navigation, route }) {
               }}
               onFocus={() => {
                 setShowResults(true);
+                setIsSearchFocused(true);
               }}
               onBlur={() => {
                 setShowResults(false);
+                setIsSearchFocused(false);
               }}
             />
-            {/* {query.length > 0 && ( */}
-            <TouchableOpacity
-              onPress={() => setQuery("")}
-              style={{ position: "absolute", right: iconSearchBarPos - 10 }}
-            >
-              {query.length > 0 && (
-                <MaterialIcons
-                  name="clear"
-                  size={26}
-                  color="rgba(127, 127, 127, 0.5)"
-                />
-              )}
-            </TouchableOpacity>
-            {/* )} */}
+            {query.length > 0 && (
+              <TouchableOpacity
+                onPress={() => setQuery("")}
+                style={{ position: "absolute", right: iconSearchBarPos - 10 }}
+              >
+                {query.length > 0 && (
+                  <MaterialIcons
+                    name="clear"
+                    size={26}
+                    color="rgba(127, 127, 127, 0.5)"
+                  />
+                )}
+              </TouchableOpacity>
+            )}
           </View>
-          {/* {showResults && (
-            <View style={styles.dropDown}>
-              {searchResults.map((location, index) => (
-                <TouchableOpacity
-                  onPress={() => {
-                    onSearch(location);
-                    setShowResults(false);
-                    Keyboard.dismiss();
-                  }}
-                  style={styles.dropDownRow}
-                  key={index}
-                >
-                  <Text>{location.name}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          )} */}
         </View>
       </View>
-      <View style={styles.body}> 
+      <View style={styles.body}>
         <FlatList
-          data={data}
+          data={renderData}
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderItem}
           onEndReached={handleEndOfUserReached}
           onEndReachedThreshold={0.8}
         />
         {loading && <ActivityIndicator />}
-        {/* <FlatList
-          data={locationData} 
-          keyExtractor={(item) => item.id.toString()} 
-          renderItem={renderItem}
-          onEndReached={handleEndOfLocaReached}
-          onEndReachedThreshold={1.0}
-        /> */}
       </View>
     </View>
   );
@@ -349,37 +326,6 @@ const styles = {
     height: 50,
     borderColor: "#BABABA",
     alignSelf: "center",
-  },
-  searchContainer: {
-    position: "absolute",
-    top: Platform.OS === "ios" ? searchBarPosIOS : searchBarPosANDR,
-    backgroundColor: "white",
-    width: searchBarWidth,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    display: "flex",
-    height: 40,
-    borderBottomWidth: 1,
-    borderColor: "#BABABA",
-    alignSelf: "center",
-  },
-  dropDown: {
-    position: "absolute",
-    top: 40,
-    backgroundColor: "white",
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10,
-    width: searchBarWidth,
-    display: "flex",
-    flexDirection: "column",
-  },
-  dropDownempty: {
-    borderWidth: 0,
-  },
-  dropDownRow: {
-    cursor: "pointer",
-    padding: 10,
-    alignItems: "flex-start",
   },
   input: {
     paddingLeft: 40,
