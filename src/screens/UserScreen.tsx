@@ -128,47 +128,34 @@ const BottomTab = ({ bookmarks, navigation, savedTopic, username }) => {
         <View style={{ flex: 1 }}>
           <ScrollView showsVerticalScrollIndicator={false}>
             <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-              {savedTopic.map((topic, index) => {
-                if (topic !== null)
-                  return (
-                    <TouchableOpacity
-                      key={index}
-                      style={styles.content}
-                      onPress={() =>
-                        goToTopicDetail(topic, userScreenNavigation)
-                      }
-                    >
-                      <View style={styles.saveTopic}>
-                        <Text
-                          style={{
-                            ...styles.saveTopicContent,
-                            fontWeight: "bold",
-                            fontSize: 20,
-                          }}
-                        >
-                          {topic.author}
-                        </Text>
-                        <Text
-                          style={{
-                            ...styles.saveTopicContent,
-                            fontStyle: "italic",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          {topic.name}
-                        </Text>
-                        <Text
-                          style={{
-                            ...styles.saveTopicContent,
-                            fontStyle: "italic",
-                          }}
-                        >
-                          {topic.createdAt}
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                  );
-              })}
+              {savedTopic.map((topic, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={styles.content}
+                  onPress={() =>
+                    goToTopicDetail(topic, userScreenNavigation)
+                  }
+                >
+                  <View style={styles.saveTopic}>
+                    {/* <Image
+                      source={{
+                        uri: topic.authorAvatar,
+                      }}
+                      style={{height: 50, width: 50, marginBottom:5, borderRadius: 100}}
+                      resizeMode="center"
+                    ></Image>
+                    <Text style={{...styles.saveTopicContent, fontWeight: "bold", fontSize: 20}}>
+                      {topic.author}
+                    </Text>
+                    <Text style={{...styles.saveTopicContent, fontStyle:"italic", fontWeight:"bold"}}>
+                      {topic.name}
+                    </Text>
+                    <Text style={{...styles.saveTopicContent, fontStyle: "italic"}}>
+                      {topic.createdAt}
+                    </Text> */}
+                  </View>
+                </TouchableOpacity>
+              ))}
             </View>
           </ScrollView>
         </View>
