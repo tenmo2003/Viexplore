@@ -96,7 +96,7 @@ export default function LocaListScreen({ navigation }) {
             ? { uri: item.item.thumbnail }
             : require("./../../assets/ava.png")
         }
-        rounded
+        rounded-lg
         size={80}
       />
       <Ionicons
@@ -111,7 +111,12 @@ export default function LocaListScreen({ navigation }) {
             ? item.item.name
             : item.item.name.substring(0, 20) + "..."
           : "Unknown"}{" "}
-        {"\u00B7"} {item.item.generalLocation}
+        {"\u00B7"}{" "}
+        {item.item.generalLocation
+          ? item.item.generalLocation.length <= 15
+            ? item.item.generalLocation
+            : item.item.generalLocation.substring(0, 15) + "..."
+          : "Unknown"}
       </Text>
       <Text style={styles.script}>
         {item.item.script
@@ -203,6 +208,7 @@ export default function LocaListScreen({ navigation }) {
           renderItem={renderItem}
           onEndReached={handleEndReached}
           onEndReachedThreshold={0.8}
+          windowSize={10}
         />
         {loading && <ActivityIndicator />}
       </View>
@@ -303,13 +309,13 @@ const styles = {
     position: "absolute",
     fontSize: 16,
     left: width / 3.2,
-    top: 10,
+    top: 100/10,
   },
   script: {
     position: "absolute",
-    width: width - width / 3.5,
+    width: width - width / 3,
     fontSize: 16,
-    left: width / 3.8,
+    left: width / 3.5,
     top: 35,
   },
 };

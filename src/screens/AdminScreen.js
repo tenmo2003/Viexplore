@@ -20,7 +20,6 @@ import Modal from "react-native-modal";
 import Loading from "../components/Loading";
 import { showAlert } from "../helper/CustomAlert";
 
-
 export default function AdminScreen({ navigation }) {
   const { token, setToken } = useContext(TokenContext);
 
@@ -47,7 +46,7 @@ export default function AdminScreen({ navigation }) {
 
   const toGotoManagedReport = () => {
     navigation.navigate("ManagedReport");
-  }
+  };
 
   const toGotoUserList = () => {
     navigation.navigate("UserList");
@@ -86,12 +85,11 @@ export default function AdminScreen({ navigation }) {
 
     setLoading(true);
     service
-    .post("/admin/broadcast", {
-      title: title,
-      message: message,
-    })
-    .then(
-      (res) => {
+      .post("/admin/broadcast", {
+        title: title,
+        message: message,
+      })
+      .then((res) => {
         if (res.data.status === 200) {
           console.log(res.data.message);
           setLoading(false);
@@ -101,34 +99,34 @@ export default function AdminScreen({ navigation }) {
           setLoading(false);
           toggleModal();
         }
-      }
-    )
-    .catch((err) => {
-      console.log(err);
-      setLoading(false);
-      toggleModal();
-    })
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+        toggleModal();
+      });
     setTitle("");
     setMessage("");
-  }
+  };
 
   return (
     <View style={styles.container}>
       {loading && <Loading />}
       <View style={styles.header}>
-        <Text style={styles.TextAdmin}>Viexplore {"\u00B7"} Admin</Text>
-        <TouchableOpacity onPress={logOutHandler}>
-          <MaterialIcons
-            style={{
-              position: "absolute",
-              top: Platform.OS === "ios" ? 25 : 0,
-              right: 10,
-            }}
-            name="logout"
-            size={28}
-            color="black"
-          />
-        </TouchableOpacity>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "flex-end",
+            marginHorizontal: 20,
+            marginTop: 20,
+          }}
+        >
+          <Text style={styles.TextAdmin}>Viexplore {"\u00B7"} Admin</Text>
+          <TouchableOpacity onPress={logOutHandler}>
+            <MaterialIcons name="logout" size={28} color="black" />
+          </TouchableOpacity>
+        </View>
       </View>
       <View style={styles.body}>
         <View style={styles.section}>
@@ -140,30 +138,37 @@ export default function AdminScreen({ navigation }) {
               <Fontisto name="bell" size={36} color="#376CBA" />
             </View>
           </View>
-          <Text style={{ left: 30, top: 20, fontSize: 20, color: "#3F3F3F" }}>
-            Trung tâm thông báo
-          </Text>
+          <View style={{ flexDirection: "row", alignItems: "center", left: 30 }}>
+            <Text style={{ fontSize: 20, color: "#3F3F3F" }}>
+              Trung tâm thông báo
+            </Text>
+          </View>
           <Feather
             name="chevron-right"
             size={36}
             color="#3F3F3F"
-            style={{ position: "absolute", right: 15, top: 32 }}
+            style={{ position: "absolute", right: 15, top: (100-36)/2 }}
           />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.category2} onPress={toGotoManagedReport}>
+        <TouchableOpacity
+          style={styles.category2}
+          onPress={toGotoManagedReport}
+        >
           <View flexDirection="column" justifyContent="center">
             <View style={styles.iconArea2}>
               <Feather name="message-circle" size={36} color="#10C037" />
             </View>
           </View>
-          <Text style={{ left: 30, top: 20, fontSize: 20, color: "#3F3F3F" }}>
-            Trung tâm báo cáo
-          </Text>
+          <View style={{ flexDirection: "row", alignItems: "center", left: 30 }}>
+            <Text style={{ fontSize: 20, color: "#3F3F3F" }}>
+              Trung tâm báo cáo
+            </Text>
+          </View>
           <Feather
             name="chevron-right"
             size={36}
             color="#3F3F3F"
-            style={{ position: "absolute", right: 15, top: 32 }}
+            style={{ position: "absolute", right: 15, top: (100-36)/2 }}
           />
         </TouchableOpacity>
         <View style={styles.section}>
@@ -215,33 +220,36 @@ export default function AdminScreen({ navigation }) {
           <View style={styles.center}>
             <View style={styles.barIcon} />
             {/* <DismissKeyboard> */}
-              <View style={styles.flexColumn}>
-                <View style={styles.center}>
-                  <View style={styles.headerReport}>
-                    <TextInput
-                      multiline={true}
-                      maxLength={50}
-                      style={styles.headerText}
-                      placeholder="Tiêu đề...(tối đa 50 chữ)"
-                      onChangeText={(value) => onChangeTitle(value)}
-                    ></TextInput>
-                  </View>
-                  <View style={styles.reportContent}>
-                    <TextInput
-                      multiline={true}
-                      maxLength={400}
-                      style={styles.textReport}
-                      placeholder="Viết thông báo ở đây...(tối đa 400 chữ)"
-                      onChangeText={(value) => onChangeMessage(value)}
-                    ></TextInput>
-                  </View>
-                  <View style={styles.containerButton}>
-                    <TouchableOpacity style={styles.button} onPress={() => onSubmit()}>
-                      <Text style={styles.buttonText}>Gửi đi</Text>
-                    </TouchableOpacity>
-                  </View>
+            <View style={styles.flexColumn}>
+              <View style={styles.center}>
+                <View style={styles.headerReport}>
+                  <TextInput
+                    multiline={true}
+                    maxLength={50}
+                    style={styles.headerText}
+                    placeholder="Tiêu đề...(tối đa 50 chữ)"
+                    onChangeText={(value) => onChangeTitle(value)}
+                  ></TextInput>
+                </View>
+                <View style={styles.reportContent}>
+                  <TextInput
+                    multiline={true}
+                    maxLength={400}
+                    style={styles.textReport}
+                    placeholder="Viết thông báo ở đây...(tối đa 400 chữ)"
+                    onChangeText={(value) => onChangeMessage(value)}
+                  ></TextInput>
+                </View>
+                <View style={styles.containerButton}>
+                  <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => onSubmit()}
+                  >
+                    <Text style={styles.buttonText}>Gửi đi</Text>
+                  </TouchableOpacity>
                 </View>
               </View>
+            </View>
             {/* </DismissKeyboard> */}
           </View>
         </View>
@@ -262,7 +270,7 @@ const styles = {
   },
   header: {
     width: "100%",
-    height: Platform.OS === "ios" ? height / 7 : height / 7 - 20,
+    height: Platform.OS === "ios" ? height / 8 : height / 8 - 20,
     backgroundColor: "#AACCFF",
     selfItems: "flex-start",
   },
@@ -271,9 +279,9 @@ const styles = {
     height: "100%",
   },
   TextAdmin: {
-    top: Platform.OS === "ios" ? 55 : 30,
-    left: 20,
-    fontSize: 30,
+    // top: Platform.OS === "ios" ? 55 : 20,
+    // left: 20,
+    fontSize: 26,
     color: "#000",
   },
   section: {

@@ -130,7 +130,7 @@ export default function TopicListScreen({ navigation }) {
         {item.item.content
           ? item.item.content.substring(
               0,
-              item.item.content.lastIndexOf(" ", 60)
+              item.item.content.lastIndexOf(" ", 80)
             ) + "..."
           : "No content"}
       </Text>
