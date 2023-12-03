@@ -134,7 +134,16 @@ export default function App() {
 
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
-        navigationRef.current?.navigate("NotificationScreen");
+        const data = response.notification.request.content.data;
+        if (data === undefined || data === null) {
+          navigationRef.current?.navigate("NotificationScreen");
+        }
+        navigationRef.current?.navigate("ForumTab", {
+          screen: "Topic",
+          params: {
+            topic: data,
+          },
+        });
       });
 
     return () => {
@@ -144,6 +153,18 @@ export default function App() {
       Notifications.removeNotificationSubscription(responseListener.current);
     };
   }, []);
+
+  useEffect(() => {
+    if (token && expoPushToken !== "") {
+      service
+        .post("/notification-token", {
+          token: expoPushToken,
+        })
+        .catch((err) => {
+          console.log("Error registering for push notifications ", err);
+        });
+    }
+  }, [token]);
 
   useEffect(() => {
     if (expoPushToken !== "") {
