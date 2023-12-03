@@ -49,6 +49,7 @@ export default function ManagedReportScreen({ navigation }) {
     }
     return () => clearInterval(interval);
   }, [isFocused]);
+  
 
   const backToAdminHome = () => {
     navigation.navigate("Admin");
@@ -91,7 +92,7 @@ export default function ManagedReportScreen({ navigation }) {
                       notification.type === "BROADCAST"
                         ? require("./../../assets/notificationBell.png")
                         : {
-                            uri: notification.thumbnail,
+                            uri: notification.location.thumbnail,
                           }
                     }
                     className="w-14 h-14 rounded-full"
