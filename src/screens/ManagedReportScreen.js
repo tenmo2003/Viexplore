@@ -38,6 +38,7 @@ export default function ManagedReportScreen({ navigation }) {
           .get("/admin/reports")
           .then((res) => {
             setNotifications(res.data.results.reverse());
+            // console.log(res.data.results);
           })
           .catch((err) => {
             console.log(err);
@@ -90,25 +91,15 @@ export default function ManagedReportScreen({ navigation }) {
                       notification.type === "BROADCAST"
                         ? require("./../../assets/notificationBell.png")
                         : {
-                            uri: notification.actionUser.avatar,
+                            uri: notification.thumbnail,
                           }
                     }
                     className="w-14 h-14 rounded-full"
                   />
-                  {notification.type !== "BROADCAST" && (
-                    <Image
-                      source={
-                        notification.type === "COMMENT"
-                          ? require("./../../assets/commentBubble.png")
-                          : require("./../../assets/likeBubble.png")
-                      }
-                      className="w-5 h-5 rounded-full absolute right-0 -bottom-1"
-                    />
-                  )}
                 </View>
                 <View className="ml-2 flex-1 flex">
                   <Text numberOfLines={2} className="text-base">
-                    {notification.message}
+                    {notification.username}{" vừa góp ý với nội dung: "}{notification.reason}
                   </Text>
                   <TimeAgo time={notification.timestamp} />
                 </View>
