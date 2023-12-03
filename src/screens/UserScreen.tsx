@@ -137,7 +137,7 @@ const BottomTab = ({ bookmarks, navigation, savedTopic, username }) => {
                   }
                 >
                   <View style={styles.saveTopic}>
-                    {/* <Image
+                    <Image
                       source={{
                         uri: topic.authorAvatar,
                       }}
@@ -152,7 +152,7 @@ const BottomTab = ({ bookmarks, navigation, savedTopic, username }) => {
                     </Text>
                     <Text style={{...styles.saveTopicContent, fontStyle: "italic"}}>
                       {topic.createdAt}
-                    </Text> */}
+                    </Text>
                   </View>
                 </TouchableOpacity>
               ))}

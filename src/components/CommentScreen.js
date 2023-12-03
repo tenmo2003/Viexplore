@@ -106,6 +106,7 @@ function CommentScreen({ route, navigation }) {
     const formData = new FormData();
     formData.append("topicId", topicId);
     formData.append("content", content);
+    
     for (let i = 0; i < image.length; i++) {
       formData.append("image", {
         uri:
