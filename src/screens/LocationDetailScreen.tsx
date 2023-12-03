@@ -385,13 +385,13 @@ export default function LocationDetail({ route, navigation }) {
                       style={styles.img}
                     />
                   </View>
-                  <Text style={styles.headerReport}>ND BÁO CÁO</Text>
+                  <Text style={styles.headerReport}>Nội dung góp ý</Text>
                   <View style={styles.reportContent}>
                     <TextInput
                       multiline={true}
                       maxLength={400}
                       style={styles.textReport}
-                      placeholder="Viết báo cáo ở đây...(tối đa 400 chữ)"
+                      placeholder="Viết góp ý ở đây...(tối đa 400 chữ)"
                       onChangeText={(text) => setReport(text)}
                     ></TextInput>
                   </View>

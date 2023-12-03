@@ -70,7 +70,7 @@ export default function ManagedReportScreen({ navigation }) {
             }}
           />
         </TouchableOpacity>
-        <Text className="text-3xl font-bold mt-4 ml-5">Notifications</Text>
+        <Text className="text-3xl font-bold mt-4 ml-5">Các góp ý</Text>
       </View>
       <ScrollView className="flex-1">
         {notifications.length > 0 &&

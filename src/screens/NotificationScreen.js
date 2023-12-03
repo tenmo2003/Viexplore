@@ -60,7 +60,7 @@ export default function NotificationScreen({ route, navigation }) {
   return (
     <View className="flex-1 flex bg-white">
       {loading && <Loading />}
-      <Text className="text-3xl font-bold mt-3 ml-3">Notifications</Text>
+      <Text className="text-3xl font-bold mt-3 ml-3">Thông báo</Text>
       <ScrollView className="flex-1">
         {notifications &&
           notifications.length > 0 &&
