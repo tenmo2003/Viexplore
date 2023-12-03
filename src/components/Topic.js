@@ -25,11 +25,13 @@ const Topic = ({ item, navigation, data, setData }) => {
   const { token } = useContext(TokenContext);
   const [saveTopic, setSaveTopic] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [upVoted, setUpVoted] = useState(false);
-  const [downVoted, setDownVoted] = useState(false);
+  const [voteValue, setVoteValue] = useState(0);
   const [votes, setVotes] = useState(item.votes);
   const [username, setUsername] = useState("");
+  const [role, setRole] = useState("");
   const [checkAuthor, setCheckAuthor] = useState(false);
+
+  const [authorAvatar, setAuthorAvatar] = useState("");
 
   const [topicName, setTopicName] = useState(item.name);
   const [topicContent, setTopicContent] = useState(item.content);
@@ -37,29 +39,28 @@ const Topic = ({ item, navigation, data, setData }) => {
   useEffect(() => {
     token ? setIsLogin(true) : setIsLogin(false);
 
+    service.get("/users/" + item.author).then((res) => {
+      setAuthorAvatar(res.data.results.avatar);
+    });
+
     if (token) {
       service.get("/users/me", {}).then(
         (res) => {
           const savedTopics = res.data.results.savedTopics;
           setUsername(res.data.results.username);
-          if (res.data.results.username === item.author)
-            setCheckAuthor(true);
+          setRole(res.data.results.role);
+          if (res.data.results.username === item.author) setCheckAuthor(true);
           for (let i = 0; i < savedTopics.length; i++) {
+            if (savedTopics[i] === null) continue;
             if (savedTopics[i].id === item.id) setSaveTopic(!saveTopic);
           }
 
           const votedList = item.votesList;
-          let voteValue = 0;
           for (let i = 0; i < votedList.length; i++) {
-            if (votedList[i].username === username) {
-              if (votedList[i].value === 1) {
-                setUpVoted(!upVoted);
-                voteValue = 1;
-              }
-              if (votedList[i].value === -1) {
-                setDownVoted(!downVoted);
-                voteValue = -1;
-              }
+            if (votedList[i] === null) continue;
+            if (votedList[i].username === res.data.results.username) {
+              setVoteValue(votedList[i].value);
+              console.log(true);
             }
           }
           // console.log("topic: " + item.name + "- vote value:" + voteValue);
@@ -75,13 +76,15 @@ const Topic = ({ item, navigation, data, setData }) => {
   }, []);
 
   const handleSaveTopicPress = () => {
-    setLoading(true)
+    setLoading(true);
     if (isLogin) {
       if (saveTopic) {
         setSaveTopic(false);
         service
           .delete("/unsave-topic/" + item.id)
-          .then((res) => {setLoading(false)})
+          .then((res) => {
+            setLoading(false);
+          })
           .catch((error) => {
             setSaveTopic(true);
             console.error("Delete Failed:", error);
@@ -90,7 +93,9 @@ const Topic = ({ item, navigation, data, setData }) => {
         setSaveTopic(true);
         service
           .post("/save-topic/" + item.id)
-          .then((res) => {setLoading(false)})
+          .then((res) => {
+            setLoading(false);
+          })
           .catch((error) => {
             setBookmarked(false);
             console.error("Post Failed:", error);
@@ -103,15 +108,22 @@ const Topic = ({ item, navigation, data, setData }) => {
 
   const upVote = () => {
     if (isLogin) {
-      const endpoint = upVoted ? "/unvote/" : "/upvote/";
+      const endpoint = voteValue === 1 ? "/unvote/" : "/upvote/";
       service
         .request({
-          method: upVoted ? "delete" : "put",
+          method: voteValue === 1 ? "delete" : "put",
           url: endpoint + item.id,
         })
         .then((res) => {
           console.log("Message: " + res.data.message);
-          setUpVoted(!upVoted);
+          setVotes(
+            voteValue === 1
+              ? votes - 1
+              : voteValue === -1
+              ? votes + 2
+              : votes + 1
+          );
+          setVoteValue(voteValue === 1 ? 0 : 1);
           // if (downVoted) setDownVoted(!downVoted);
           // setVotes(UpVoted ? votes - 1 : votes + 1);
         })
@@ -121,20 +133,26 @@ const Topic = ({ item, navigation, data, setData }) => {
     } else {
       showAlert("Bạn cần đăng nhập để thực hiện chức năng này!");
     }
-    
   };
-  
+
   const downVote = () => {
     if (isLogin) {
-      const endpoint = downVoted ? "/unvote/" : "/downvote/";
+      const endpoint = voteValue === -1 ? "/unvote/" : "/downvote/";
       service
         .request({
-          method: downVoted ? "delete" : "put",
+          method: voteValue === -1 ? "delete" : "put",
           url: endpoint + item.id,
         })
         .then((res) => {
           console.log("Message: " + res.data.message);
-          setDownVoted(!downVoted);
+          setVotes(
+            voteValue === -1
+              ? votes + 1
+              : voteValue === 1
+              ? votes - 2
+              : votes - 1
+          );
+          setVoteValue(voteValue === -1 ? 0 : -1);
           // if (UpVoted) setUpVoted(!UpVoted);
           // setVotes(downVoted ? votes + 1 : votes - 1);
         })
@@ -144,8 +162,7 @@ const Topic = ({ item, navigation, data, setData }) => {
     } else {
       showAlert("Bạn cần đăng nhập để thực hiện chức năng này!");
     }
-    
-  };  
+  };
 
   const [isModalVisible, setModalVisible] = useState(false);
   const toggleModal = () => {
@@ -230,23 +247,27 @@ const Topic = ({ item, navigation, data, setData }) => {
         <View
           style={{
             flexDirection: "row",
-            justifyContent: "space-between"
+            justifyContent: "space-between",
           }}
         >
-          <TouchableOpacity 
-            style = {{flexDirection: "row"}}
+          <TouchableOpacity
+            style={{ flexDirection: "row" }}
             onPress={() => {
               navigation.navigate("OtherUser", {
                 username: item.author,
-                avatar: item.authorAvatar,
+                avatar: authorAvatar,
               });
             }}
           >
             <View style={styles.profileImage}>
               <Image
-                source={{
-                  uri: item.authorAvatar,
-                }}
+                source={
+                  authorAvatar !== ""
+                    ? {
+                        uri: authorAvatar,
+                      }
+                    : require("./../../assets/ava.png")
+                }
                 style={styles.image}
                 resizeMode="center"
               ></Image>
@@ -256,16 +277,21 @@ const Topic = ({ item, navigation, data, setData }) => {
               <Text style={styles.Time}>{item.createdAt}</Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity style = {{paddingRight: 5}}>
+          <TouchableOpacity style={{ paddingRight: 5 }}>
             <Ionicons
-              name={checkAuthor || username === "admin" ? "ellipsis-vertical" : "ellipsis-vertical"}
-              color={checkAuthor || username === "admin" ? "black" : "#D9D9D9"}
+              name={
+                checkAuthor || role === "ROLE_ADMIN"
+                  ? "ellipsis-vertical"
+                  : "ellipsis-vertical"
+              }
+              color={checkAuthor || role === "ROLE_ADMIN" ? "black" : "#D9D9D9"}
               size={30}
-              onPress={() => checkAuthor || username === "admin" && setModalVisible(true)}
+              onPress={() =>
+                (checkAuthor || role === "ROLE_ADMIN") && setModalVisible(true)
+              }
               style={{ marginTop: 15 }}
             />
           </TouchableOpacity>
-          
         </View>
 
         <Text style={styles.topicName}>{topicName}</Text>
@@ -300,9 +326,11 @@ const Topic = ({ item, navigation, data, setData }) => {
             >
               <TouchableOpacity>
                 <Ionicons
-                  name={upVoted ? "arrow-up-outline" : "arrow-up-outline"}
+                  name={
+                    voteValue === 1 ? "arrow-up-outline" : "arrow-up-outline"
+                  }
                   size={30}
-                  color={upVoted ? "#AACCFF" : "#52575D"}
+                  color={voteValue === 1 ? "#AACCFF" : "#52575D"}
                   style={{
                     marginRight: 5,
                   }}
@@ -319,9 +347,13 @@ const Topic = ({ item, navigation, data, setData }) => {
               </Text>
               <TouchableOpacity>
                 <Ionicons
-                  name={downVoted ? "arrow-down-outline" : "arrow-down-outline"}
+                  name={
+                    voteValue === -1
+                      ? "arrow-down-outline"
+                      : "arrow-down-outline"
+                  }
                   size={30}
-                  color={downVoted ? "#AACCFF" : "#52575D"}
+                  color={voteValue === -1 ? "#AACCFF" : "#52575D"}
                   style={{
                     marginLeft: 5,
                   }}
@@ -334,7 +366,8 @@ const Topic = ({ item, navigation, data, setData }) => {
               size={27}
               color="#52575D"
               style={styles.iconStyle}
-              onPress={() => setModalVisible3(true)
+              onPress={
+                () => setModalVisible3(true)
                 // navigation.navigate("Comment", {
                 //   topicId: item.id,
                 //   comments: item.comments,
@@ -498,23 +531,52 @@ const Topic = ({ item, navigation, data, setData }) => {
           backdropTransitionOutTiming={300}
           style={styles.modal}
         >
-          <View style={{...styles.commentModal, minHeight: screenHeight}}>
-              {/* Gọi comment */}
-              <View style={{ flexDirection: "row", justifyContent: 'space-between', paddingRight: 15, paddingLeft: 10, paddingTop: 10, paddingBottom: 10, }}>
-                <TouchableOpacity>
-                    <Icon name="chevron-left" type="font-awesome" color="#000" size={24} onPress={() => setModalVisible3(false)} />
-                </TouchableOpacity>
-                <Text style={{ fontSize: 18, alignItems: "center", paddingLeft: 15 }}> Bình luận </Text>
-                <TouchableOpacity>
-                  <Ionicons
-                    name={saveTopic ? "flag" : "flag-outline"}
-                    size={27}
-                    color={saveTopic ? "#AACCFF" : "#52575D"}
-                    onPress={handleSaveTopicPress}
-                  ></Ionicons>
-                </TouchableOpacity>
-              </View>
-              <CommentScreen route={{ params: { topicId: item.id, comments: item.comments, username: username } }} navigation={navigation} />
+          <View style={{ ...styles.commentModal, minHeight: screenHeight }}>
+            {/* Gọi comment */}
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                paddingRight: 15,
+                paddingLeft: 10,
+                paddingTop: 10,
+                paddingBottom: 10,
+              }}
+            >
+              <TouchableOpacity>
+                <Icon
+                  name="chevron-left"
+                  type="font-awesome"
+                  color="#000"
+                  size={24}
+                  onPress={() => setModalVisible3(false)}
+                />
+              </TouchableOpacity>
+              <Text
+                style={{ fontSize: 18, alignItems: "center", paddingLeft: 15 }}
+              >
+                {" "}
+                Bình luận{" "}
+              </Text>
+              <TouchableOpacity>
+                <Ionicons
+                  name={saveTopic ? "flag" : "flag-outline"}
+                  size={27}
+                  color={saveTopic ? "#AACCFF" : "#52575D"}
+                  onPress={handleSaveTopicPress}
+                ></Ionicons>
+              </TouchableOpacity>
+            </View>
+            <CommentScreen
+              route={{
+                params: {
+                  topicId: item.id,
+                  comments: item.comments,
+                  username: username,
+                },
+              }}
+              navigation={navigation}
+            />
           </View>
         </Modal>
       </View>

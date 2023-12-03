@@ -2,10 +2,10 @@ import { View, Text, ScrollView, Image, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import service from "../helper/axiosService";
 import Loading from "../components/Loading";
-import { useIsFocused } from "@react-navigation/native";
+import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import TimeAgo from "react-native-timeago";
 
-export default function NotificationScreen() {
+export default function NotificationScreen({ route, navigation }) {
   const [loading, setLoading] = useState(false);
   const [notifications, setNotifications] = useState([]);
 
@@ -15,19 +15,28 @@ export default function NotificationScreen() {
 
   const isFocused = useIsFocused();
 
-  useEffect(() => {
-    setLoading(true);
-    service
-      .get("/notifications")
-      .then((res) => {
-        setNotifications(res.data.results.reverse());
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setLoading(false);
-      });
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchData = async () => {
+        try {
+          setLoading(true);
+          const response = await service.get("/notifications");
+          setNotifications(response.data.results.reverse());
+        } catch (error) {
+          console.error(error);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchData();
+
+      // Cleanup function if needed (not necessary in this case)
+      return () => {
+        // Cleanup logic here (if any)
+      };
+    }, [])
+  );
 
   useEffect(() => {
     let interval;
@@ -62,7 +71,12 @@ export default function NotificationScreen() {
                   return;
                 }
                 // TODO: Redirect to topic
-                console.log(notification.targetTopic);
+                navigation.navigate("ForumTab", {
+                  screen: "Topic",
+                  params: {
+                    topic: notification.targetTopic,
+                  },
+                });
               }}
             >
               <View className="bg-slate-200 px-2 py-2 rounded-lg my-1 mx-3 flex flex-row items-center">

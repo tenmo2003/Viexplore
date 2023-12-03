@@ -76,19 +76,23 @@ const BottomTab = ({ bookmarks, navigation, savedTopic, username }) => {
       </View>
     );
   };
-  
-  const Forums = ({username}) => {
+
+  const Forums = ({ username }) => {
     const [data, setData] = useState([]);
     useEffect(() => {
-      service.get('/topics/' + username).then(
-        (res) => {
+      service
+        .get("/topics/" + username)
+        .then((res) => {
           setData(res.data.results);
-      }).catch((err) => {
-        console.log("Topics failed ", err);
-      })
+        })
+        .catch((err) => {
+          console.log("Topics failed ", err);
+        });
     }, []);
 
-    const renderItem = ({item, index}) => <Topic item={item} navigation={navigation} />;
+    const renderItem = ({ item, index }) => (
+      <Topic item={item} navigation={navigation} data={data} setData={setData} />
+    );
 
     return (
       <View style={{ flex: 1, backgroundColor: "#" }}>
@@ -117,47 +121,60 @@ const BottomTab = ({ bookmarks, navigation, savedTopic, username }) => {
       },
     });
   };
-  
-  const Save = ({ savedTopic, userScreenNavigation, goToTopicDetail}) => {
+
+  const Save = ({ savedTopic, userScreenNavigation, goToTopicDetail }) => {
     return (
       <View style={{ flex: 1, backgroundColor: "#0000" }}>
         <View style={{ flex: 1 }}>
           <ScrollView showsVerticalScrollIndicator={false}>
             <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-              {savedTopic.map((topic, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={styles.content}
-                  onPress={() =>
-                    goToTopicDetail(topic, userScreenNavigation)
-                  }
-                >
-                  <View style={styles.saveTopic}>
-                    <Image
-                      source={{
-                        uri: topic.authorAvatar,
-                      }}
-                      style={{height: 50, width: 50, marginBottom:5, borderRadius: 100}}
-                      resizeMode="center"
-                    ></Image>
-                    <Text style={{...styles.saveTopicContent, fontWeight: "bold", fontSize: 20}}>
-                      {topic.author}
-                    </Text>
-                    <Text style={{...styles.saveTopicContent, fontStyle:"italic", fontWeight:"bold"}}>
-                      {topic.name}
-                    </Text>
-                    <Text style={{...styles.saveTopicContent, fontStyle: "italic"}}>
-                      {topic.createdAt}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              ))}
+              {savedTopic.map((topic, index) => {
+                if (topic !== null)
+                  return (
+                    <TouchableOpacity
+                      key={index}
+                      style={styles.content}
+                      onPress={() =>
+                        goToTopicDetail(topic, userScreenNavigation)
+                      }
+                    >
+                      <View style={styles.saveTopic}>
+                        <Text
+                          style={{
+                            ...styles.saveTopicContent,
+                            fontWeight: "bold",
+                            fontSize: 20,
+                          }}
+                        >
+                          {topic.author}
+                        </Text>
+                        <Text
+                          style={{
+                            ...styles.saveTopicContent,
+                            fontStyle: "italic",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          {topic.name}
+                        </Text>
+                        <Text
+                          style={{
+                            ...styles.saveTopicContent,
+                            fontStyle: "italic",
+                          }}
+                        >
+                          {topic.createdAt}
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  );
+              })}
             </View>
           </ScrollView>
         </View>
       </View>
     );
-  };  
+  };
 
   return (
     <Tab.Navigator
@@ -190,13 +207,15 @@ const BottomTab = ({ bookmarks, navigation, savedTopic, username }) => {
         )}
       </Tab.Screen>
       <Tab.Screen name="Forums">
-        {() => (
-          <Forums username={username}/>
-        )}
+        {() => <Forums username={username} />}
       </Tab.Screen>
       <Tab.Screen name="Save">
         {() => (
-          <Save savedTopic={savedTopic} userScreenNavigation={navigation} goToTopicDetail={goToTopicDetail}/>
+          <Save
+            savedTopic={savedTopic}
+            userScreenNavigation={navigation}
+            goToTopicDetail={goToTopicDetail}
+          />
         )}
       </Tab.Screen>
     </Tab.Navigator>
@@ -248,26 +267,29 @@ const UserScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     setLoading(true);
-    service.get("/users/me", {}).then(
-      (res) => {
-        const userData = res.data.results;
-        const savedTopic = res.data.results.savedTopics;
-        const user = res.data.results.username;
-        // console.log(userData);
-        setFullName(userData.fullName);
-        setUsername(userData.username);
-        setAvatar(userData.avatar);
-        setEmail(userData.email);
-        setBookmarkList(userData.bookmarks);
-        setSavedTopic(res.data.results.savedTopics);
-        setLoading(false);
-      },
-      () => {
-        console.log("failed");
-      }
-    ).catch((err) => {
-      console.log("info error")
-    });
+    service
+      .get("/users/me", {})
+      .then(
+        (res) => {
+          const userData = res.data.results;
+          const savedTopic = res.data.results.savedTopics;
+          const user = res.data.results.username;
+          // console.log(userData);
+          setFullName(userData.fullName);
+          setUsername(userData.username);
+          setAvatar(userData.avatar);
+          setEmail(userData.email);
+          setBookmarkList(userData.bookmarks);
+          setSavedTopic(res.data.results.savedTopics);
+          setLoading(false);
+        },
+        () => {
+          console.log("failed");
+        }
+      )
+      .catch((err) => {
+        console.log("info error");
+      });
   }, []);
 
   const { token, setToken } = useContext(TokenContext);
@@ -297,9 +319,8 @@ const UserScreen = ({ route, navigation }) => {
   const navigateToSecurity = () => {
     setModalVisible(false);
     navigation.navigate("Security", {
-        username: username,
-      },
-    );
+      username: username,
+    });
   };
 
   return (
@@ -368,14 +389,69 @@ const UserScreen = ({ route, navigation }) => {
               <View style={styles.barIcon} />
             </View>
 
-              <View style={styles.flexColumn}>
-                <View style={styles.editProfile}>
+            <View style={styles.flexColumn}>
+              <View style={styles.editProfile}>
+                <TouchableOpacity
+                  style={styles.flexEditProfile}
+                  onPress={navigateToEditProfile}
+                >
+                  <View style={{ flexDirection: "row" }}>
+                    <Ionicons name="settings-outline" size={30} />
+                    <Text
+                      style={{
+                        fontSize: 24,
+                        fontWeight: "bold",
+                        paddingHorizontal: 10,
+                      }}
+                    >
+                      Sửa hồ sơ
+                    </Text>
+                  </View>
+                  <Feather
+                    name="chevron-right"
+                    style={{
+                      alignSelf: "flex-end",
+                    }}
+                    size={30}
+                  />
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.security}>
+                <TouchableOpacity
+                  style={styles.flexEditProfile}
+                  onPress={navigateToSecurity}
+                >
+                  <View style={{ flexDirection: "row" }}>
+                    <MaterialCommunityIcons name="security" size={30} />
+                    <Text
+                      style={{
+                        fontSize: 24,
+                        fontWeight: "bold",
+                        paddingHorizontal: 10,
+                      }}
+                    >
+                      Bảo mật
+                    </Text>
+                  </View>
+                  <Feather
+                    name="chevron-right"
+                    style={{
+                      alignSelf: "flex-end",
+                    }}
+                    size={30}
+                  />
+                </TouchableOpacity>
+              </View>
+
+              {username === "admin" && (
+                <View style={{ ...styles.security, top: 40 }}>
                   <TouchableOpacity
                     style={styles.flexEditProfile}
-                    onPress={navigateToEditProfile}
+                    onPress={() => navigation.navigate("Admin")}
                   >
-                    <View style={{flexDirection:"row"}}>
-                      <Ionicons name="settings-outline" size={30} />
+                    <View style={{ flexDirection: "row" }}>
+                      <MaterialCommunityIcons name="account-tie" size={30} />
                       <Text
                         style={{
                           fontSize: 24,
@@ -383,7 +459,7 @@ const UserScreen = ({ route, navigation }) => {
                           paddingHorizontal: 10,
                         }}
                       >
-                        Sửa hồ sơ
+                        Admin
                       </Text>
                     </View>
                     <Feather
@@ -395,77 +471,25 @@ const UserScreen = ({ route, navigation }) => {
                     />
                   </TouchableOpacity>
                 </View>
+              )}
 
-                <View style={styles.security}>
-                  <TouchableOpacity
-                    style={styles.flexEditProfile}
-                    onPress={navigateToSecurity}
-                  >
-                    <View style={{flexDirection:"row"}}>
-                      <MaterialCommunityIcons name="security" size={30} />
-                      <Text
-                        style={{
-                          fontSize: 24,
-                          fontWeight: "bold",
-                          paddingHorizontal: 10,
-                        }}
-                      >
-                        Bảo mật
-                      </Text>
-                    </View>
-                    <Feather
-                      name="chevron-right"
-                      style={{
-                        alignSelf: "flex-end"
-                      }}
-                      size={30}
-                    />
-                  </TouchableOpacity>
-                </View>
-                
-                {username === "admin" && (
-                  <View style={{...styles.security, top: 40}}>
-                    <TouchableOpacity
-                      style={styles.flexEditProfile}
-                      onPress={() => navigation.navigate("Admin")}
-                    >
-                      <View style={{flexDirection:"row"}}>
-                        <MaterialCommunityIcons name="account-tie" size={30} />
-                        <Text
-                          style={{
-                            fontSize: 24,
-                            fontWeight: "bold",
-                            paddingHorizontal: 10,
-                          }}
-                        >
-                          Admin
-                        </Text>
-                      </View>
-                      <Feather
-                        name="chevron-right"
-                        style={{
-                          alignSelf: "flex-end"
-                        }}
-                        size={30}
-                      />
-                    </TouchableOpacity>
-                  </View>
-                )}
-                
-                <TouchableOpacity style={styles.logOut} onPress={logOutHandler}>
-                  <Text
-                    style={{ fontSize: 26, fontWeight: "bold", color: "red" }}
-                  >
-                    Đăng xuất
-                  </Text>
-                </TouchableOpacity>
-              </View>
-              
+              <TouchableOpacity style={styles.logOut} onPress={logOutHandler}>
+                <Text
+                  style={{ fontSize: 26, fontWeight: "bold", color: "red" }}
+                >
+                  Đăng xuất
+                </Text>
+              </TouchableOpacity>
             </View>
+          </View>
         </Modal>
       </ScrollView>
-      <BottomTab bookmarks={bookmarkList} navigation={navigation} savedTopic={savedTopic} username={username}/>
-      
+      <BottomTab
+        bookmarks={bookmarkList}
+        navigation={navigation}
+        savedTopic={savedTopic}
+        username={username}
+      />
     </View>
   );
 };
@@ -552,9 +576,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   saveTopic: {
-    height: screenHeight/5, 
-    width: screenWidth/2-13, 
-    borderRadius:10,
+    height: screenHeight / 5,
+    width: screenWidth / 2 - 13,
+    borderRadius: 10,
     borderColor: "black",
     borderWidth: 1,
     backgroundColor: "#ffff",
@@ -602,10 +626,10 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 35,
     minHeight: settingsHeight,
     paddingBottom: 20,
-    justifyContent: "center", 
-    alignItems: "center", 
+    justifyContent: "center",
+    alignItems: "center",
   },
-  
+
   center: {
     display: "flex",
     alignItems: "center",
@@ -630,7 +654,7 @@ const styles = StyleSheet.create({
   flexEditProfile: {
     display: "flex",
     flexDirection: "row",
-    justifyContent:"space-between",
+    justifyContent: "space-between",
   },
   editProfile: {
     top: 20,
