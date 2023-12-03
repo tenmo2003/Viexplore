@@ -35,15 +35,7 @@ function CommentScreen({ route, navigation }) {
       setReversedComments(res.data.results.reverse());
     });
 
-    const interval = setInterval(() => {
-      service.get("/comments/" + topicId).then((res) => {
-        setReversedComments(res.data.results.reverse());
-      });
-    }, 3000);
-
-    return () => {
-      clearInterval(interval);
-    };
+    return () => {};
   }, []);
 
   const [image, setImage] = useState(null);
@@ -94,8 +86,6 @@ function CommentScreen({ route, navigation }) {
     setImage(null);
   };
 
-  useEffect(() => {}, [topicId, comments]);
-
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
   const onSubmit = () => {
@@ -106,12 +96,12 @@ function CommentScreen({ route, navigation }) {
     const formData = new FormData();
     formData.append("topicId", topicId);
     formData.append("content", content);
-    for (let i = 0; i < image.length; i++) {
+    if (image !== null) {
       formData.append("image", {
         uri:
           Platform.OS === "android"
-            ? image[i].uri
-            : image[i].uri.replace("file://", "/private"),
+            ? image.uri
+            : image.uri.replace("file://", "/private"),
         name: "image.jpg",
         type: "image/jpg",
       });
@@ -135,7 +125,7 @@ function CommentScreen({ route, navigation }) {
             ...reversedComments,
           ]);
           setContent("");
-          setImage([]);
+          setImage(null);
           //console.log("Content: " + res.data.content);
         }
       })
@@ -188,7 +178,9 @@ function CommentScreen({ route, navigation }) {
       .then((res) => {
         setReversedComments(
           reversedComments.map((el) =>
-            el.id === editingCommentId ? { ...el, content: editedContent } : el
+            el.id === editingCommentId
+              ? { ...el, content: editedContent, image: editedImage.uri }
+              : el
           )
         );
         setEditingCommentId(null);
@@ -258,7 +250,13 @@ function CommentScreen({ route, navigation }) {
           )}
 
           {item.image && (
-            <TouchableOpacity onPress={editPickImage}>
+            <TouchableOpacity
+              onPress={() => {
+                if (editingCommentId === item.id) {
+                  editPickImage();
+                }
+              }}
+            >
               <Image
                 source={{
                   uri:
@@ -275,31 +273,31 @@ function CommentScreen({ route, navigation }) {
             <Text style={styles.Time}>{item.createdAt}</Text>
             {editingCommentId !== item.id ? (
               <>
-                <TouchableOpacity
-                  style={styles.Time}
-                  onPress={() => {
-                    if (item.username === username || username === "admin") {
-                      setEditedContent(item.content); // Cập nhật editedContent với nội dung của comment ban đầu
-                      setEditingCommentId(item.id);
-                    }
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontWeight: "bold",
-                      color:
-                        item.username === username || username === "admin"
-                          ? "black"
-                          : "#D9D9D9",
+                {item.commenter.username === username && (
+                  <TouchableOpacity
+                    style={styles.Time}
+                    onPress={() => {
+                      if (item.commenter.username === username) {
+                        setEditedContent(item.content); // Cập nhật editedContent với nội dung của comment ban đầu
+                        setEditingCommentId(item.id);
+                      }
                     }}
                   >
-                    Chỉnh sửa
-                  </Text>
-                </TouchableOpacity>
+                    <Text
+                      style={{
+                        fontWeight: "bold",
+                        color: "black",
+                      }}
+                    >
+                      Chỉnh sửa
+                    </Text>
+                  </TouchableOpacity>
+                )}
                 <TouchableOpacity
                   style={styles.Time}
                   onPress={() =>
-                    (item.username === username || username === "admin") &&
+                    (item.commenter.username === username ||
+                      username === "admin") &&
                     deleteComment(item.id)
                   }
                 >
@@ -307,7 +305,8 @@ function CommentScreen({ route, navigation }) {
                     style={{
                       fontWeight: "bold",
                       color:
-                        item.username === username || username === "admin"
+                        item.commenter.username === username ||
+                        username === "admin"
                           ? "black"
                           : "#D9D9D9",
                     }}
