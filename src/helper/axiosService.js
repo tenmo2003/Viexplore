@@ -11,8 +11,8 @@ const getToken = async () => {
 
 getToken();
 
-// const baseURL = "http://192.168.0.102:8080/api/";
-const baseURL = "https://viexplore.onrender.com/api/";
+const baseURL = "http://192.168.0.102:8080/api/";
+// const baseURL = "https://viexplore.onrender.com/api/";
 
 const service = axios.create({
   baseURL: baseURL,
@@ -29,7 +29,7 @@ async function removeToken() {
 
 service.interceptors.response.use(
   (response) => {
-    if (response.data.status === 401) {
+    if (response.data.status === 401 && response.data.message !== "Unauthorized") {
       removeToken();
       console.log("Token invalid")
       showAlert("Phiên đăng nhập đã hết hạn");

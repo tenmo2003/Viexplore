@@ -60,7 +60,6 @@ const Topic = ({ item, navigation, data, setData }) => {
             if (votedList[i] === null) continue;
             if (votedList[i].username === res.data.results.username) {
               setVoteValue(votedList[i].value);
-              console.log(true);
             }
           }
           // console.log("topic: " + item.name + "- vote value:" + voteValue);
