@@ -11,7 +11,7 @@ const getToken = async () => {
 
 getToken();
 
-// const baseURL = "http://192.168.0.102:8080/api/";
+// const baseURL = "http://192.168.98.167:8080/api/";
 const baseURL = "https://viexplore.onrender.com/api/";
 
 const service = axios.create({
