@@ -272,8 +272,8 @@ function CommentScreen({ route, navigation }) {
           <View style={{ flexDirection: "row" }}>
             <Text style={styles.Time}>{item.createdAt}</Text>
             {editingCommentId !== item.id ? (
-              <>
-                {item.commenter.username === username && (
+              item.commenter.username === username && (
+                <>
                   <TouchableOpacity
                     style={styles.Time}
                     onPress={() => {
@@ -292,29 +292,29 @@ function CommentScreen({ route, navigation }) {
                       Chỉnh sửa
                     </Text>
                   </TouchableOpacity>
-                )}
-                <TouchableOpacity
-                  style={styles.Time}
-                  onPress={() =>
-                    (item.commenter.username === username ||
-                      username === "admin") &&
-                    deleteComment(item.id)
-                  }
-                >
-                  <Text
-                    style={{
-                      fontWeight: "bold",
-                      color:
-                        item.commenter.username === username ||
-                        username === "admin"
-                          ? "black"
-                          : "#D9D9D9",
-                    }}
+                  <TouchableOpacity
+                    style={styles.Time}
+                    onPress={() =>
+                      (item.commenter.username === username ||
+                        username === "admin") &&
+                      deleteComment(item.id)
+                    }
                   >
-                    Xoá
-                  </Text>
-                </TouchableOpacity>
-              </>
+                    <Text
+                      style={{
+                        fontWeight: "bold",
+                        color:
+                          item.commenter.username === username ||
+                          username === "admin"
+                            ? "black"
+                            : "#D9D9D9",
+                      }}
+                    >
+                      Xoá
+                    </Text>
+                  </TouchableOpacity>
+                </>
+              )
             ) : (
               <>
                 <TouchableOpacity style={styles.Time} onPress={editComment}>
