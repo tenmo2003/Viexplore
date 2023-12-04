@@ -315,7 +315,7 @@ const styles = {
     position: "absolute",
     width: width - width / 3,
     fontSize: 16,
-    left: width / 3.5,
-    top: 35,
+    left: width / 3.2,
+    top: 30,
   },
 };
