@@ -248,6 +248,7 @@ export default function LocationDetail({ route, navigation }) {
       (res) => {
         if (res.data.status === 200) {
           console.log(res.data.message);
+          showAlert("Cảm ơn bạn đã góp ý với chúng tôi!", false, "LocationDetail");
           setLoading(false);
           toggleModal();
         } else {
