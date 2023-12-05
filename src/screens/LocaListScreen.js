@@ -16,9 +16,10 @@ import { Feather, Ionicons } from "@expo/vector-icons";
 
 export default function LocaListScreen({ navigation }) {
   const [query, setQuery] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
   const [haveResults, setHaveResults] = useState(false);
+  const [searchSuggestions, setSearchSuggestions] = useState([]);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
@@ -28,16 +29,19 @@ export default function LocaListScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const maximumAmountOfSearchResults = 10;
-    // const results =
-    //   .slice(0, maximumAmountOfSearchResults);
-    // setSearchResults(results);
-    // setHaveResults(results.length !== 0);
+    // Fetch or filter data for search suggestions based on the query
+    const results = data.filter((item) =>
+      item.name.toLowerCase().includes(query.toLowerCase())
+    );
+
+    setSearchSuggestions(results.slice(0, 10));
+    setHaveResults(results.length !== 0);
   }, [query]);
 
   useEffect(() => {
     fetchData(page);
   }, []);
+
 
   const fetchData = async (pageNumber) => {
     if (loading || isEndReached.current) return;
@@ -71,15 +75,28 @@ export default function LocaListScreen({ navigation }) {
     }
   };
 
+  const goToLocation = (id) => {
+    console.log("Navigating");
+    navigation.navigate("MapTab", {
+      screen: "Map",
+      params: {
+        id: id,
+      },
+    });
+  };
+
   const renderItem = (item) => (
-    <View style={[styles.showList]}>
+    <TouchableOpacity
+      style={[styles.showList]}
+      onPress={() => goToLocation(item.item.id)}
+    >
       <Avatar
         source={
           item.item.thumbnail
             ? { uri: item.item.thumbnail }
             : require("./../../assets/ava.png")
         }
-        rounded
+        rounded-lg
         size={80}
       />
       <Ionicons
@@ -94,14 +111,22 @@ export default function LocaListScreen({ navigation }) {
             ? item.item.name
             : item.item.name.substring(0, 20) + "..."
           : "Unknown"}{" "}
-        {"\u00B7"} {item.item.generalLocation}
+        {"\u00B7"}{" "}
+        {item.item.generalLocation
+          ? item.item.generalLocation.length <= 15
+            ? item.item.generalLocation
+            : item.item.generalLocation.substring(0, 15) + "..."
+          : "Unknown"}
       </Text>
       <Text style={styles.script}>
         {item.item.script
-          ? item.item.script.substring(0, item.item.script.lastIndexOf(" ", 80)) + "..."
+          ? item.item.script.substring(
+              0,
+              item.item.script.lastIndexOf(" ", 80)
+            ) + "..."
           : "No description"}
       </Text>
-    </View>
+    </TouchableOpacity>
   );
 
   const backToAdminHome = () => {
@@ -111,6 +136,8 @@ export default function LocaListScreen({ navigation }) {
   const handleEndReached = () => {
     fetchData(page);
   };
+
+  const renderData = haveResults ? searchSuggestions : data;
 
   return (
     <View style={styles.container}>
@@ -124,17 +151,13 @@ export default function LocaListScreen({ navigation }) {
             style={{
               position: "absolute",
               left: 15,
-              top: Platform.OS === "ios" ? 60 : 35,
+              top: Platform.OS === "ios" ? 60 : 20,
             }}
           />
         </TouchableOpacity>
         <Text style={styles.TextAdmin}>Di tích</Text>
         <View
-          style={
-            haveResults && showResults
-              ? styles.searchContainer
-              : styles.searchContainerEmpty
-          }
+          style={styles.searchContainerEmpty}
         >
           <View style={styles.searchInner}>
             <Feather
@@ -154,12 +177,14 @@ export default function LocaListScreen({ navigation }) {
               }}
               onFocus={() => {
                 setShowResults(true);
+                setIsSearchFocused(true);
               }}
               onBlur={() => {
                 setShowResults(false);
+                setIsSearchFocused(false);
               }}
             />
-            {/* {query.length > 0 && ( */}
+            {query.length > 0 && (
             <TouchableOpacity
               onPress={() => setQuery("")}
               style={{ position: "absolute", right: iconSearchBarPos - 10 }}
@@ -172,34 +197,18 @@ export default function LocaListScreen({ navigation }) {
                 />
               )}
             </TouchableOpacity>
-            {/* )} */}
+            )}
           </View>
-          {/* {showResults && (
-            <View style={styles.dropDown}>
-              {searchResults.map((location, index) => (
-                <TouchableOpacity
-                  onPress={() => {
-                    onSearch(location);
-                    setShowResults(false);
-                    Keyboard.dismiss();
-                  }}
-                  style={styles.dropDownRow}
-                  key={index}
-                >
-                  <Text>{location.name}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          )} */}
         </View>
       </View>
       <View style={styles.body}>
         <FlatList
-          data={data}
+          data={renderData}
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderItem}
           onEndReached={handleEndReached}
           onEndReachedThreshold={0.8}
+          windowSize={10}
         />
         {loading && <ActivityIndicator />}
       </View>
@@ -209,7 +218,7 @@ export default function LocaListScreen({ navigation }) {
 
 const { height, width } = Dimensions.get("window");
 
-const searchBarPosANDR = height / 25;
+const searchBarPosANDR = height / 12;
 const searchBarPosIOS = 110;
 const iconSearchBarPos = height / 40;
 
@@ -223,7 +232,7 @@ const styles = {
   },
   header: {
     width: "100%",
-    height: Platform.OS === "ios" ? height / 5 : height / 5 - 20,
+    height: Platform.OS === "ios" ? height / 5 : height / 6.5,
     backgroundColor: "#AACCFF",
     selfItems: "flex-start",
   },
@@ -233,7 +242,7 @@ const styles = {
     flex: 1,
   },
   TextAdmin: {
-    top: Platform.OS === "ios" ? 55 : 30,
+    top: Platform.OS === "ios" ? 55 : 15,
     fontSize: 30,
     color: "#000",
     alignSelf: "center",
@@ -274,37 +283,6 @@ const styles = {
     borderColor: "#BABABA",
     alignSelf: "center",
   },
-  searchContainer: {
-    position: "absolute",
-    top: Platform.OS === "ios" ? searchBarPosIOS : searchBarPosANDR,
-    backgroundColor: "white",
-    width: searchBarWidth,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    display: "flex",
-    height: 40,
-    borderBottomWidth: 1,
-    borderColor: "#BABABA",
-    alignSelf: "center",
-  },
-  dropDown: {
-    position: "absolute",
-    top: 40,
-    backgroundColor: "white",
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10,
-    width: searchBarWidth,
-    display: "flex",
-    flexDirection: "column",
-  },
-  dropDownempty: {
-    borderWidth: 0,
-  },
-  dropDownRow: {
-    cursor: "pointer",
-    padding: 10,
-    alignItems: "flex-start",
-  },
   input: {
     paddingLeft: 40,
     width: searchBarWidth,
@@ -331,13 +309,13 @@ const styles = {
     position: "absolute",
     fontSize: 16,
     left: width / 3.2,
-    top: 10,
+    top: 100/10,
   },
   script: {
     position: "absolute",
-    width: width - width / 3.5,
+    width: width - width / 3,
     fontSize: 16,
-    left: width / 3.8,
+    left: width / 3.5,
     top: 35,
   },
 };
