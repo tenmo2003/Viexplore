@@ -117,6 +117,7 @@ function CommentScreen({ route, navigation }) {
         type: "image/jpg",
       });
     }
+    
 
     setLoading(true);
     service
@@ -250,7 +251,8 @@ function CommentScreen({ route, navigation }) {
                   marginRight: 10,
                   marginBottom: 10,
                   flexWrap: "wrap",
-                  maxWidth: screenWidth - 95,
+                  maxWidth: screenWidth - 50 - (10 / standarWidth) * screenWidth*8
+
                 }}
               >
                 {item.content}
@@ -279,7 +281,7 @@ function CommentScreen({ route, navigation }) {
                 <TouchableOpacity
                   style={styles.Time}
                   onPress={() => {
-                    if (item.username === username || username === "admin") {
+                    if (item.comenter.username === username || username === "admin") {
                       setEditedContent(item.content); // Cập nhật editedContent với nội dung của comment ban đầu
                       setEditingCommentId(item.id);
                     }
@@ -289,7 +291,7 @@ function CommentScreen({ route, navigation }) {
                     style={{
                       fontWeight: "bold",
                       color:
-                        item.username === username || username === "admin"
+                        (item.commenter.username === username || username === "admin")
                           ? "black"
                           : "#D9D9D9",
                     }}
@@ -300,7 +302,7 @@ function CommentScreen({ route, navigation }) {
                 <TouchableOpacity
                   style={styles.Time}
                   onPress={() =>
-                    (item.username === username || username === "admin") &&
+                    (item.commenter.username === username || username === "admin") &&
                     deleteComment(item.id)
                   }
                 >
@@ -308,7 +310,7 @@ function CommentScreen({ route, navigation }) {
                     style={{
                       fontWeight: "bold",
                       color:
-                        item.username === username || username === "admin"
+                        (item.commenter.username === username || username === "admin")
                           ? "black"
                           : "#D9D9D9",
                     }}
