@@ -70,12 +70,16 @@ function ForumScreen({ navigation }) {
 
   const [avatar, setAvatar] = useState(null);
   useEffect(() => {
+    setLoading(true);
+
     service.get("/users/me", {}).then(
       (res) => {
         setAvatar(res.data.results.avatar);
+        setLoading(false);
       },
       () => {
         console.log("failed");
+        setLoading(false);
       }
     );
   }, []);
@@ -108,7 +112,7 @@ function ForumScreen({ navigation }) {
         <View style={{ flexDirection: "row", marginBottom: 15 }}>
           <View style={styles.profileImage}>
             <Image
-              source={ avatar ? {uri: avatar} : require("./../../assets/ava.png")}
+              source = {avatar ? { uri: avatar } : require("./../../assets/ava.png")}
               style={styles.image}
               resizeMode="center"
             ></Image>

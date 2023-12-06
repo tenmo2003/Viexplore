@@ -11,6 +11,9 @@ import {
   FlatList,
   ActivityIndicator,
   TextInput,
+  Keyboard,
+  Animated,
+  Easing,
 } from "react-native";
 import { Icon, Input } from "react-native-elements";
 import { Ionicons } from "react-native-vector-icons";
@@ -106,6 +109,7 @@ function CommentScreen({ route, navigation }) {
         type: "image/jpg",
       });
     }
+    
 
     setLoading(true);
     service
@@ -199,6 +203,29 @@ function CommentScreen({ route, navigation }) {
     setEditedImage(null);
   };
 
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      (event) => {
+        const keyboardHeight = event.endCoordinates.height;
+        setKeyboardHeight(keyboardHeight);
+      }
+    );
+  
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setKeyboardHeight(0);
+      }
+    );
+  
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
+
   const renderItem = ({ item }) => (
     <View>
       <View style={{ flexDirection: "row", marginBottom: 10 }}>
@@ -241,7 +268,8 @@ function CommentScreen({ route, navigation }) {
                   marginRight: 10,
                   marginBottom: 10,
                   flexWrap: "wrap",
-                  maxWidth: screenWidth - 95,
+                  maxWidth: screenWidth - 50 - (10 / standarWidth) * screenWidth*8
+
                 }}
               >
                 {item.content}
@@ -277,8 +305,8 @@ function CommentScreen({ route, navigation }) {
                   <TouchableOpacity
                     style={styles.Time}
                     onPress={() => {
-                      if (item.commenter.username === username) {
-                        setEditedContent(item.content); // Cập nhật editedContent với nội dung của comment ban đầu
+                      if (item.commenter.username === username ) {
+                        setEditedContent(item.content);
                         setEditingCommentId(item.id);
                       }
                     }}
@@ -295,9 +323,8 @@ function CommentScreen({ route, navigation }) {
                   <TouchableOpacity
                     style={styles.Time}
                     onPress={() =>
-                      (item.commenter.username === username ||
-                        username === "admin") &&
-                      deleteComment(item.id)
+                      (item.commenter.username === username || username === "admin") &&
+                        deleteComment(item.id)
                     }
                   >
                     <Text
@@ -335,12 +362,13 @@ function CommentScreen({ route, navigation }) {
       </View>
     </View>
   );
-
+  
+  console.log(keyboardHeight);
   return (
     <View>
       {loading && <Loading />}
       <View style={styles.sheetScreen}>
-        <View style={{ height: screenHeight - screenHeight * 0.3 }}>
+        <View style={{ height: screenHeight - screenHeight * 0.2 - keyboardHeight }}>
           <FlatList
             data={reversedComments}
             keyExtractor={(reversedComments) => reversedComments.id.toString()}
@@ -365,7 +393,6 @@ function CommentScreen({ route, navigation }) {
                 onPress: handleSendPress,
               }}
               inputContainerStyle={styles.inputContainerStyle2}
-              inputStyle={styles.inputStyle2}
               leftIconContainerStyle={styles.leftIconStyle}
               rightIconContainerStyle={styles.rightIconStyle}
               value={content}
@@ -385,7 +412,7 @@ function CommentScreen({ route, navigation }) {
 
           {image && (
             <View style={{ flexDirection: "row", justifyContent: "center" }}>
-              <View style={{ marginLeft: 5, marginBottom: 5 }}>
+              <View style={{ marginLeft: 5, marginBottom: 20 }}>
                 <Image source={{ uri: image.uri }} style={styles.postimg} />
                 <TouchableOpacity
                   style={styles.closeButton}
@@ -496,7 +523,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     paddingTop: 12,
     paddingHorizontal: 12,
-    paddingBottom: 20,
   },
   closeButton: {
     position: "absolute",
