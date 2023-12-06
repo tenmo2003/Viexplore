@@ -28,13 +28,15 @@ import { Icon } from "react-native-elements";
 const OtherUser = ({ route, navigation }) => {
     const [loading, setLoading] = useState(false);
     const [fullname, setFullName] = useState("");
-    const { username, avatar } = route.params;
+    const { username } = route.params;
+    const [avatar, setAvatar] = useState(null);
 
     useEffect(() => {
         setLoading(true);
         service.get("/users/" + username).then(
             (res) => {
-                setFullName(res.data.results.fullName)
+                setFullName(res.data.results.fullName);
+                setAvatar(res.data.results.avatar);
                 setLoading(false);
             }
         ).catch((err) => {
@@ -70,7 +72,7 @@ const OtherUser = ({ route, navigation }) => {
             <ScrollView showsVerticalScrollIndicator={true}>
                 <View style={styles.profileImage}>
                     <Image 
-                        source={{uri: avatar ? avatar : require("./../../assets/ava.png")}}
+                        source={avatar ? {uri: avatar} : require("./../../assets/ava.png")}
                         style={styles.image} 
                         resizeMode="center"></Image>
                 </View>

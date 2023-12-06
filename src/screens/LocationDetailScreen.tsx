@@ -321,7 +321,7 @@ export default function LocationDetail({ route, navigation }) {
         <View className="flex-1 py-2 px-2">
           <ScrollView showsVerticalScrollIndicator={false}>
             <View>
-              <Text className="text-center" style={{fontSize: 18}}>{location.script}</Text>
+              <Text className="text-center" style={{fontSize: 18, textAlign: "justify"}}>{location.script}</Text>
             </View>
           </ScrollView>
         </View>

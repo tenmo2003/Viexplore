@@ -252,7 +252,7 @@ export default function App() {
                 tabPress: (e) => {
                   e.preventDefault();
                   navigation.navigate("UserTab", {
-                    screen: token ? "User" : "Login",
+                    screen: token ? " " : "Login",
                   });
                 },
               })}

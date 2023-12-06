@@ -7,6 +7,7 @@ import {
   Dimensions,
   TouchableOpacity,
   TextInput,
+  Keyboard,
   KeyboardAvoidingView,
 } from "react-native";
 import { Icon, Input } from "react-native-elements";
@@ -165,6 +166,7 @@ const Topic = ({ item, navigation, data, setData }) => {
 
   const [isModalVisible, setModalVisible] = useState(false);
   const toggleModal = () => {
+    console.log("tongling modal");
     setModalVisible(!isModalVisible);
   };
 
@@ -228,6 +230,30 @@ const Topic = ({ item, navigation, data, setData }) => {
   const toggleModal3 = () => {
     setModalVisible3(!isModalVisible3);
   };
+
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      (event) => {
+        const keyboardHeight = event.endCoordinates.height;
+        setKeyboardHeight(keyboardHeight);
+      }
+    );
+  
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setKeyboardHeight(0);
+      }
+    );
+  
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
+  
 
   return (
     <>
@@ -530,7 +556,7 @@ const Topic = ({ item, navigation, data, setData }) => {
           backdropTransitionOutTiming={300}
           style={styles.modal}
         >
-          <View style={{ ...styles.commentModal, minHeight: screenHeight }}>
+          <View style={{ ...styles.commentModal, minHeight: screenHeight - keyboardHeight}}>
             {/* Gọi comment */}
             <View
               style={{
@@ -566,6 +592,7 @@ const Topic = ({ item, navigation, data, setData }) => {
                 ></Ionicons>
               </TouchableOpacity>
             </View>
+            
             <CommentScreen
               route={{
                 params: {
@@ -736,8 +763,6 @@ const styles = StyleSheet.create({
     borderColor: "#000",
     borderTopRightRadius: 35,
     borderTopLeftRadius: 35,
-    minHeight: settingsHeight,
-    paddingBottom: 20,
   },
   center: {
     display: "flex",
