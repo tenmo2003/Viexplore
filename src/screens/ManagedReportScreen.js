@@ -38,7 +38,7 @@ export default function ManagedReportScreen({ navigation }) {
           .get("/admin/reports")
           .then((res) => {
             setNotifications(res.data.results.reverse());
-            // console.log(res.data.results);
+            console.log(res.data.results);
           })
           .catch((err) => {
             console.log(err);
@@ -82,7 +82,6 @@ export default function ManagedReportScreen({ navigation }) {
                   return;
                 }
                 // TODO: Redirect to topic
-                console.log(notification.targetTopic);
               }}
             >
               <View className="bg-slate-200 px-2 py-2 rounded-lg my-1 mx-3 flex flex-row items-center">
@@ -91,9 +90,9 @@ export default function ManagedReportScreen({ navigation }) {
                     source={
                       notification.type === "BROADCAST"
                         ? require("./../../assets/notificationBell.png")
-                        : {
-                            uri: notification.location.thumbnail,
-                          }
+                        : notification.location && notification.location.thumbnail
+                        ? { uri: notification.location.thumbnail }
+                        : require("./../../assets/notificationBell.png")
                     }
                     className="w-14 h-14 rounded-full"
                   />

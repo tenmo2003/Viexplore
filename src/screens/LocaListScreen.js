@@ -107,15 +107,15 @@ export default function LocaListScreen({ navigation }) {
       />
       <Text style={styles.informationLoca}>
         {item.item.name
-          ? item.item.name.length <= 20
+          ? item.item.name.length <= 15
             ? item.item.name
-            : item.item.name.substring(0, 20) + "..."
+            : item.item.name.substring(0, 15) + "..."
           : "Unknown"}{" "}
         {"\u00B7"}{" "}
         {item.item.generalLocation
-          ? item.item.generalLocation.length <= 15
+          ? item.item.generalLocation.length <= 12
             ? item.item.generalLocation
-            : item.item.generalLocation.substring(0, 15) + "..."
+            : item.item.generalLocation.substring(0, 12) + "..."
           : "Unknown"}
       </Text>
       <Text style={styles.script}>
@@ -302,13 +302,13 @@ const styles = {
   },
   locationIcon: {
     position: "absolute",
-    left: width / 4,
+    left: width / 3.6,
     top: 6,
   },
   informationLoca: {
     position: "absolute",
     fontSize: 16,
-    left: width / 3.2,
+    left: width/3.6 + 25,
     top: 100/10,
   },
   script: {

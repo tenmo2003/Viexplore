@@ -76,6 +76,7 @@ export default function TopicListScreen({ navigation }) {
   };
 
   const deleteTopic = (id) => {
+    console.log(id);
     setLoading(true);
     service
       .delete("/topic/" + id)
@@ -325,7 +326,7 @@ const styles = {
   imagesPost: {
     position: "absolute",
     right: 0,
-    width: 250,
+    width: (width/3)*2 - (width/8),
     height: 195,
   },
   contentPost: {
@@ -351,7 +352,7 @@ const styles = {
   },
   deleteButton: {
     position: "absolute",
-    right: 255,
+    right: (width/3)*2 - (width/8) + 10,
     top: 10,
   },
 };
