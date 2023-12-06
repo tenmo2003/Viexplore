@@ -38,7 +38,7 @@ export default function ManagedReportScreen({ navigation }) {
           .get("/admin/reports")
           .then((res) => {
             setNotifications(res.data.results.reverse());
-            console.log(res.data.results);
+            // console.log(res.data.results);
           })
           .catch((err) => {
             console.log(err);
@@ -78,10 +78,12 @@ export default function ManagedReportScreen({ navigation }) {
             <TouchableOpacity
               key={notification.id}
               onPress={() => {
-                if (notification.type === "BROADCAST") {
-                  return;
-                }
-                // TODO: Redirect to topic
+                notification.location && navigation.navigate("MapTab", {
+                  screen: "Map",
+                  params: {
+                    id: notification.location.id,
+                  },
+                });
               }}
             >
               <View className="bg-slate-200 px-2 py-2 rounded-lg my-1 mx-3 flex flex-row items-center">
@@ -99,7 +101,7 @@ export default function ManagedReportScreen({ navigation }) {
                 </View>
                 <View className="ml-2 flex-1 flex">
                   <Text numberOfLines={2} className="text-base">
-                    {notification.username}{" vừa góp ý với nội dung: "}{notification.reason}
+                    {notification.username ? notification.username : "Ai đó"}{" vừa góp ý về địa danh "}{notification.location ? (notification.location.name + " ") : ""}{"với nội dung: "}{notification.reason ? notification.reason : "Không rõ"}
                   </Text>
                   <TimeAgo time={notification.timestamp} />
                 </View>
