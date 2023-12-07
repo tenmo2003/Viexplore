@@ -100,7 +100,7 @@ export default function ManagedReportScreen({ navigation }) {
                   />
                 </View>
                 <View className="ml-2 flex-1 flex">
-                  <Text numberOfLines={2} className="text-base">
+                  <Text className="text-base">
                     {notification.username ? notification.username : "Ai đó"}{" vừa góp ý về địa danh "}{notification.location ? (notification.location.name + " ") : ""}{"với nội dung: "}{notification.reason ? notification.reason : "Không rõ"}
                   </Text>
                   <TimeAgo time={notification.timestamp} />

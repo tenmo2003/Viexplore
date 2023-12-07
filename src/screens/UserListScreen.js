@@ -1,26 +1,23 @@
-import React, { useState, useEffect, useRef } from "react";
-import {
-  View,
-  TextInput,
-  TouchableOpacity,
-  Dimensions,
-  Platform,
-  FlatList,
-  ActivityIndicator,
-} from "react-native";
-import { Text, Avatar } from "react-native-elements";
-import service from "../helper/axiosService";
-import { showAlert } from "../helper/CustomAlert";
-import { MaterialIcons } from "react-native-vector-icons";
 import { Feather } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  ActivityIndicator,
+  Dimensions,
+  FlatList,
+  Platform,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { Avatar, Text } from "react-native-elements";
+import { MaterialIcons } from "react-native-vector-icons";
+import { actionAlert, showAlert } from "../helper/CustomAlert";
+import service from "../helper/axiosService";
 
 export default function UserListScreen({ navigation, route }) {
   const [query, setQuery] = useState("");
-  const [showResults, setShowResults] = useState(false);
-  const [haveResults, setHaveResults] = useState(false);
   const [searchSuggestions, setSearchSuggestions] = useState([]);
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
@@ -61,8 +58,7 @@ export default function UserListScreen({ navigation, route }) {
       item.username.toLowerCase().includes(query.toLowerCase())
     );
 
-    setSearchSuggestions(results.slice(0, 10));
-    setHaveResults(results.length !== 0);
+    setSearchSuggestions(results);
   }, [query]);
 
   useEffect(() => {
@@ -93,18 +89,23 @@ export default function UserListScreen({ navigation, route }) {
           } else {
             console.error("API request failed:", res.data.message);
           }
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+          setLoading(false);
         });
     } catch (error) {
       console.error("Error fetching data:", error);
-    } finally {
       setLoading(false);
     }
   };
 
   const banUser = (index) => {
-    console.log(data[index].username);
+    setLoading(true);
     service.put(`/admin/ban-user?username=` + `${data[index].username}`).then(
       (res) => {
+        setLoading(false);
         if (res.status === 200) {
           toggleBanStatus(index);
           console.log("Ban người dùng thành công");
@@ -113,14 +114,16 @@ export default function UserListScreen({ navigation, route }) {
       },
       () => {
         console.log("Network failed");
+        setLoading(false);
       }
     );
   };
 
   const unBanUser = (index) => {
-    console.log(data[index].username);
+    setLoading(true);
     service.put(`/admin/unban-user?username=` + `${data[index].username}`).then(
       (res) => {
+        setLoading(false);
         if (res.status === 200) {
           toggleBanStatus(index);
           console.log("Gỡ Ban người dùng thành công");
@@ -129,6 +132,7 @@ export default function UserListScreen({ navigation, route }) {
       },
       () => {
         console.log("Network failed");
+        setLoading(false);
       }
     );
   };
@@ -164,7 +168,11 @@ export default function UserListScreen({ navigation, route }) {
       ) : (
         <TouchableOpacity
           style={styles.reportButton}
-          onPress={() => banUser(index)}
+          onPress={() => {
+            actionAlert("Bạn có chắc chắn muốn cấm người dùng này?", () => {
+              banUser(index);
+            })
+          }}
         >
           <MaterialIcons
             name="report-problem"
@@ -185,78 +193,82 @@ export default function UserListScreen({ navigation, route }) {
     fetchData(page);
   };
 
-  const renderData = haveResults ? searchSuggestions : data;
+  const renderData = query.length > 0 ? searchSuggestions : data;
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={backToAdminHome}>
-          <Feather
-            name="chevron-left"
-            size={30}
-            color="#3F3F3F"
-            style={{
-              position: "absolute",
-              left: 15,
-              top: Platform.OS === "ios" ? 60 : 20,
-            }}
-          />
-        </TouchableOpacity>
-        <Text style={styles.TextAdmin}>Người dùng</Text>
-        <View style={styles.searchContainerEmpty}>
-          <View style={styles.searchInner}>
+    <>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={backToAdminHome}>
             <Feather
-              name="search"
-              size={24}
-              color="black"
-              position="absolute"
-              left={iconSearchBarPos}
-            />
-            <TextInput
-              placeholder="Tìm kiếm người dùng"
-              style={styles.input}
-              value={query}
-              onChangeText={(value) => {
-                setQuery(value);
-                setShowResults(true);
-              }}
-              onFocus={() => {
-                setShowResults(true);
-                setIsSearchFocused(true);
-              }}
-              onBlur={() => {
-                setShowResults(false);
-                setIsSearchFocused(false);
+              name="chevron-left"
+              size={30}
+              color="#3F3F3F"
+              style={{
+                position: "absolute",
+                left: 15,
+                top: Platform.OS === "ios" ? 60 : 20,
               }}
             />
-            {query.length > 0 && (
-              <TouchableOpacity
-                onPress={() => setQuery("")}
-                style={{ position: "absolute", right: iconSearchBarPos - 10 }}
-              >
-                {query.length > 0 && (
-                  <MaterialIcons
-                    name="clear"
-                    size={26}
-                    color="rgba(127, 127, 127, 0.5)"
-                  />
-                )}
-              </TouchableOpacity>
-            )}
+          </TouchableOpacity>
+          <Text style={styles.TextAdmin}>Người dùng</Text>
+          <View style={styles.searchContainerEmpty}>
+            <View style={styles.searchInner}>
+              <Feather
+                name="search"
+                size={24}
+                color="black"
+                position="absolute"
+                left={iconSearchBarPos}
+              />
+              <TextInput
+                placeholder="Tìm kiếm người dùng"
+                style={styles.input}
+                value={query}
+                onChangeText={(value) => {
+                  setQuery(value);
+                  setShowResults(true);
+                }}
+                onFocus={() => {
+                  setShowResults(true);
+                  setIsSearchFocused(true);
+                }}
+                onBlur={() => {
+                  setShowResults(false);
+                  setIsSearchFocused(false);
+                }}
+              />
+              {query.length > 0 && (
+                <TouchableOpacity
+                  onPress={() => setQuery("")}
+                  style={{ position: "absolute", right: iconSearchBarPos - 10 }}
+                >
+                  {query.length > 0 && (
+                    <MaterialIcons
+                      name="clear"
+                      size={26}
+                      color="rgba(127, 127, 127, 0.5)"
+                    />
+                  )}
+                </TouchableOpacity>
+              )}
+            </View>
           </View>
         </View>
+        <View className="flex-1">
+          {data.length > 0 && (
+            <FlatList
+              data={renderData}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={renderItem}
+              onEndReached={handleEndOfUserReached}
+              onEndReachedThreshold={0.8}
+            />
+          )}
+          {loading && <ActivityIndicator color="black" size="large" />}
+        </View>
       </View>
-      <View style={styles.body}>
-        <FlatList
-          data={renderData}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={renderItem}
-          onEndReached={handleEndOfUserReached}
-          onEndReachedThreshold={0.8}
-        />
-        {loading && <ActivityIndicator />}
-      </View>
-    </View>
+    </>
   );
 }
 
