@@ -70,7 +70,7 @@ export default function ManagedReportScreen({ navigation }) {
             }}
           />
         </TouchableOpacity>
-        <Text className="text-3xl font-bold mt-4 ml-5">Notifications</Text>
+        <Text className="text-3xl font-bold mt-4 ml-5">Các góp ý</Text>
       </View>
       <ScrollView className="flex-1">
         {notifications.length > 0 &&
@@ -78,11 +78,12 @@ export default function ManagedReportScreen({ navigation }) {
             <TouchableOpacity
               key={notification.id}
               onPress={() => {
-                if (notification.type === "BROADCAST") {
-                  return;
-                }
-                // TODO: Redirect to topic
-                console.log(notification.targetTopic);
+                notification.location && navigation.navigate("MapTab", {
+                  screen: "Map",
+                  params: {
+                    id: notification.location.id,
+                  },
+                });
               }}
             >
               <View className="bg-slate-200 px-2 py-2 rounded-lg my-1 mx-3 flex flex-row items-center">
@@ -91,16 +92,16 @@ export default function ManagedReportScreen({ navigation }) {
                     source={
                       notification.type === "BROADCAST"
                         ? require("./../../assets/notificationBell.png")
-                        : {
-                            uri: notification.location.thumbnail,
-                          }
+                        : notification.location && notification.location.thumbnail
+                        ? { uri: notification.location.thumbnail }
+                        : require("./../../assets/notificationBell.png")
                     }
                     className="w-14 h-14 rounded-full"
                   />
                 </View>
                 <View className="ml-2 flex-1 flex">
-                  <Text numberOfLines={2} className="text-base">
-                    {notification.username}{" vừa góp ý với nội dung: "}{notification.reason}
+                  <Text className="text-base">
+                    {notification.username ? notification.username : "Ai đó"}{" vừa góp ý về địa danh "}{notification.location ? (notification.location.name + " ") : ""}{"với nội dung: "}{notification.reason ? notification.reason : "Không rõ"}
                   </Text>
                   <TimeAgo time={notification.timestamp} />
                 </View>

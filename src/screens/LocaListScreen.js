@@ -1,25 +1,21 @@
-import React, { useState, useEffect, useRef } from "react";
+import { Feather, Ionicons } from "@expo/vector-icons";
+import React, { useEffect, useRef, useState } from "react";
 import {
-  View,
+  ActivityIndicator,
+  Dimensions,
+  FlatList,
+  Platform,
   TextInput,
   TouchableOpacity,
-  Dimensions,
-  Platform,
-  FlatList,
-  ActivityIndicator,
+  View,
 } from "react-native";
-import { Text, Avatar } from "react-native-elements";
-import service from "../helper/axiosService";
-import { showAlert } from "../helper/CustomAlert";
+import { Avatar, Text } from "react-native-elements";
 import { MaterialIcons } from "react-native-vector-icons";
-import { Feather, Ionicons } from "@expo/vector-icons";
+import service from "../helper/axiosService";
 
 export default function LocaListScreen({ navigation }) {
   const [query, setQuery] = useState("");
-  const [showResults, setShowResults] = useState(false);
-  const [haveResults, setHaveResults] = useState(false);
   const [searchSuggestions, setSearchSuggestions] = useState([]);
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
@@ -34,14 +30,12 @@ export default function LocaListScreen({ navigation }) {
       item.name.toLowerCase().includes(query.toLowerCase())
     );
 
-    setSearchSuggestions(results.slice(0, 10));
-    setHaveResults(results.length !== 0);
+    setSearchSuggestions(results);
   }, [query]);
 
   useEffect(() => {
     fetchData(page);
   }, []);
-
 
   const fetchData = async (pageNumber) => {
     if (loading || isEndReached.current) return;
@@ -67,11 +61,15 @@ export default function LocaListScreen({ navigation }) {
           } else {
             console.error("API request failed:", res.data.message);
           }
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+          setLoading(false);
         });
     } catch (error) {
-      console.error("Error fetching data:", error);
-    } finally {
       setLoading(false);
+      console.error("Error fetching data:", error);
     }
   };
 
@@ -96,7 +94,9 @@ export default function LocaListScreen({ navigation }) {
             ? { uri: item.item.thumbnail }
             : require("./../../assets/ava.png")
         }
-        rounded-lg
+        avatarStyle={{
+          borderRadius: 10,
+        }}
         size={80}
       />
       <Ionicons
@@ -107,15 +107,15 @@ export default function LocaListScreen({ navigation }) {
       />
       <Text style={styles.informationLoca}>
         {item.item.name
-          ? item.item.name.length <= 20
+          ? item.item.name.length <= 15
             ? item.item.name
-            : item.item.name.substring(0, 20) + "..."
+            : item.item.name.substring(0, 15) + "..."
           : "Unknown"}{" "}
         {"\u00B7"}{" "}
         {item.item.generalLocation
-          ? item.item.generalLocation.length <= 15
+          ? item.item.generalLocation.length <= 12
             ? item.item.generalLocation
-            : item.item.generalLocation.substring(0, 15) + "..."
+            : item.item.generalLocation.substring(0, 12) + "..."
           : "Unknown"}
       </Text>
       <Text style={styles.script}>
@@ -137,11 +137,10 @@ export default function LocaListScreen({ navigation }) {
     fetchData(page);
   };
 
-  const renderData = haveResults ? searchSuggestions : data;
+  const renderData = query.length > 0 ? searchSuggestions : data;
 
   return (
     <View style={styles.container}>
-      {loading && <Loading full={false} />}
       <View style={styles.header}>
         <TouchableOpacity onPress={backToAdminHome}>
           <Feather
@@ -156,9 +155,7 @@ export default function LocaListScreen({ navigation }) {
           />
         </TouchableOpacity>
         <Text style={styles.TextAdmin}>Di tích</Text>
-        <View
-          style={styles.searchContainerEmpty}
-        >
+        <View style={styles.searchContainerEmpty}>
           <View style={styles.searchInner}>
             <Feather
               name="search"
@@ -173,44 +170,37 @@ export default function LocaListScreen({ navigation }) {
               value={query}
               onChangeText={(value) => {
                 setQuery(value);
-                setShowResults(true);
-              }}
-              onFocus={() => {
-                setShowResults(true);
-                setIsSearchFocused(true);
-              }}
-              onBlur={() => {
-                setShowResults(false);
-                setIsSearchFocused(false);
               }}
             />
             {query.length > 0 && (
-            <TouchableOpacity
-              onPress={() => setQuery("")}
-              style={{ position: "absolute", right: iconSearchBarPos - 10 }}
-            >
-              {query.length > 0 && (
-                <MaterialIcons
-                  name="clear"
-                  size={26}
-                  color="rgba(127, 127, 127, 0.5)"
-                />
-              )}
-            </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => setQuery("")}
+                style={{ position: "absolute", right: iconSearchBarPos - 10 }}
+              >
+                {query.length > 0 && (
+                  <MaterialIcons
+                    name="clear"
+                    size={26}
+                    color="rgba(127, 127, 127, 0.5)"
+                  />
+                )}
+              </TouchableOpacity>
             )}
           </View>
         </View>
       </View>
-      <View style={styles.body}>
-        <FlatList
-          data={renderData}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={renderItem}
-          onEndReached={handleEndReached}
-          onEndReachedThreshold={0.8}
-          windowSize={10}
-        />
-        {loading && <ActivityIndicator />}
+      <View className="flex-1">
+        {data.length > 0 && (
+          <FlatList
+            data={renderData}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={renderItem}
+            onEndReached={handleEndReached}
+            onEndReachedThreshold={0.8}
+            windowSize={10}
+          />
+        )}
+        {loading && <ActivityIndicator size="large" color="black" />}
       </View>
     </View>
   );
@@ -302,20 +292,20 @@ const styles = {
   },
   locationIcon: {
     position: "absolute",
-    left: width / 4,
+    left: width / 3.6,
     top: 6,
   },
   informationLoca: {
     position: "absolute",
     fontSize: 16,
-    left: width / 3.2,
-    top: 100/10,
+    left: width / 3.6 + 25,
+    top: 100 / 10,
   },
   script: {
     position: "absolute",
     width: width - width / 3,
     fontSize: 16,
-    left: width / 3.5,
-    top: 35,
+    left: width / 3.2,
+    top: 30,
   },
 };

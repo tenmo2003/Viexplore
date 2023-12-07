@@ -4,6 +4,8 @@ import service from "../helper/axiosService";
 import Loading from "../components/Loading";
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import TimeAgo from "react-native-timeago";
+import { MaterialIcons } from "@expo/vector-icons";
+import { Notification } from "../components/Notification";
 
 export default function NotificationScreen({ route, navigation }) {
   const [loading, setLoading] = useState(false);
@@ -60,60 +62,16 @@ export default function NotificationScreen({ route, navigation }) {
   return (
     <View className="flex-1 flex bg-white">
       {loading && <Loading />}
-      <Text className="text-3xl font-bold mt-3 ml-3">Notifications</Text>
+      <Text className="text-3xl font-bold mt-3 ml-3">Thông báo</Text>
       <ScrollView className="flex-1">
         {notifications &&
           notifications.length > 0 &&
           notifications.map((notification) => (
-            <TouchableOpacity
+            <Notification
               key={notification.id}
-              onPress={() => {
-                if (
-                  notification.type === "BROADCAST" ||
-                  notification.type === "REPORT"
-                ) {
-                  return;
-                }
-                // TODO: Redirect to topic
-                navigation.navigate("ForumTab", {
-                  screen: "Topic",
-                  params: {
-                    topic: notification.targetTopic,
-                  },
-                });
-              }}
-            >
-              <View className="bg-slate-200 px-2 py-2 rounded-lg my-1 mx-3 flex flex-row items-center">
-                <View>
-                  <Image
-                    source={
-                      notification.type === "BROADCAST"
-                        ? require("./../../assets/notificationBell.png")
-                        : {
-                            uri: notification.actionUser.avatar,
-                          }
-                    }
-                    className="w-14 h-14 rounded-full"
-                  />
-                  {notification.type !== "BROADCAST" && (
-                    <Image
-                      source={
-                        notification.type === "COMMENT"
-                          ? require("./../../assets/commentBubble.png")
-                          : require("./../../assets/likeBubble.png")
-                      }
-                      className="w-5 h-5 rounded-full absolute right-0 -bottom-1"
-                    />
-                  )}
-                </View>
-                <View className="ml-2 flex-1 flex">
-                  <Text numberOfLines={2} className="text-base">
-                    {notification.message}
-                  </Text>
-                  <TimeAgo time={notification.timestamp} />
-                </View>
-              </View>
-            </TouchableOpacity>
+              notification={notification}
+              navigation={navigation}
+            />
           ))}
       </ScrollView>
     </View>

@@ -18,4 +18,21 @@ const showAlert = (message, proceed, screen, navigation) => {
   );
 };
 
+export const actionAlert = (message, action) => {
+  Alert.alert(
+    "Alert",
+    message,
+    [
+      {
+        text: "OK",
+        onPress: () => action(),
+        style: "cancel",
+      },
+    ],
+    {
+      cancelable: true,
+    }
+  );
+}
+
 export { showAlert };

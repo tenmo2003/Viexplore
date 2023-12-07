@@ -91,7 +91,7 @@ const Tab = createMaterialBottomTabNavigator();
 
 export default function App() {
   const [token, setToken] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const [expoPushToken, setExpoPushToken] = useState("");
   const [notification, setNotification] = useState(false);
@@ -102,14 +102,15 @@ export default function App() {
 
   useEffect(() => {
     const loadToken = async () => {
+      setLoading(true);
       const storedToken = await SecureStore.getItemAsync("token");
       if (storedToken) {
         service.get("/check-token").then(
           (res) => {
             if (res.data.status === 200) {
               setToken(storedToken);
+              setLoading(false);
             }
-            setLoading(false);
           },
           (reject) => {
             console.log("Failed");

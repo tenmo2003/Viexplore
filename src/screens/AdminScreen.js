@@ -1,9 +1,10 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import {
   View,
   TouchableOpacity,
   Dimensions,
-  Platform
+  Platform,
+  TextInput
 } from "react-native";
 import { Text } from "react-native-elements";
 import service, { removeHeaderConfig } from "../helper/axiosService";
@@ -17,6 +18,17 @@ import { showAlert } from "../helper/CustomAlert";
 
 export default function AdminScreen({ navigation }) {
   const { token, setToken } = useContext(TokenContext);
+
+  const [title, setTitle] = useState("");
+  const [message, setMessage] = useState("");
+
+  const [isModalVisible, setModalVisible] = useState(false);
+
+  const [loading, setLoading] = useState(false);
+
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
 
   const logOutHandler = () => {
     const removeToken = async () => {
@@ -122,7 +134,7 @@ export default function AdminScreen({ navigation }) {
         <View style={styles.section}>
           <Text style={styles.nameSection}>Trung tâm kiểm soát</Text>
         </View>
-        <TouchableOpacity style={styles.category}>
+        <TouchableOpacity style={styles.category} onPress={toggleModal}>
           <View flexDirection="column" justifyContent="center">
             <View style={styles.iconArea1}>
               <Fontisto name="bell" size={36} color="#376CBA" />
@@ -154,9 +166,6 @@ export default function AdminScreen({ navigation }) {
               Trung tâm báo cáo
             </Text>
           </View>
-          <Text style={{ left: 30, top: 20, fontSize: 20, color: "#3F3F3F" }}>
-            Trung tâm tin nhắn
-          </Text>
           <Feather
             name="chevron-right"
             size={36}
@@ -253,6 +262,9 @@ export default function AdminScreen({ navigation }) {
 
 const { height, width } = Dimensions.get("window");
 
+const reportHeight = height * 0.5;
+const reportWidth = width;
+
 const styles = {
   container: {
     flex: 1,
@@ -334,5 +346,88 @@ const styles = {
     borderColor: "#959595",
     justifyContent: "center",
     alignItems: "center",
+  },
+  modal: {
+    justifyContent: "flex-end",
+    margin: 0,
+  },
+  modalContent: {
+    backgroundColor: "#ffffff",
+    paddingTop: 12,
+    paddingHorizontal: 12,
+    borderTopRightRadius: 35,
+    borderTopLeftRadius: 35,
+    borderWidth: 5,
+    borderColor: "#000",
+    minHeight: reportHeight,
+    paddingBottom: 20,
+  },
+  center: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 15,
+  },
+  barIcon: {
+    width: 60,
+    height: 5,
+    backgroundColor: "#bbb",
+    borderRadius: 3,
+  },
+  flexColumn: {
+    display: "flex",
+    flexDirection: "column",
+  },
+  headerReport: {
+    width: reportWidth * 0.8,
+    height: reportHeight * 0.2,
+    marginTop: 20,
+  },
+  headerText: {
+    color: "#000",
+    fontSize: 26,
+    fontWeight: "bold",
+  },
+  reportContent: {
+    borderWidth: 3,
+    height: reportHeight * 0.65,
+    alignItems: "center",
+    width: reportWidth * 0.82,
+    borderColor: "#000",
+    borderRadius: 20,
+  },
+  flexStyle: {
+    flex: 1,
+  },
+  containerView: {
+    flex: 1,
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: "flex-end",
+  },
+  textReport: {
+    marginVertical: Platform.OS === "ios" ? 10 : -5,
+    padding: 15,
+    borderColor: "#000",
+    maxHeight: reportHeight * 0.6,
+    width: reportWidth * 0.82,
+    lineHeight: -0.5,
+    fontSize: width / 25,
+  },
+  containerButton: {
+    width: reportHeight * 0.7,
+  },
+  button: {
+    backgroundColor: "#687DAA",
+    borderRadius: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 8,
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 24,
+    fontWeight: "bold",
   },
 };

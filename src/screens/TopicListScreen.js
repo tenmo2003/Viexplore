@@ -1,25 +1,22 @@
-import React, { useState, useEffect, useRef } from "react";
+import { Feather, FontAwesome } from "@expo/vector-icons";
+import React, { useEffect, useRef, useState } from "react";
 import {
-  View,
+  ActivityIndicator,
+  Dimensions,
+  FlatList,
+  Platform,
   TextInput,
   TouchableOpacity,
-  Dimensions,
-  Platform,
-  FlatList,
-  ActivityIndicator,
+  View,
 } from "react-native";
-import { Text, Avatar } from "react-native-elements";
-import service from "../helper/axiosService";
-import { showAlert } from "../helper/CustomAlert";
+import { Avatar, Text } from "react-native-elements";
 import { MaterialIcons } from "react-native-vector-icons";
-import { Feather, FontAwesome } from "@expo/vector-icons";
+import service from "../helper/axiosService";
+import { actionAlert } from "../helper/CustomAlert";
 
 export default function TopicListScreen({ navigation }) {
   const [query, setQuery] = useState("");
-  const [showResults, setShowResults] = useState(false);
-  const [haveResults, setHaveResults] = useState(false);
   const [searchSuggestions, setSearchSuggestions] = useState([]);
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
@@ -34,8 +31,7 @@ export default function TopicListScreen({ navigation }) {
       item.author.toLowerCase().includes(query.toLowerCase())
     );
 
-    setSearchSuggestions(results.slice(0, 10));
-    setHaveResults(results.length !== 0);
+    setSearchSuggestions(results);
   }, [query, data]);
 
   useEffect(() => {
@@ -70,12 +66,11 @@ export default function TopicListScreen({ navigation }) {
       });
     } catch (error) {
       console.error("Error fetching data:", error);
-    } finally {
-      setLoading(false);
     }
   };
 
   const deleteTopic = (id) => {
+    console.log(id);
     setLoading(true);
     service
       .delete("/topic/" + id)
@@ -121,7 +116,11 @@ export default function TopicListScreen({ navigation }) {
       />
       <TouchableOpacity
         style={styles.deleteButton}
-        onPress={() => deleteTopic(item.item.id)}
+        onPress={() => {
+          actionAlert("Bạn có chắc chắn muốn xóa bài viết này?", () => {
+            deleteTopic(item.item.id);
+          });
+        }}
       >
         <MaterialIcons name="delete" size={24} color="black" />
       </TouchableOpacity>
@@ -151,7 +150,7 @@ export default function TopicListScreen({ navigation }) {
     fetchData(page + 1);
   };
 
-  const renderData = haveResults && isSearchFocused ? searchSuggestions : data;
+  const renderData = query.length > 0 ? searchSuggestions : data;
 
   return (
     <View style={styles.container}>
@@ -184,15 +183,6 @@ export default function TopicListScreen({ navigation }) {
               value={query}
               onChangeText={(value) => {
                 setQuery(value);
-                setShowResults(true);
-              }}
-              onFocus={() => {
-                setShowResults(true);
-                setIsSearchFocused(true);
-              }}
-              onBlur={() => {
-                setShowResults(false);
-                setIsSearchFocused(false);
               }}
             />
             {query.length > 0 && (
@@ -212,15 +202,17 @@ export default function TopicListScreen({ navigation }) {
           </View>
         </View>
       </View>
-      <View style={styles.body}>
-        <FlatList
-          data={renderData}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={renderItem}
-          onEndReached={handleEndReached}
-          onEndReachedThreshold={0.8}
-        />
-        {loading && <ActivityIndicator />}
+      <View className="flex-1">
+        {data.length > 0 && (
+          <FlatList
+            data={renderData}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={renderItem}
+            onEndReached={handleEndReached}
+            onEndReachedThreshold={0.8}
+          />
+        )}
+        {loading && <ActivityIndicator color="black" size="large" />}
       </View>
     </View>
   );
@@ -325,7 +317,7 @@ const styles = {
   imagesPost: {
     position: "absolute",
     right: 0,
-    width: 250,
+    width: (width / 3) * 2 - width / 8,
     height: 195,
   },
   contentPost: {
@@ -351,7 +343,7 @@ const styles = {
   },
   deleteButton: {
     position: "absolute",
-    right: 255,
+    right: (width / 3) * 2 - width / 8 + 10,
     top: 10,
   },
 };

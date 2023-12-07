@@ -61,10 +61,12 @@ function ForumScreen({ navigation }) {
           console.error("API request failed:", res.data.message);
           setLoading(false);
         }
+      }).catch((error) => {
+        console.error("Error fetching data:", error);
+        setLoading(false);
       });
     } catch (error) {
       console.error("Error fetching data:", error);
-    } finally {
     }
   };
 

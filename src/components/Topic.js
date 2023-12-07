@@ -15,7 +15,7 @@ import ImageSlider2 from "./ImageSlide2";
 import { Ionicons } from "react-native-vector-icons";
 import TokenContext from "../contexts/TokenContext";
 import service from "../helper/axiosService";
-import { showAlert } from "../helper/CustomAlert";
+import { actionAlert, showAlert } from "../helper/CustomAlert";
 import Loading from "../components/Loading";
 import Modal from "react-native-modal";
 import { Feather } from "react-native-vector-icons";
@@ -234,26 +234,25 @@ const Topic = ({ item, navigation, data, setData }) => {
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
-      'keyboardDidShow',
+      "keyboardDidShow",
       (event) => {
         const keyboardHeight = event.endCoordinates.height;
         setKeyboardHeight(keyboardHeight);
       }
     );
-  
+
     const keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
+      "keyboardDidHide",
       () => {
         setKeyboardHeight(0);
       }
     );
-  
+
     return () => {
       keyboardDidShowListener.remove();
       keyboardDidHideListener.remove();
     };
   }, []);
-  
 
   return (
     <>
@@ -431,37 +430,46 @@ const Topic = ({ item, navigation, data, setData }) => {
             </View>
 
             <View style={styles.flexColumn}>
-              <View style={styles.editTopic}>
+              {checkAuthor && (
+                <View style={styles.editTopic}>
+                  <TouchableOpacity
+                    style={styles.flexEdit}
+                    onPress={() => {
+                      setModalVisible2(true);
+                      setModalVisible(false);
+                    }}
+                  >
+                    <View style={{ flexDirection: "row" }}>
+                      <Text
+                        style={{
+                          fontSize: 24,
+                          fontWeight: "bold",
+                          paddingHorizontal: 10,
+                        }}
+                      >
+                        Sửa bài viết
+                      </Text>
+                    </View>
+                    <Feather
+                      name="chevron-right"
+                      style={{
+                        alignSelf: "flex-end",
+                      }}
+                      size={30}
+                    />
+                  </TouchableOpacity>
+                </View>
+              )}
+
+              <View style={styles.delete}>
                 <TouchableOpacity
                   style={styles.flexEdit}
                   onPress={() => {
-                    setModalVisible2(true);
-                    setModalVisible(false);
+                    actionAlert("Bạn muốn xóa bài viết này?", () => {
+                      deleteTopic();
+                    });
                   }}
                 >
-                  <View style={{ flexDirection: "row" }}>
-                    <Text
-                      style={{
-                        fontSize: 24,
-                        fontWeight: "bold",
-                        paddingHorizontal: 10,
-                      }}
-                    >
-                      Sửa bài viết
-                    </Text>
-                  </View>
-                  <Feather
-                    name="chevron-right"
-                    style={{
-                      alignSelf: "flex-end",
-                    }}
-                    size={30}
-                  />
-                </TouchableOpacity>
-              </View>
-
-              <View style={styles.delete}>
-                <TouchableOpacity style={styles.flexEdit} onPress={deleteTopic}>
                   <View style={{ flexDirection: "row" }}>
                     <Text
                       style={{
@@ -556,7 +564,12 @@ const Topic = ({ item, navigation, data, setData }) => {
           backdropTransitionOutTiming={300}
           style={styles.modal}
         >
-          <View style={{ ...styles.commentModal, minHeight: screenHeight - keyboardHeight}}>
+          <View
+            style={{
+              ...styles.commentModal,
+              minHeight: screenHeight - keyboardHeight,
+            }}
+          >
             {/* Gọi comment */}
             <View
               style={{
@@ -592,7 +605,7 @@ const Topic = ({ item, navigation, data, setData }) => {
                 ></Ionicons>
               </TouchableOpacity>
             </View>
-            
+
             <CommentScreen
               route={{
                 params: {

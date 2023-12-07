@@ -22,6 +22,7 @@ import Loading from "./Loading";
 import service from "../helper/axiosService";
 import { useFocusEffect } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { actionAlert, showAlert } from "../helper/CustomAlert";
 
 function CommentScreen({ route, navigation }) {
   const { topicId, comments, username } = route.params;
@@ -109,7 +110,6 @@ function CommentScreen({ route, navigation }) {
         type: "image/jpg",
       });
     }
-    
 
     setLoading(true);
     service
@@ -206,20 +206,20 @@ function CommentScreen({ route, navigation }) {
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
-      'keyboardDidShow',
+      "keyboardDidShow",
       (event) => {
         const keyboardHeight = event.endCoordinates.height;
         setKeyboardHeight(keyboardHeight);
       }
     );
-  
+
     const keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
+      "keyboardDidHide",
       () => {
         setKeyboardHeight(0);
       }
     );
-  
+
     return () => {
       keyboardDidShowListener.remove();
       keyboardDidHideListener.remove();
@@ -268,8 +268,8 @@ function CommentScreen({ route, navigation }) {
                   marginRight: 10,
                   marginBottom: 10,
                   flexWrap: "wrap",
-                  maxWidth: screenWidth - 50 - (10 / standarWidth) * screenWidth*8
-
+                  maxWidth:
+                    screenWidth - 50 - (10 / standarWidth) * screenWidth * 8,
                 }}
               >
                 {item.content}
@@ -300,12 +300,13 @@ function CommentScreen({ route, navigation }) {
           <View style={{ flexDirection: "row" }}>
             <Text style={styles.Time}>{item.createdAt}</Text>
             {editingCommentId !== item.id ? (
-              item.commenter.username === username && (
+              (item.commenter.username === username ||
+                username === "admin") && (
                 <>
                   <TouchableOpacity
                     style={styles.Time}
                     onPress={() => {
-                      if (item.commenter.username === username ) {
+                      if (item.commenter.username === username) {
                         setEditedContent(item.content);
                         setEditingCommentId(item.id);
                       }
@@ -314,7 +315,10 @@ function CommentScreen({ route, navigation }) {
                     <Text
                       style={{
                         fontWeight: "bold",
-                        color: "black",
+                        color:
+                          item.commenter.username === username
+                            ? "black"
+                            : "#D9D9D9",
                       }}
                     >
                       Chỉnh sửa
@@ -322,10 +326,19 @@ function CommentScreen({ route, navigation }) {
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.Time}
-                    onPress={() =>
-                      (item.commenter.username === username || username === "admin") &&
-                        deleteComment(item.id)
-                    }
+                    onPress={() => {
+                      if (
+                        item.commenter.username === username ||
+                        username === "admin"
+                      ) {
+                        actionAlert(
+                          "Bạn có chắc chắn muốn xóa bình luận không",
+                          () => {
+                            deleteComment(item.id);
+                          }
+                        );
+                      }
+                    }}
                   >
                     <Text
                       style={{
@@ -337,7 +350,7 @@ function CommentScreen({ route, navigation }) {
                             : "#D9D9D9",
                       }}
                     >
-                      Xoá
+                      Xóa
                     </Text>
                   </TouchableOpacity>
                 </>
@@ -362,13 +375,15 @@ function CommentScreen({ route, navigation }) {
       </View>
     </View>
   );
-  
+
   console.log(keyboardHeight);
   return (
     <View>
       {loading && <Loading />}
       <View style={styles.sheetScreen}>
-        <View style={{ height: screenHeight - screenHeight * 0.2 - keyboardHeight }}>
+        <View
+          style={{ height: screenHeight - screenHeight * 0.2 - keyboardHeight }}
+        >
           <FlatList
             data={reversedComments}
             keyExtractor={(reversedComments) => reversedComments.id.toString()}
