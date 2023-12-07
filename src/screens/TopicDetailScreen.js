@@ -18,7 +18,7 @@ import Topic from "../components/Topic";
 import ImageSlider2 from "../components/ImageSlide2";
 
 export default function TopicDetailScreen({ route, navigation }) {
-  const { topic } = route.params;
+  const { topicId } = route.params;
   const [isLogin, setIsLogin] = useState(false);
   const { token } = useContext(TokenContext);
   const [saveTopic, setSaveTopic] = useState(false);
@@ -26,8 +26,24 @@ export default function TopicDetailScreen({ route, navigation }) {
   const [UpVoted, setUpVoted] = useState(false);
   const [downVoted, setDownVoted] = useState(false);
 
+  const [topic, setTopic] = useState();
+
+  useEffect(() => {
+    setLoading(true);
+    service.get("/topics/" + topicId).then(
+      (res) => {
+        setTopic(res.data.results);
+        setLoading(false);
+      }
+    ).catch((err) => {
+      console.log(err);
+      setLoading(false);
+    });
+  }, []);
+
   return (
     <View style={styles.sheetScreen}>
+      {loading && <Loading />}
       <View
         style={{
           flexDirection: "row",

@@ -53,7 +53,7 @@ export function Notification({ notification, navigation }) {
         navigation.navigate("ForumTab", {
           screen: "Topic",
           params: {
-            topic: notification.targetTopic,
+            topicId: notification.targetTopicId,
           },
         });
       }}
