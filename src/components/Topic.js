@@ -468,6 +468,7 @@ const Topic = ({ item, navigation, data, setData }) => {
                     actionAlert("Bạn muốn xóa bài viết này?", () => {
                       deleteTopic();
                     });
+                    setModalVisible(false);
                   }}
                 >
                   <View style={{ flexDirection: "row" }}>

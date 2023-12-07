@@ -105,7 +105,6 @@ export default function AdminScreen({ navigation }) {
     setMessage("");
   };
 
-
   return (
     <View style={styles.container}>
       <View style={styles.header}>

@@ -169,21 +169,25 @@ function CommentScreen({ route, navigation }) {
     const formData = new FormData();
     formData.append("id", editingCommentId);
     formData.append("content", editedContent);
-    formData.append("image", {
-      uri:
-        Platform.OS === "android"
-          ? editedImage.uri
-          : editedImage.uri.replace("file://", "/private"),
-      name: "image.jpg",
-      type: "image/jpg",
-    });
+    if (editedImage !== null) {
+      formData.append("image", {
+        uri:
+          Platform.OS === "android"
+            ? editedImage.uri
+            : editedImage.uri.replace("file://", "/private"),
+        name: "image.jpg",
+        type: "image/jpg",
+      });
+    }
     service
       .put("/comment", formData)
       .then((res) => {
         setReversedComments(
           reversedComments.map((el) =>
             el.id === editingCommentId
-              ? { ...el, content: editedContent, image: editedImage.uri }
+              ? editedImage !== null
+                ? { ...el, content: editedContent, image: editedImage.uri }
+                : { ...el, content: editedContent }
               : el
           )
         );
@@ -565,6 +569,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     shadowColor: "black",
     paddingLeft: 15,
+    paddingRight: 15,
     marginTop: 5,
   },
   cmtIcon: {
