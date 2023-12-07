@@ -235,7 +235,11 @@ function CommentScreen({ route, navigation }) {
       <View style={{ flexDirection: "row", marginBottom: 10 }}>
         <View style={styles.profileImage}>
           <Image
-            source={{ uri: item.commenter.avatar }}
+            source={
+              item.commenter.avatar !== null
+                ? { uri: item.commenter.avatar }
+                : require("./../../assets/ava.png")
+            }
             style={styles.image}
             resizeMode="center"
           ></Image>
