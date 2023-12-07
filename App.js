@@ -142,7 +142,7 @@ export default function App() {
         navigationRef.current?.navigate("ForumTab", {
           screen: "Topic",
           params: {
-            topic: data,
+            topicId: data.targetTopicId,
           },
         });
       });

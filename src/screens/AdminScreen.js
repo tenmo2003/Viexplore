@@ -135,7 +135,7 @@ export default function AdminScreen({ navigation }) {
           </View>
           <View style={{ flexDirection: "row", alignItems: "center", left: 30 }}>
             <Text style={{ fontSize: 20, color: "#3F3F3F" }}>
-              Trung tâm thông báo
+              Tạo thông báo tổng
             </Text>
           </View>
           <Feather

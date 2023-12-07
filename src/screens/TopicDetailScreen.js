@@ -30,49 +30,59 @@ export default function TopicDetailScreen({ route, navigation }) {
 
   useEffect(() => {
     setLoading(true);
-    service.get("/topics/" + topicId).then(
-      (res) => {
+    service
+      .get("/topic/" + topicId)
+      .then((res) => {
         setTopic(res.data.results);
         setLoading(false);
-      }
-    ).catch((err) => {
-      console.log(err);
-      setLoading(false);
-    });
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+      });
   }, []);
 
   return (
-    <View style={styles.sheetScreen}>
-      {loading && <Loading />}
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          paddingRight: 15,
-          paddingLeft: 10,
-          paddingTop: 10,
-          paddingBottom: 10,
-        }}
-      >
-        <TouchableOpacity>
-          <Icon
-            name="chevron-left"
-            type="font-awesome"
-            color="#000"
-            size={24}
-            onPress={() => navigation.navigate("User")}
-          />
-        </TouchableOpacity>
-        <Text style={{ fontSize: 18, marginLeft: "auto", marginRight: "auto" }}>
-          {" "}
-          Bài viết{" "}
-        </Text>
-      </View>
+    <>
+      {loading && <Loading full={true} />}
+      <View style={styles.sheetScreen}>
+        {topic && (
+          <>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                paddingRight: 15,
+                paddingLeft: 10,
+                paddingTop: 10,
+                paddingBottom: 10,
+              }}
+            >
+              <TouchableOpacity>
+                <Icon
+                  name="chevron-left"
+                  type="font-awesome"
+                  color="#000"
+                  size={24}
+                  onPress={() => navigation.navigate("User")}
+                />
+              </TouchableOpacity>
+              <Text
+                style={{
+                  fontSize: 18,
+                  marginLeft: "auto",
+                  marginRight: "auto",
+                }}
+              >
+                {" "}
+                Bài viết{" "}
+              </Text>
+            </View>
 
-      {/* Component hiện ở đây */}
-      <ScrollView>
-        <Topic item={topic} navigation={navigation} />
-        {/* <View style={{flexDirection: "row",}}>
+            {/* Component hiện ở đây */}
+            <ScrollView>
+              <Topic item={topic} navigation={navigation} />
+              {/* <View style={{flexDirection: "row",}}>
                 <View style={styles.profileImage}>
                 <Image
                     source={{uri: topic.authorAvatar ? topic.authorAvatar : require("./../../assets/cho.jpg")}}
@@ -167,8 +177,11 @@ export default function TopicDetailScreen({ route, navigation }) {
             <View style={styles.Rectangle} />
 
             <Text>List comment nma tao mệc quá làm sau nhe :D</Text> */}
-      </ScrollView>
-    </View>
+            </ScrollView>
+          </>
+        )}
+      </View>
+    </>
   );
 }
 
@@ -185,7 +198,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     paddingTop: 12,
     paddingBottom: 20,
-    minHeight: screenHeight - screenHeight * 0.09,
+    flex: 1,
   },
   body: {
     height: screenHeight * 0.81,
