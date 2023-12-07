@@ -109,6 +109,7 @@ const Topic = ({ item, navigation, data, setData }) => {
   const upVote = () => {
     if (isLogin) {
       const endpoint = voteValue === 1 ? "/unvote/" : "/upvote/";
+      setLoading(true);
       service
         .request({
           method: voteValue === 1 ? "delete" : "put",
@@ -126,9 +127,11 @@ const Topic = ({ item, navigation, data, setData }) => {
           setVoteValue(voteValue === 1 ? 0 : 1);
           // if (downVoted) setDownVoted(!downVoted);
           // setVotes(UpVoted ? votes - 1 : votes + 1);
+          setLoading(false);
         })
         .catch((error) => {
           console.log("Network failed", error);
+          setLoading(false);
         });
     } else {
       showAlert("Bạn cần đăng nhập để thực hiện chức năng này!");
@@ -138,6 +141,7 @@ const Topic = ({ item, navigation, data, setData }) => {
   const downVote = () => {
     if (isLogin) {
       const endpoint = voteValue === -1 ? "/unvote/" : "/downvote/";
+      setLoading(true);
       service
         .request({
           method: voteValue === -1 ? "delete" : "put",
@@ -155,9 +159,11 @@ const Topic = ({ item, navigation, data, setData }) => {
           setVoteValue(voteValue === -1 ? 0 : -1);
           // if (UpVoted) setUpVoted(!UpVoted);
           // setVotes(downVoted ? votes + 1 : votes - 1);
+          setLoading(false);
         })
         .catch((error) => {
           console.log("Network failed", error);
+          setLoading(false);
         });
     } else {
       showAlert("Bạn cần đăng nhập để thực hiện chức năng này!");

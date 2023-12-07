@@ -136,7 +136,6 @@ export default function App() {
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
         const data = response.notification.request.content.data;
-        console.log(data.targetTopicId);
         if (data.targetTopicId === undefined || data.targetTopicId === null) {
           navigationRef.current?.navigate("NotificationScreen");
         } else {
@@ -167,19 +166,7 @@ export default function App() {
           console.log("Error registering for push notifications ", err);
         });
     }
-  }, [token]);
-
-  useEffect(() => {
-    if (expoPushToken !== "") {
-      service
-        .post("/notification-token", {
-          token: expoPushToken,
-        })
-        .catch((err) => {
-          console.log("Error registering for push notifications ", err);
-        });
-    }
-  }, [expoPushToken]);
+  }, [token, expoPushToken]);
 
   return (
     <TokenContext.Provider value={{ token, setToken }}>
@@ -263,7 +250,7 @@ export default function App() {
                 tabPress: (e) => {
                   e.preventDefault();
                   navigation.navigate("UserTab", {
-                    screen: token ? " " : "Login",
+                    screen: token ? "User" : "Login",
                   });
                 },
               })}
