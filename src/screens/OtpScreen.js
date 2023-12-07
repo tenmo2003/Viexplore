@@ -70,6 +70,7 @@ export default function OtpScreen({ route, navigation }) {
               onChangeText={(text) => onChangeOtp(text)}
             />
           </TouchableOpacity>
+          <Text style = {{fontSize:18,maxWidth:280,textAlign:"center",marginBottom:20}}>Mã OTP đã được gửi về email đăng ký tài khoản</Text>
           <TouchableOpacity style={styles.btn}>
             <Button
               title="Xác thực"
