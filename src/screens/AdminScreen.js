@@ -93,6 +93,12 @@ export default function AdminScreen({ navigation }) {
     setMessage("");
   };
 
+  const [isModalVisible, setModalVisible] = useState(false);
+  const toggleModal = () => {
+    console.log("tongling modal");
+    setModalVisible(!isModalVisible);
+  };
+
 
   return (
     <View style={styles.container}>
