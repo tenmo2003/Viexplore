@@ -34,17 +34,16 @@ export default function TopicDetailScreen({ route, navigation }) {
           alignItems: "center",
           paddingRight: 15,
           paddingLeft: 10,
-          paddingTop: 10,
           paddingBottom: 10,
         }}
       >
-        <TouchableOpacity>
+        <TouchableOpacity className="p-3">
           <Icon
             name="chevron-left"
             type="font-awesome"
             color="#000"
             size={24}
-            onPress={() => navigation.navigate("User")}
+            onPress={() => navigation.goBack()}
           />
         </TouchableOpacity>
         <Text style={{ fontSize: 18, marginLeft: "auto", marginRight: "auto" }}>
@@ -167,7 +166,7 @@ const postWidth = screenWidth;
 const styles = StyleSheet.create({
   sheetScreen: {
     backgroundColor: "#fff",
-    paddingTop: 12,
+    paddingTop: 10,
     paddingBottom: 20,
     minHeight: screenHeight - screenHeight * 0.09,
   },
