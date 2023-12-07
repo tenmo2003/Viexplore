@@ -30,14 +30,8 @@ export default function AdminScreen({ navigation }) {
     setModalVisible(!isModalVisible);
   };
 
-  const logOutHandler = () => {
-    const removeToken = async () => {
-      await SecureStore.deleteItemAsync("token");
-      setToken(null);
-      removeHeaderConfig("Authorization");
-      navigation.navigate("Login");
-    };
-    removeToken();
+  const backout = () => {
+    navigation.navigate("User");
   };
 
   const toGotoManagedReport = () => {
@@ -118,7 +112,7 @@ export default function AdminScreen({ navigation }) {
           }}
         >
           <Text style={styles.TextAdmin}>Viexplore {"\u00B7"} Admin</Text>
-          <TouchableOpacity onPress={logOutHandler}>
+          <TouchableOpacity onPress={backout}>
             <MaterialIcons name="logout" size={28} color="black" />
           </TouchableOpacity>
         </View>

@@ -147,6 +147,7 @@ export default function SecurtityScreen({ route, navigation }) {
       setIsErrorCfPassword(false);
       service
         .put(`/change-password`, {
+          oldPassword: nowpassword,
           newPassword: newpassword,
         })
         .then(

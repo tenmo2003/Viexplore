@@ -73,19 +73,17 @@ function ForumScreen({ navigation }) {
   };
 
   const [avatar, setAvatar] = useState(null);
-  useEffect(() => {
-    service.get("/users/me", {}).then(
-      (res) => {
-        setAvatar(res.data.results.avatar);
-      },
-      () => {
-        console.log("failed");
-      }
-    );
-  }, []);
 
   useFocusEffect(
     React.useCallback(() => {
+      service.get("/users/me", {}).then(
+        (res) => {
+          setAvatar(res.data.results.avatar);
+        },
+        () => {
+          console.log("failed");
+        }
+      );
       isEndReached.current = false;
       setData([]);
       setPage(1);
