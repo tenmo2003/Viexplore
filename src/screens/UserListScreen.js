@@ -227,15 +227,6 @@ export default function UserListScreen({ navigation, route }) {
                 value={query}
                 onChangeText={(value) => {
                   setQuery(value);
-                  setShowResults(true);
-                }}
-                onFocus={() => {
-                  setShowResults(true);
-                  setIsSearchFocused(true);
-                }}
-                onBlur={() => {
-                  setShowResults(false);
-                  setIsSearchFocused(false);
                 }}
               />
               {query.length > 0 && (

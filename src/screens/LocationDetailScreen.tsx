@@ -105,7 +105,7 @@ export default function LocationDetail({ route, navigation }) {
   const handleBookmarkPress = () => {
     if (isLogin) {
       if (isBookmarked) {
-        setBookmarked(false);
+        setLoading(true);
         service
           .delete("/bookmark", {
             data: {
@@ -114,23 +114,29 @@ export default function LocationDetail({ route, navigation }) {
               thumbnail: location.thumbnail,
             },
           })
-          .then((res) => {})
+          .then((res) => {
+            setBookmarked(false);
+            setLoading(false);
+          })
           .catch((error) => {
-            setBookmarked(true);
             console.error("Delete Failed:", error);
+            setLoading(false);
           });
       } else {
-        setBookmarked(true);
+        setLoading(true);
         service
           .post("/bookmark", {
             id: location.id,
             name: location.name,
             thumbnail: location.thumbnail,
           })
-          .then((res) => {})
+          .then((res) => {
+            setBookmarked(true);
+            setLoading(false);
+          })
           .catch((error) => {
-            setBookmarked(false);
             console.error("Post Failed:", error);
+            setLoading(false);
           });
       }
     } else {
