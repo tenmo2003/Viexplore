@@ -44,27 +44,29 @@ function ForumScreen({ navigation }) {
       const index = (pageNumber - 1) * perPage;
       const offset = perPage;
 
-      service.get(`/topics?index=${index}&offset=${offset}`).then((res) => {
-        if (res.data.status === 200) {
-          const newData = res.data.results;
+      service
+        .get(`/topics?index=${index}&offset=${offset}`)
+        .then((res) => {
+          if (res.data.status === 200) {
+            const newData = res.data.results;
 
-          if (newData.length > 0) {
-            //const reversedData = [...newData].reverse();
-            setData([...data, ...newData]);
-            setPage(pageNumber + 1);
-          } 
-          if (newData.length < offset) {
-            isEndReached.current = true;
+            if (newData.length > 0) {
+              //const reversedData = [...newData].reverse();
+              setData([...data, ...newData]);
+              setPage(pageNumber + 1);
+            }
+            if (newData.length < offset) {
+              isEndReached.current = true;
+            }
+          } else {
+            console.error("API request failed:", res.data.message);
           }
           setLoading(false);
-        } else {
-          console.error("API request failed:", res.data.message);
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
           setLoading(false);
-        }
-      }).catch((error) => {
-        console.error("Error fetching data:", error);
-        setLoading(false);
-      });
+        });
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -72,16 +74,12 @@ function ForumScreen({ navigation }) {
 
   const [avatar, setAvatar] = useState(null);
   useEffect(() => {
-    setLoading(true);
-
     service.get("/users/me", {}).then(
       (res) => {
         setAvatar(res.data.results.avatar);
-        setLoading(false);
       },
       () => {
         console.log("failed");
-        setLoading(false);
       }
     );
   }, []);
@@ -99,14 +97,16 @@ function ForumScreen({ navigation }) {
     fetchData(page);
   }, [page]);
 
-  const renderItem = ({item, index}) => <Topic item={item} navigation={navigation} data={data} setData={setData} />;
+  const renderItem = ({ item, index }) => (
+    <Topic item={item} navigation={navigation} data={data} setData={setData} />
+  );
 
   const handleEndReached = () => {
     fetchData(page);
   };
 
   return (
-    <View className="flex-1" style ={{backgroundColor:"#C0D8FC"}}>
+    <View className="flex-1" style={{ backgroundColor: "#C0D8FC" }}>
       <View
         style={Platform.OS === "ios" && { paddingTop: 30 }}
         className="flex-1"
@@ -114,7 +114,9 @@ function ForumScreen({ navigation }) {
         <View style={{ flexDirection: "row", marginBottom: 15 }}>
           <View style={styles.profileImage}>
             <Image
-              source = {avatar ? { uri: avatar } : require("./../../assets/ava.png")}
+              source={
+                avatar ? { uri: avatar } : require("./../../assets/ava.png")
+              }
               style={styles.image}
               resizeMode="center"
             ></Image>
@@ -139,7 +141,7 @@ function ForumScreen({ navigation }) {
         {/* <View style={styles.Rectangle} /> */}
 
         {/* Code for ở đây */}
-        <View className="flex-1" >
+        <View className="flex-1">
           {data.length > 0 && (
             <FlatList
               data={data}

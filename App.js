@@ -136,15 +136,17 @@ export default function App() {
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
         const data = response.notification.request.content.data;
-        if (data === undefined || data === null) {
+        console.log(data.targetTopicId);
+        if (data.targetTopicId === undefined || data.targetTopicId === null) {
           navigationRef.current?.navigate("NotificationScreen");
+        } else {
+          navigationRef.current?.navigate("ForumTab", {
+            screen: "Topic",
+            params: {
+              topicId: data.targetTopicId,
+            },
+          });
         }
-        navigationRef.current?.navigate("ForumTab", {
-          screen: "Topic",
-          params: {
-            topic: data,
-          },
-        });
       });
 
     return () => {
@@ -207,6 +209,14 @@ export default function App() {
               }}
               name="ForumTab"
               component={ForumTabs}
+              listeners={({ navigation, route }) => ({
+                tabPress: (e) => {
+                  e.preventDefault();
+                  navigation.navigate("ForumTab", {
+                    screen: "Forum",
+                  });
+                },
+              })}
             />
             <Tab.Screen
               options={{

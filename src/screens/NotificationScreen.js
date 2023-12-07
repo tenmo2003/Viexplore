@@ -71,6 +71,9 @@ export default function NotificationScreen({ route, navigation }) {
               key={notification.id}
               notification={notification}
               navigation={navigation}
+              notifications={notifications}
+              setNotifications={setNotifications}
+              setLoading={setLoading}
             />
           ))}
       </ScrollView>

@@ -117,7 +117,7 @@ const BottomTab = ({ bookmarks, navigation, savedTopic, username }) => {
     navigation.navigate("UserTab", {
       screen: "Topic",
       params: {
-        topic: topic,
+        topicId: topic.id,
       },
     });
   };

@@ -1,8 +1,15 @@
-import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialIcons, Octicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { TouchableOpacity, View, Image, Text } from "react-native";
 import TimeAgo from "react-native-timeago";
-export function Notification({ notification, navigation }) {
+import service from "../helper/axiosService";
+export function Notification({
+  notification,
+  navigation,
+  notifications,
+  setNotifications,
+  setLoading,
+}) {
   const [expanded, setExpanded] = useState(false);
 
   const getSmallIcon = (type) => {
@@ -40,6 +47,25 @@ export function Notification({ notification, navigation }) {
     }
   };
 
+  const deleteNotification = () => {
+    setLoading(true);
+    service
+      .delete(`/notification?notificationId=${notification.id}`)
+      .then((res) => {
+        setNotifications(
+          notifications.filter(
+            (notification) => notification.id !== notification.id
+          )
+        );
+        console.log(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+      });
+  };
+
   return (
     <TouchableOpacity
       onPress={() => {
@@ -53,7 +79,7 @@ export function Notification({ notification, navigation }) {
         navigation.navigate("ForumTab", {
           screen: "Topic",
           params: {
-            topic: notification.targetTopic,
+            topicId: notification.targetTopicId,
           },
         });
       }}
@@ -80,13 +106,18 @@ export function Notification({ notification, navigation }) {
           </Text>
           <TimeAgo time={notification.timestamp} />
         </View>
-        <TouchableOpacity onPress={() => setExpanded(!expanded)}>
-          <MaterialIcons
-            name={expanded ? "expand-less" : "expand-more"}
-            size={24}
-            color="black"
-          />
-        </TouchableOpacity>
+        <View className="flex flex-col items-center self-start gap-3">
+          <TouchableOpacity onPress={() => setExpanded(!expanded)}>
+            <MaterialIcons
+              name={expanded ? "expand-less" : "expand-more"}
+              size={24}
+              color="black"
+            />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => deleteNotification()}>
+            <Octicons name="trash" size={18} color="red" />
+          </TouchableOpacity>
+        </View>
       </View>
     </TouchableOpacity>
   );
