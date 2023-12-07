@@ -265,33 +265,6 @@ const UserScreen = ({ route, navigation }) => {
     }, [])
   );
 
-  useEffect(() => {
-    setLoading(true);
-    service
-      .get("/users/me", {})
-      .then(
-        (res) => {
-          const userData = res.data.results;
-          const savedTopic = res.data.results.savedTopics;
-          const user = res.data.results.username;
-          // console.log(userData);
-          setFullName(userData.fullName);
-          setUsername(userData.username);
-          setAvatar(userData.avatar);
-          setEmail(userData.email);
-          setBookmarkList(userData.bookmarks);
-          setSavedTopic(res.data.results.savedTopics);
-          setLoading(false);
-        },
-        () => {
-          console.log("failed");
-        }
-      )
-      .catch((err) => {
-        console.log("info error");
-      });
-  }, []);
-
   const { token, setToken } = useContext(TokenContext);
 
   const logOutHandler = () => {

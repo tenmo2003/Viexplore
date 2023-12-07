@@ -32,7 +32,7 @@ const Topic = ({ item, navigation, data, setData }) => {
   const [role, setRole] = useState("");
   const [checkAuthor, setCheckAuthor] = useState(false);
 
-  const [authorAvatar, setAuthorAvatar] = useState("");
+  const [authorAvatar, setAuthorAvatar] = useState(null);
 
   const [topicName, setTopicName] = useState(item.name);
   const [topicContent, setTopicContent] = useState(item.content);
@@ -292,7 +292,7 @@ const Topic = ({ item, navigation, data, setData }) => {
             <View style={styles.profileImage}>
               <Image
                 source={
-                  authorAvatar !== ""
+                  authorAvatar !== null
                     ? {
                         uri: authorAvatar,
                       }

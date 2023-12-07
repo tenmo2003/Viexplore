@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import service from "../helper/axiosService";
 import Loading from "../components/Loading";
 import { useIsFocused } from "@react-navigation/native";
-import TimeAgo from "react-native-timeago";
 import { Feather } from "@expo/vector-icons";
 
 export default function ManagedReportScreen({ navigation }) {
@@ -103,7 +102,7 @@ export default function ManagedReportScreen({ navigation }) {
                   <Text className="text-base">
                     {notification.username ? notification.username : "Ai đó"}{" vừa góp ý về địa danh "}{notification.location ? (notification.location.name + " ") : ""}{"với nội dung: "}{notification.reason ? notification.reason : "Không rõ"}
                   </Text>
-                  <TimeAgo time={notification.timestamp} />
+                  <Text>{moment(notification.issuedAt).fromNow()}</Text>
                 </View>
               </View>
             </TouchableOpacity>

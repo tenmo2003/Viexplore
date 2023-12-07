@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import service from "../helper/axiosService";
 import Loading from "../components/Loading";
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
-import TimeAgo from "react-native-timeago";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Notification } from "../components/Notification";
 

@@ -1,8 +1,9 @@
 import { MaterialIcons, Octicons } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TouchableOpacity, View, Image, Text } from "react-native";
-import TimeAgo from "react-native-timeago";
 import service from "../helper/axiosService";
+import moment from "moment";
+import { actionAlert } from "../helper/CustomAlert";
 export function Notification({
   notification,
   navigation,
@@ -104,7 +105,7 @@ export function Notification({
           <Text numberOfLines={expanded ? 20 : 2} className="text-base">
             {notification.message}
           </Text>
-          <TimeAgo time={notification.timestamp} />
+          <Text>{moment(notification.timestamp).fromNow()}</Text>
         </View>
         <View className="flex flex-col items-center self-start gap-3">
           <TouchableOpacity onPress={() => setExpanded(!expanded)}>
@@ -114,7 +115,13 @@ export function Notification({
               color="black"
             />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => deleteNotification()}>
+          <TouchableOpacity
+            onPress={() => {
+              actionAlert("Bạn muốn xoá thông báo này?", () => {
+                deleteNotification();
+              });
+            }}
+          >
             <Octicons name="trash" size={18} color="red" />
           </TouchableOpacity>
         </View>
