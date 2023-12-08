@@ -196,7 +196,7 @@ const postWidth = screenWidth;
 const styles = StyleSheet.create({
   sheetScreen: {
     backgroundColor: "#fff",
-    paddingTop: 12,
+    paddingTop: 10,
     paddingBottom: 20,
     flex: 1,
   },

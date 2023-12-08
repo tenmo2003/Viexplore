@@ -252,7 +252,7 @@ function CommentScreen({ route, navigation }) {
               >
                 <Input
                   placeholder="Chỉnh sửa bình luận..."
-                  inputContainerStyle={styles.inputContainerStyle2}
+                  inputContainerStyle={{...styles.inputContainerStyle2, paddingRight: 15,}}
                   inputStyle={styles.inputStyle2}
                   value={editedContent}
                   onChangeText={(text) => setEditedContent(text)}
@@ -390,7 +390,7 @@ function CommentScreen({ route, navigation }) {
       {loading && <Loading />}
       <View style={styles.sheetScreen}>
         <View
-          style={{ height: screenHeight - screenHeight * 0.2 - keyboardHeight }}
+          style={{ height: screenHeight - screenHeight * 0.2 - keyboardHeight - (image ? 120 : 0)}}
         >
           <FlatList
             data={reversedComments}
@@ -573,7 +573,6 @@ const styles = StyleSheet.create({
     elevation: 5,
     shadowColor: "black",
     paddingLeft: 15,
-    paddingRight: 15,
     marginTop: 5,
   },
   cmtIcon: {
