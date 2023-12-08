@@ -90,7 +90,7 @@ export default function TopicListScreen({ navigation }) {
     navigation.navigate("UserTab", {
       screen: "Topic",
       params: {
-        topic: topic,
+        topicId: topic.id,
       },
     });
   };
