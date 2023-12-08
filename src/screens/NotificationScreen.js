@@ -1,10 +1,9 @@
-import { View, Text, ScrollView, Image, TouchableOpacity } from "react-native";
-import React, { useEffect, useState } from "react";
-import service from "../helper/axiosService";
-import Loading from "../components/Loading";
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
-import { MaterialIcons } from "@expo/vector-icons";
+import React, { useEffect, useState } from "react";
+import { ScrollView, Text, View } from "react-native";
+import Loading from "../components/Loading";
 import { Notification } from "../components/Notification";
+import service from "../helper/axiosService";
 
 export default function NotificationScreen({ route, navigation }) {
   const [loading, setLoading] = useState(false);

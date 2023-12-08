@@ -48,7 +48,6 @@ export default function ManagedReportScreen({ navigation }) {
     }
     return () => clearInterval(interval);
   }, [isFocused]);
-  
 
   const backToAdminHome = () => {
     navigation.navigate("Admin");
@@ -77,12 +76,13 @@ export default function ManagedReportScreen({ navigation }) {
             <TouchableOpacity
               key={notification.id}
               onPress={() => {
-                notification.location && navigation.navigate("MapTab", {
-                  screen: "Map",
-                  params: {
-                    id: notification.location.id,
-                  },
-                });
+                notification.location &&
+                  navigation.navigate("MapTab", {
+                    screen: "Map",
+                    params: {
+                      id: notification.location.id,
+                    },
+                  });
               }}
             >
               <View className="bg-slate-200 px-2 py-2 rounded-lg my-1 mx-3 flex flex-row items-center">
@@ -91,7 +91,8 @@ export default function ManagedReportScreen({ navigation }) {
                     source={
                       notification.type === "BROADCAST"
                         ? require("./../../assets/notificationBell.png")
-                        : notification.location && notification.location.thumbnail
+                        : notification.location &&
+                          notification.location.thumbnail
                         ? { uri: notification.location.thumbnail }
                         : require("./../../assets/notificationBell.png")
                     }
@@ -100,9 +101,19 @@ export default function ManagedReportScreen({ navigation }) {
                 </View>
                 <View className="ml-2 flex-1 flex">
                   <Text className="text-base">
-                    {notification.username ? notification.username : "Ai đó"}{" vừa góp ý về địa danh "}{notification.location ? (notification.location.name + " ") : ""}{"với nội dung: "}{notification.reason ? notification.reason : "Không rõ"}
+                    {notification.username ? notification.username : "Ai đó"}
+                    {" vừa góp ý về địa danh "}
+                    {notification.location
+                      ? notification.location.name + " "
+                      : ""}
+                    {"với nội dung: "}
+                    {notification.reason ? notification.reason : "Không rõ"}
                   </Text>
-                  <Text>{moment(notification.issuedAt).fromNow()}</Text>
+                  <Text>
+                    {moment(notification.issuedAt).diff(new Date(), "days") < -2
+                      ? moment(notification.issuedAt).format("DD/MM HH:mm")
+                      : moment(notification.issuedAt).fromNow()}
+                  </Text>
                 </View>
               </View>
             </TouchableOpacity>

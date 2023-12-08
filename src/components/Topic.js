@@ -1,25 +1,24 @@
-import React, { useState, useEffect, useRef, useContext, memo } from "react";
+import moment from "moment";
+import React, { memo, useContext, useEffect, useState } from "react";
 import {
-  Text,
-  View,
-  StyleSheet,
-  Image,
   Dimensions,
-  TouchableOpacity,
-  TextInput,
+  Image,
   Keyboard,
-  KeyboardAvoidingView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from "react-native";
-import { Icon, Input } from "react-native-elements";
-import ImageSlider2 from "./ImageSlide2";
-import { Ionicons } from "react-native-vector-icons";
-import TokenContext from "../contexts/TokenContext";
-import service from "../helper/axiosService";
-import { actionAlert, showAlert } from "../helper/CustomAlert";
-import Loading from "../components/Loading";
+import { Icon } from "react-native-elements";
 import Modal from "react-native-modal";
-import { Feather } from "react-native-vector-icons";
+import { Feather, Ionicons } from "react-native-vector-icons";
+import Loading from "../components/Loading";
+import TokenContext from "../contexts/TokenContext";
+import { actionAlert, showAlert } from "../helper/CustomAlert";
+import service from "../helper/axiosService";
 import CommentScreen from "./CommentScreen";
+import ImageSlider2 from "./ImageSlide2";
 
 const Topic = ({ item, navigation, data, setData }) => {
   const [isLogin, setIsLogin] = useState(false);
@@ -304,7 +303,11 @@ const Topic = ({ item, navigation, data, setData }) => {
             </View>
             <View>
               <Text style={styles.Name}>{item.author}</Text>
-              <Text style={styles.Time}>{item.createdAt}</Text>
+              <Text style={styles.Time}>
+                {moment(item.createdAt).diff(new Date(), "days") < -2
+                  ? moment(item.createdAt).format("DD/MM HH:mm")
+                  : moment(item.createdAt).fromNow()}
+              </Text>
             </View>
           </TouchableOpacity>
           <TouchableOpacity style={{ paddingRight: 5 }}>

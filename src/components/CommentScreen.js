@@ -1,28 +1,12 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Platform } from "react-native";
-import {
-  Text,
-  View,
-  StyleSheet,
-  ScrollView,
-  Image,
-  Dimensions,
-  TouchableOpacity,
-  FlatList,
-  ActivityIndicator,
-  TextInput,
-  Keyboard,
-  Animated,
-  Easing,
-} from "react-native";
-import { Icon, Input } from "react-native-elements";
-import { Ionicons } from "react-native-vector-icons";
 import * as ImagePicker from "expo-image-picker";
-import Loading from "./Loading";
+import moment from "moment";
+import React, { useEffect, useState } from "react";
+import { Dimensions, FlatList, Image, Keyboard, Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Input } from "react-native-elements";
+import { Ionicons } from "react-native-vector-icons";
+import { actionAlert } from "../helper/CustomAlert";
 import service from "../helper/axiosService";
-import { useFocusEffect } from "@react-navigation/native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { actionAlert, showAlert } from "../helper/CustomAlert";
+import Loading from "./Loading";
 
 function CommentScreen({ route, navigation }) {
   const { topicId, comments, username } = route.params;
@@ -252,7 +236,10 @@ function CommentScreen({ route, navigation }) {
               >
                 <Input
                   placeholder="Chỉnh sửa bình luận..."
-                  inputContainerStyle={{...styles.inputContainerStyle2, paddingRight: 15,}}
+                  inputContainerStyle={{
+                    ...styles.inputContainerStyle2,
+                    paddingRight: 15,
+                  }}
                   inputStyle={styles.inputStyle2}
                   value={editedContent}
                   onChangeText={(text) => setEditedContent(text)}
@@ -306,7 +293,11 @@ function CommentScreen({ route, navigation }) {
           )}
 
           <View style={{ flexDirection: "row" }}>
-            <Text style={styles.Time}>{item.createdAt}</Text>
+            <Text style={styles.Time}>
+              {moment(item.createdAt).diff(new Date(), "days") < -2
+                ? moment(item.createdAt).format("DD/MM HH:mm")
+                : moment(item.createdAt).fromNow()}
+            </Text>
             {editingCommentId !== item.id ? (
               (item.commenter.username === username ||
                 username === "admin") && (
@@ -390,7 +381,13 @@ function CommentScreen({ route, navigation }) {
       {loading && <Loading />}
       <View style={styles.sheetScreen}>
         <View
-          style={{ height: screenHeight - screenHeight * 0.2 - keyboardHeight - (image ? 120 : 0)}}
+          style={{
+            height:
+              screenHeight -
+              screenHeight * 0.2 -
+              keyboardHeight -
+              (image ? 120 : 0),
+          }}
         >
           <FlatList
             data={reversedComments}

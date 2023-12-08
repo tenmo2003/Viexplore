@@ -1,9 +1,9 @@
 import { MaterialIcons, Octicons } from "@expo/vector-icons";
-import React, { useEffect, useState } from "react";
-import { TouchableOpacity, View, Image, Text } from "react-native";
-import service from "../helper/axiosService";
 import moment from "moment";
+import React, { useState } from "react";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import { actionAlert } from "../helper/CustomAlert";
+import service from "../helper/axiosService";
 export function Notification({
   notification,
   navigation,
@@ -105,7 +105,11 @@ export function Notification({
           <Text numberOfLines={expanded ? 20 : 2} className="text-base">
             {notification.message}
           </Text>
-          <Text>{moment(notification.timestamp).fromNow()}</Text>
+          <Text>
+            {moment(notification.timestamp).diff(new Date(), "days") < -2
+              ? moment(notification.timestamp).format("DD/MM HH:mm")
+              : moment(notification.timestamp).fromNow()}
+          </Text>
         </View>
         <View className="flex flex-col items-center self-start gap-3">
           <TouchableOpacity onPress={() => setExpanded(!expanded)}>
