@@ -44,7 +44,7 @@ const BottomTab = ({ bookmarks, navigation, savedTopic, username }) => {
         <View style={{ flex: 1 }}>
           <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
             <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-              {bookmarks.map((bookmarks, index) => (
+              {bookmarks.reverse().map((bookmarks, index) => (
                 <TouchableOpacity
                   key={index}
                   style={styles.content}
